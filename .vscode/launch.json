@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "BC19-INT",
+            "request": "launch",
+            "type": "al",
+            "environmentType": "OnPrem",
+            "server": "http://localhost:8080",
+
+            "serverInstance": "BC19-INT",
+            "port": 19904,
+
+            "authentication": "Windows",
+
+            "startupObjectId": 60106,
+            "startupObjectType": "Page",
+            "breakOnError": true,
+
+            "launchBrowser": true,
+            "enableLongRunningSqlStatements": true,
+            "enableSqlInformationDebugger": true,
+            "schemaUpdateMode":"ForceSync",
+            "tenant": "default"
+        }
+    ]
+} 
