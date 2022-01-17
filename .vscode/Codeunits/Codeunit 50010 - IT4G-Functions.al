@@ -151,7 +151,24 @@ codeunit 50010 "IT4G-Functions"
     begin
     end;
 
-    procedure InsertLogEntry(iEntryNo: Integer; xModule: Text; xKey: Text; xDate: Date; xTime: Time; xStatus: Integer; xStatusText: Text; xStarted: DateTime; xFinished: DateTime; xProcessed: Integer; xErrors: Integer; xTable: Integer; xType: Integer; iInserted: Integer; iModified: Integer; iSkiped: Integer; xJobFinished: Boolean): Integer
+    procedure InsertLogEntry(iEntryNo: Integer;
+                xModule: Text;
+                xKey: Text;
+                xDate: Date;
+                xTime: Time;
+                xStatus: Integer;
+                xStatusText: Text;
+                xStarted: DateTime;
+                xFinished: DateTime;
+                xProcessed: Integer;
+                xErrors: Integer;
+                xTable: Integer;
+                xType: Integer;
+                iInserted: Integer;
+                iModified: Integer;
+                iSkiped: Integer;
+                xJobFinished: Boolean;
+                xBatch: Code[20]): Integer
     begin
         IF iEntryNo <> 0 THEN
             rLog.GET(iEntryNo)
@@ -160,6 +177,7 @@ codeunit 50010 "IT4G-Functions"
 
         rLog.Module := xModule;
         rLog.Key := xKey;
+        rLog."Batch ID" := xBatch;
         rLog.User := USERID;
         rLog."Table ID" := xTable;
         rLog.Type := xType;

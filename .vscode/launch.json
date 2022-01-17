@@ -13,6 +13,28 @@
 
             "authentication": "Windows",
 
+            "startupObjectId": 60008,
+            "startupObjectType": "Page",
+            "breakOnError": true,
+
+            "launchBrowser": true,
+            "enableLongRunningSqlStatements": true,
+            "enableSqlInformationDebugger": true,
+            "schemaUpdateMode":"ForceSync",
+            "tenant": "default"
+        },
+        {
+            "name": "BC19-INT-PANOS",
+            "request": "launch",
+            "type": "al",
+            "environmentType": "OnPrem",
+            "server": "http://panos-pc:8080",
+
+            "serverInstance": "BC190-INT",
+            "port": 1924,
+
+            "authentication": "Windows",
+
             "startupObjectId": 60106,
             "startupObjectType": "Page",
             "breakOnError": true,

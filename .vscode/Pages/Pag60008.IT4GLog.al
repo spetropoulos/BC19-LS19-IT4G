@@ -4,6 +4,7 @@ page 60008 "IT4G-Log"
     Caption = 'IT4G-Log';
     PageType = List;
     SourceTable = "IT4G-Log";
+    SourceTableView = Sorting("Entry No.") order(descending);
     UsageCategory = Administration;
 
     layout
@@ -20,6 +21,11 @@ page 60008 "IT4G-Log"
                 field(Module; Rec.Module)
                 {
                     ToolTip = 'Specifies the value of the Module field.';
+                    ApplicationArea = All;
+                }
+                field("Batch ID"; Rec."Batch ID")
+                {
+                    ToolTip = 'Specifies the value of the Batch ID field.';
                     ApplicationArea = All;
                 }
                 field("Table ID"; Rec."Table ID")
@@ -42,19 +48,14 @@ page 60008 "IT4G-Log"
                     ToolTip = 'Specifies the value of the Key field.';
                     ApplicationArea = All;
                 }
-                field("Duration"; Rec."Duration")
+                field(Processed; Rec.Processed)
                 {
-                    ToolTip = 'Specifies the value of the Duration field.';
+                    ToolTip = 'Specifies the value of the Processed field.';
                     ApplicationArea = All;
                 }
-                field(Errors; Rec.Errors)
+                field(Skipped; Rec.Skipped)
                 {
-                    ToolTip = 'Specifies the value of the Errors field.';
-                    ApplicationArea = All;
-                }
-                field(Finished; Rec.Finished)
-                {
-                    ToolTip = 'Specifies the value of the Finished field.';
+                    ToolTip = 'Specifies the value of the Skipped field.';
                     ApplicationArea = All;
                 }
                 field(Inserted; Rec.Inserted)
@@ -62,14 +63,19 @@ page 60008 "IT4G-Log"
                     ToolTip = 'Specifies the value of the Inserted field.';
                     ApplicationArea = All;
                 }
-                field("Job Finished"; Rec."Job Finished")
-                {
-                    ToolTip = 'Specifies the value of the Job Finished field.';
-                    ApplicationArea = All;
-                }
                 field(Modified; Rec.Modified)
                 {
                     ToolTip = 'Specifies the value of the Modified field.';
+                    ApplicationArea = All;
+                }
+                field(Errors; Rec.Errors)
+                {
+                    ToolTip = 'Specifies the value of the Errors field.';
+                    ApplicationArea = All;
+                }
+                field("Job Finished"; Rec."Job Finished")
+                {
+                    ToolTip = 'Specifies the value of the Job Finished field.';
                     ApplicationArea = All;
                 }
                 field("Posting Date"; Rec."Posting Date")
@@ -82,19 +88,19 @@ page 60008 "IT4G-Log"
                     ToolTip = 'Specifies the value of the Posting Time field.';
                     ApplicationArea = All;
                 }
-                field(Processed; Rec.Processed)
-                {
-                    ToolTip = 'Specifies the value of the Processed field.';
-                    ApplicationArea = All;
-                }
-                field(Skipped; Rec.Skipped)
-                {
-                    ToolTip = 'Specifies the value of the Skipped field.';
-                    ApplicationArea = All;
-                }
                 field(Started; Rec.Started)
                 {
                     ToolTip = 'Specifies the value of the Started field.';
+                    ApplicationArea = All;
+                }
+                field(Finished; Rec.Finished)
+                {
+                    ToolTip = 'Specifies the value of the Finished field.';
+                    ApplicationArea = All;
+                }
+                field("Duration"; Rec."Duration")
+                {
+                    ToolTip = 'Specifies the value of the Duration field.';
                     ApplicationArea = All;
                 }
                 field(Status; Rec.Status)
