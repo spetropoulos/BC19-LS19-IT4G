@@ -31,16 +31,41 @@ codeunit 50012 "IT4G-LS Functions"
     var
 
         rDC: Record "IT4G-LS Document";
+        rStore: Record "LSC Store";
     begin
         rDC.get(xDocCode);
         rPT."Document Code" := rDC."Code";
-        /*
-                rPT."To Location" := 'To Loc';
-                rPT."To Store" := 'To Store';
-                rPT."From Location" := 'From Loc';
-                rPT."From Store" := 'From Sto';
-        */
 
+        If rPT."Location Code" = '' then begin
+            If rStore.get(rPT."Store No.") then
+                rPT."Location Code" := rStore."Location Code";
+        end;
+
+        rPT."To Location" := rDC."Default To Location";
+        rPT."To Store" := rDC."Default Store To";
+
+        case rDC."Transfer Type" of
+            rDC."Transfer Type"::Ship:
+                begin
+                    rPT."From Location" := rPT."Location Code";
+                    rPT."From Store" := rPT."Store No.";
+                end;
+            rDC."Transfer Type"::Receive:
+                begin
+                    rPT."To Location" := rPT."Location Code";
+                    rPT."To Store" := rPT."Store No.";
+                end;
+            else begin
+                    rPT."From Location" := '';
+                    rPT."From Store" := '';
+                    rPT."To Location" := '';
+                    rPT."To Store" := '';
+                end;
+        end;
+        /*
+                if rPT."From Location" = '' then rPT."From Location" := rDC."Default From Location";
+                if rPT."From Store" := 'From Sto';
+        */
         if rPT."Reason Code" = '' then rPT."Reason Code" := rDC."Reason Code";
         if rPT."Shipment Method" = '' then rPT."Shipment Method" := rDC."Shipment Method";
         if rPT."Shipment Reason" = '' then rPT."Shipment Reason" := rDC."Shipment Reason";
@@ -283,6 +308,7 @@ codeunit 50012 "IT4G-LS Functions"
         lblPostCancelled: Label 'Posting Cancelled!!!';
         lblCustomerMandatory: Label 'Customer No. is Mandatory!!!';
         lblPostCodeMandatory: Label 'You can not Post document without Document Code!!!';
+        lblMissingLocation: Label 'You can not Post document without Location Code!!!';
     begin
         retText := '';
         if rPT."Entry Status" <> rPT."Entry Status"::" " then exit(True);
@@ -297,6 +323,10 @@ codeunit 50012 "IT4G-LS Functions"
                 exit(false);
             end;
         if not rDoc.get(rPT."Document Code") then begin
+            retText := lblMissingDocCode;
+            exit(false);
+        end;
+        If rPT."Location Code" = '' then begin
             retText := lblMissingDocCode;
             exit(false);
         end;

@@ -13,5 +13,12 @@ tableextension 60007 "TE99001490-Trans. Inv. Entry" extends "LSC Trans. Inventor
             Caption = 'IT4G-Doc. Line No.';
             DataClassification = ToBeClassified;
         }
+        field(60100; "Location Code"; Code[20])
+        {
+            Caption = 'Location Code';
+            TableRelation = "LSC Store Location"."Location Code" where("Store No." = field("Store No."));
+            DataClassification = ToBeClassified;
+        }
+
     }
 }

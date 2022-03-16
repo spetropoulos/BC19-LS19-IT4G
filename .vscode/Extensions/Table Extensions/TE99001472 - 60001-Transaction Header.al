@@ -91,5 +91,12 @@ tableextension 60001 "TE99001472-Transaction Header" extends "LSC Transaction He
             Caption = 'Ship-to Code';
             TableRelation = "Ship-to Address".Code WHERE("Customer No." = FIELD("Customer No."));
         }
+        field(60100; "Location Code"; Code[20])
+        {
+            Caption = 'Location Code';
+            TableRelation = "LSC Store Location"."Location Code" where("Store No." = field("Store No."));
+            DataClassification = ToBeClassified;
+        }
+
     }
 }
