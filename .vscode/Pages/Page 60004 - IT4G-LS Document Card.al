@@ -106,6 +106,11 @@ page 60004 "IT4G-Document Card"
                     ToolTip = 'Specifies the value of the Collect Series Document field.';
                     ApplicationArea = All;
                 }
+                field("Do not Export"; Rec."Do not Export")
+                {
+                    ToolTip = 'Specifies the value of the Do not Export field.';
+                    ApplicationArea = All;
+                }
             }
             group(Menus)
             {

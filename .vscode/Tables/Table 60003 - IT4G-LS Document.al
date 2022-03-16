@@ -194,6 +194,10 @@ table 60003 "IT4G-LS Document"
             DataClassification = ToBeClassified;
             TableRelation = "IT4G-LS Document".Code where("Type" = const(Series));
         }
+        field(1007; "Do not Export"; Boolean)
+        {
+            DataClassification = ToBeClassified;
+        }
 
         //---------------------------------------- IT4G Locations----------------------------------------
         field(500; "Location Mandatory"; Boolean)

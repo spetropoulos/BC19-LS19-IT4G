@@ -8,5 +8,11 @@ tableextension 60004 "TE99001470 - 60004-Store" extends "LSC Store"
             TableRelation = "LSC Store"."No.";
             DataClassification = ToBeClassified;
         }
+        field(50001; "Do not Export"; Boolean)
+        {
+            DataClassification = ToBeClassified;
+        }
+
+
     }
 }
