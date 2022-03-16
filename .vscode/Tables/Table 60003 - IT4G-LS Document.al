@@ -185,6 +185,16 @@ table 60003 "IT4G-LS Document"
         {
             DataClassification = ToBeClassified;
         }
+        field(1005; "Collect To Series"; Boolean)
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(1006; "Collect Series Document"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+            TableRelation = "IT4G-LS Document".Code where("Type" = const(Series));
+        }
+
         //---------------------------------------- IT4G Locations----------------------------------------
         field(500; "Location Mandatory"; Boolean)
         {

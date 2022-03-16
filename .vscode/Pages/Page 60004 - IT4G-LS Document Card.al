@@ -96,6 +96,16 @@ page 60004 "IT4G-Document Card"
                     ApplicationArea = All;
                     Tooltip = '';
                 }
+                field("Collect To Series"; Rec."Collect To Series")
+                {
+                    ToolTip = 'Specifies the value of the Collect To Series field.';
+                    ApplicationArea = All;
+                }
+                field("Collect Series Document"; Rec."Collect Series Document")
+                {
+                    ToolTip = 'Specifies the value of the Collect Series Document field.';
+                    ApplicationArea = All;
+                }
             }
             group(Menus)
             {

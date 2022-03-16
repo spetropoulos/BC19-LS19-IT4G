@@ -233,7 +233,7 @@ codeunit 50013 "IT4G-LS Events"
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"LSC POS Session", 'OnBeforeGetMenu', '', false, false)]
-    local procedure OnBeforeGetMenu_IT4G(var SelectedMenu: Code[20]; MenuType: Enum "Menu Types")
+    local procedure OnBeforeGetMenu_IT4G(var SelectedMenu: Code[20]; MenuType: Enum "LSC Menu Types")
     var
         rPT: record "LSC POS Transaction";
         rD: Record "IT4G-LS Document";

@@ -2,7 +2,7 @@
     "id": "0647fe0e-a7da-478f-a972-599707d1a7ee",
     "name": "IT4G-LS19",
     "publisher": "IT4G",
-    "version": "19.0.0.2",
+    "version": "19.3.0.0",
     "brief": "",
     "description": "",
     "privacyStatement": "",
@@ -11,34 +11,23 @@
     "url": "",
     "logo": "",
     "platform": "19.0.0.0",
-    "application": "19.0.0.0",
-    "runtime": "8.0",
+    "application": "19.3.0.0",
+    "runtime": "8.1",
     "target": "OnPrem",
+   "resourceExposurePolicy":  {
+                                   "allowDebugging":  true,
+                                   "allowDownloadingSource":  true,
+                                   "includeSourceInSymbolFile":  true
+                               },
+    "propagateDependencies":  true,
     "dependencies": [
-      {
-        "id": "63ca2fa4-4f03-4f2b-a480-172fef340d3f",
-        "publisher": "Microsoft",
-        "name": "System Application",
-        "version": "19.0.0.0"
-      },
-      {
-        "id": "437dbf0e-84ff-417a-965d-ed2bb9650972",
-        "publisher": "Microsoft",
-        "name": "Base Application",
-        "version": "19.0.0.0"
-      },                         {
-        "id":  "2a0547fa-f60f-401d-b1fe-c7c4be8fb230",
-        "publisher":  "LS Retail",
-        "name":  "LS Central System App",
-        "version":  "19.0.0.0"
-      },
-      {
-        "id": "5ecfc871-5d82-43f1-9c54-59685e82318d",
-        "publisher": "LS Retail",
-        "name": "LS Central",
-        "version": "19.0.0.1"
-      }
-    ],
+              {
+                  "id": "5ecfc871-5d82-43f1-9c54-59685e82318d",
+                  "publisher": "LS Retail",
+                  "name": "LS Central",
+                  "version": "19.3.0.0"
+                }
+              ],
     "screenshots": [],
     "idRanges": [
       {
