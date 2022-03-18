@@ -7,7 +7,9 @@ codeunit 50013 "IT4G-LS Events"
         POSGUI: Codeunit "LSC POS GUI";
         cC: Codeunit "IT4G-LS Functions";
         POSView: Codeunit "LSC POS View";
+        POSSESSION: Codeunit "LSC POS Session";
         cPTF: Codeunit "LSC POS Transaction Functions";
+        TSAction_g: Option ,Update,Delete;
 
     [EventSubscriber(ObjectType::Codeunit, codeunit::"LSC POS Transaction", 'OnBeforePostTransaction', '', false, false)]
     procedure OnBeforePostTransaction_IT4G(var Rec: Record "LSC POS Transaction"; var IsHandled: boolean)
@@ -58,30 +60,43 @@ codeunit 50013 "IT4G-LS Events"
         Transaction."Shipment Method" := POSTrans."Shipment Method";
         Transaction."Shipment Reason" := POSTrans."Shipment Reason";
         Transaction."WEB Order No." := POSTrans."WEB Order No.";
+        Transaction."Location Code" := POSTrans."Location Code";
 
     end;
 
     [EventSubscriber(ObjectType::Codeunit, codeunit::"LSC POS Post Utility", 'SalesEntryOnBeforeInsertV2', '', false, false)]
     local procedure SalesEntryOnBeforeInsert_IT4G(var pPOSTransLineTemp: Record "LSC POS Trans. Line" temporary; var pTransSalesEntry: Record "LSC Trans. Sales Entry")
     var
+        rPT: Record "LSC POS Transaction";
     begin
+
         if not cC.IsIT4GRetailActive() then exit;
+        rPT.GET(pPOSTransLineTemp."Receipt No.");
         pTransSalesEntry."IT4G-Doc. No." := pPOSTransLineTemp."IT4G-Doc. No.";
         pTransSalesEntry."IT4G-Doc. Line No." := pPOSTransLineTemp."IT4G-Doc. Line No.";
+        pTransSalesEntry."Location Code" := pPOSTransLineTemp."Location Code";
+        if pTransSalesEntry."Location Code" = '' then
+            pTransSalesEntry."Location Code" := rPT."Location Code";
     end;
 
     [EventSubscriber(ObjectType::Codeunit, codeunit::"LSC POS Post Utility", 'OnBeforeInsertTransInventoryEntry', '', false, false)]
     local procedure OnBeforeInsertTransInventoryEntry_IT4G(var InventoryEntry: Record "LSC Trans. Inventory Entry"; var PosTransLineTmp: Record "LSC POS Trans. Line" temporary)
     var
+        rPT: Record "LSC POS Transaction";
     begin
         if not cC.IsIT4GRetailActive() then exit;
+        rPT.GET(PosTransLineTmp."Receipt No.");
         InventoryEntry."IT4G-Doc. No." := PosTransLineTmp."IT4G-Doc. No.";
         InventoryEntry."IT4G-Doc. Line No." := PosTransLineTmp."IT4G-Doc. Line No.";
+        InventoryEntry."Location Code" := PosTransLineTmp."Location Code";
+        if InventoryEntry."Location Code" = '' then
+            InventoryEntry."Location Code" := rPT."Location Code";
     end;
 
     [EventSubscriber(ObjectType::Codeunit, codeunit::"LSC POS Post Utility", 'OnBeforeInsertPaymentEntryV2', '', false, false)]
     local procedure OnBeforeInsertPaymentEntry_IT4G(var POSTransaction: Record "LSC POS Transaction"; var POSTransLineTemp: Record "LSC POS Trans. Line"; var TransPaymentEntry: Record "LSC Trans. Payment Entry")
     var
+        rPT: Record "LSC POS Transaction";
     begin
         if not cC.IsIT4GRetailActive() then exit;
         TransPaymentEntry."IT4G-Doc. No." := POSTransLineTemp."IT4G-Doc. No.";
@@ -264,5 +279,128 @@ codeunit 50013 "IT4G-LS Events"
             "MenuType"::QuickCash:
                 SelectedMenu := rD."Doc. Quick Cash Menu";
         End
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, codeunit::"LSC POS Trans. Server Utility", 'OnBeforeSendWholeTmpTransaction', '', false, false)]
+    local procedure OnBeforeSendWholeTmpTransaction_IT4G(var TransactionHeaderTemp_g: Record "LSC Transaction Header" temporary; var DCUTIL3: Codeunit "LSC Data Dir. POS Client Util"; var IsHandled: Boolean; var RetVal: Boolean)
+    var
+        rPT: Record "LSC POS Transaction";
+        PosFuncProfile: Record "LSC POS Func. Profile";
+        SendTransactionUtils: Codeunit LSCSendTransactionIT4GUtils;
+        _SendingTxt1: Label 'Sending';
+        SendTransactionTxt: Label 'Send Transaction';
+        TransactionHeaderTemp: Record "LSC Transaction Header" temporary;
+        Trans: Record "LSC Transaction Header";
+        ResponseCode: Code[30];
+        ErrorText: Text;
+        TSUTIL: Codeunit "LSC POS Trans. Server Utility";
+        RetryEntry: Record "LSC Trans. Server Work Table";
+
+    begin
+        IsHandled := false;
+        if not cC.IsIT4GRetailActive() then exit;
+        if not cC.USEIT4GtransWS() then exit;
+        PosFuncProfile.get(POSSESSION.FunctionalityProfileID);
+
+        if PosFuncProfile."TS Send Transactions" then begin
+            //            IF PosFuncProfile."Use Web Replication" and PosFuncProfile."Use Background Session" then
+            //              WebReplClientHandler.SetPosFunctionalityProfile(PosFuncProfile."Profile ID")
+            //            else
+            SendTransactionUtils.SetPosFunctionalityProfile(PosFuncProfile."Profile ID");
+            if GuiAllowed then
+                POSGUI.ScreenDisplay(_SendingTxt1 + ' ' + Trans.TableCaption);
+            if TransactionHeaderTemp_g.FindSet then
+                repeat
+                    Trans.Get(TransactionHeaderTemp_g."Store No.", TransactionHeaderTemp_g."POS Terminal No.", TransactionHeaderTemp_g."Transaction No.");
+                    TransactionHeaderTemp.Reset();
+                    TransactionHeaderTemp.DeleteAll();
+                    TransactionHeaderTemp.Init;
+                    TransactionHeaderTemp := Trans;
+                    TransactionHeaderTemp.Insert;
+                    //                    IF PosFuncProfile."Use Web Replication" and PosFuncProfile."Use Background Session" then
+                    //                        WebReplClientHandler.SendTransaction(ResponseCode, ErrorText, TransactionHeaderTemp."Refund Receipt No." = '', PosFuncProfile.TransUpdateReplCounter, TransactionHeaderTemp)
+                    //                    else
+                    SendTransactionUtils.SendRequest(ResponseCode, ErrorText, TransactionHeaderTemp."Refund Receipt No." = '', PosFuncProfile.TransUpdateReplCounter, TransactionHeaderTemp);
+                    if ErrorText <> '' then begin
+                        RetryEntry.Reset;
+                        RetryEntry.SetRange(Table, Database::"LSC Transaction Header");
+                        RetryEntry.SetRange(Key1, Format(TransactionHeaderTemp."Transaction No."));
+                        RetryEntry.SetRange(Key2, '');
+                        RetryEntry.SetRange("Store No.", TransactionHeaderTemp."Store No.");
+                        RetryEntry.SetRange("POS Terminal No.", TransactionHeaderTemp."POS Terminal No.");
+                        RetryEntry.SetRange("Transaction No.", TransactionHeaderTemp."Transaction No.");
+                        if RetryEntry.FindFirst then
+                            TSUTIL.UpdateTSRetryEntryErrorMessage(RetryEntry, ErrorText);
+                        RetVal := (false);
+                    end;
+                until TransactionHeaderTemp_g.Next = 0;
+            RetVal := (true);
+            IsHandled := true;
+        end;
+
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, codeunit::"LSC POS Trans. Server Utility", 'OnBeforeGetPostedTransaction', '', false, false)]
+    local procedure OnBeforeGetPostedTransaction_IT4G(ReceiptNo: Code[20]; pStoreNo: Code[10]; pTerminalNo: Code[10]; pTransNo: Integer; var ResponseCode: Code[30]; var ErrorText: Text; var IsHandled: Boolean; var RetVal: Boolean)
+    var
+        PosFuncProfile: Record "LSC POS Func. Profile";
+        GetTransactionUtils: Codeunit LSCGetTransactionIT4GUtils;
+        BufferUtility: Codeunit "LSC Buffer Utility";
+    begin
+        IsHandled := false;
+        if not cC.IsIT4GRetailActive() then exit;
+        if not cC.USEIT4GtransWS() then exit;
+        PosFuncProfile.get(POSSESSION.FunctionalityProfileID);
+
+        if PosFuncProfile."TS Void Transactions" then begin
+            GetTransactionUtils.SetPosFunctionalityProfile(PosFuncProfile."Profile ID");
+            GetTransactionUtils.SendRequest(ReceiptNo, pStoreNo, pTerminalNo, pTransNo, ResponseCode, ErrorText, BufferUtility);
+            GetTransactionUtils.SetCommunicationError(ResponseCode, ErrorText);
+            if ErrorText <> '' then begin
+                if (ResponseCode = '0098') or (ResponseCode = '0099') then
+                    if PosFuncProfile."Show Web Process Messages" then
+                        Message(ErrorText);
+                retVal := (false);
+            end;
+            retVal := (true);
+            IsHandled := true;
+        end;
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, codeunit::"LSC POS Trans. Server Utility", 'OnBeforeSendAtEndOfTransaction', '', false, false)]
+    local procedure OnBeforeSendAtEndOfTransaction_IT4G(var Trans: Record "LSC Transaction Header")
+    var
+        rIT4Gdoc: Record "IT4G-Doc. Header";
+        TSUTIL: Codeunit "LSC POS Trans. Server Utility";
+    begin
+        Clear(rIT4Gdoc);
+        rIT4Gdoc.setrange("Created by Store No.", Trans."Store No.");
+        rIT4Gdoc.setrange("Created by POS Terminal No.", Trans."POS Terminal No.");
+        rIT4Gdoc.setrange("Created by Transaction No.", Trans."Transaction No.");
+        if rIT4Gdoc.FINDFIRST then TSUTIL.CreateTSRetryEntry(Database::"IT4G-Doc. Header", rIT4Gdoc."Document No.", '0', '', TSAction_g::Update, 0, false, '', '', 0, '');
+
+        Clear(rIT4Gdoc);
+        rIT4Gdoc.setrange("Updated by Store No.", Trans."Store No.");
+        rIT4Gdoc.setrange("Updated by POS Terminal No.", Trans."POS Terminal No.");
+        rIT4Gdoc.setrange("Updated by Transaction No.", Trans."Transaction No.");
+        if rIT4Gdoc.FINDFIRST then TSUTIL.CreateTSRetryEntry(Database::"IT4G-Doc. Header", rIT4Gdoc."Document No.", '0', '', TSAction_g::Update, 0, false, '', '', 0, '');
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, codeunit::"LSC POS Trans. Server Utility", 'OnAfterProcessRetryAction', '', false, false)]
+    local procedure OnAfterProcessRetryAction_IT4G(var RetryAction_p: Record "LSC Trans. Server Work Table"; var Ok_p: Boolean)
+    var
+        cIT4GTSU: Codeunit "IT4G-Trans. Server Util";
+        rIT4GDoc: Record "IT4G-Doc. Header";
+        errTxt: text;
+    begin
+        case RetryAction_p.Table of
+            Database::"IT4G-Doc. Header":
+                begin
+                    if not rIT4GDoc.get(RetryAction_p.Key1) then
+                        Ok_p := true
+                    else
+                        Ok_p := cIT4GTSU.SendIt4GDoc(rIT4GDoc, errTxt)
+                end;
+        end;
     end;
 }

@@ -79,33 +79,39 @@ codeunit 50025 "IT4G-Trans. Server Util"
         ResponseCode: Code[30];
         Ret: Boolean;
         ErrorCode: Text;
+        cRepl: codeunit "IT4G Web Repl. Client Handler";
     begin
         Ret := true;
 
         if not Initialize then
             exit(false);
 
-        if PosFuncProfile."TS Void Transactions" then begin
+        if PosFuncProfile."TS Send Transactions" then begin
             rIT4GDoctemp.Init;
             rIT4GDoctemp := rIT4GDoc;
             rIT4GDoctemp.Insert;
+            If PosFuncProfile."Use Web Replication" and PosFuncProfile."Use Background Session" then begin
+                crepl.SendIT4GDocs(ResponseCode, ErrorText, false, PosFuncProfile.TransUpdateReplCounter, rIT4GDoctemp);
+                ret := true;
+            end else begin
+                SendIT4GDocUtils.SetPosFunctionalityProfile(PosFuncProfile."Profile ID");
+                SendIT4GDocUtils.SendRequestSendIT4GDoc(ResponseCode, ErrorText, false, false, rIT4GDoctemp);
+                if ErrorText <> '' then begin
+                    if PosFuncProfile."Show Web Process Messages" then
+                        Message(ErrorText);
+                    Ret := false;
+                end else
+                    Ret := true;
+            end;
 
-            SendIT4GDocUtils.SetPosFunctionalityProfile(PosFuncProfile."Profile ID");
-            SendIT4GDocUtils.SendRequestSendIT4GDoc(ResponseCode, ErrorText, false, false, rIT4GDoctemp);
-            if ErrorText <> '' then begin
-                if PosFuncProfile."Show Web Process Messages" then
-                    Message(ErrorText);
-                Ret := false;
-            end else
-                Ret := true;
+
+            if not Ret then
+                CPTU.CreateTSRetryEntry(Database::"IT4G-Doc. Header",
+                  rIT4GDoc."Document No.", '',
+                  '', TSAction_g::Update, 0, false,
+                  '', '', 0, '');
+
+            exit(Ret);
         end;
-
-        if not Ret then
-            CPTU.CreateTSRetryEntry(Database::"IT4G-Doc. Header",
-              rIT4GDoc."Document No.", '',
-              '', TSAction_g::Update, 0, false,
-              '', '', 0, '');
-
-        exit(Ret);
     end;
 }

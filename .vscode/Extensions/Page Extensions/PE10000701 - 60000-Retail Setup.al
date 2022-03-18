@@ -10,6 +10,11 @@ pageextension 60000 "Retail Setup" extends "LSC Retail Setup"
                 {
                     ApplicationArea = All;
                 }
+                field("Use IT4G Transaction WS"; Rec."Use IT4G Transaction WS")
+                {
+                    ToolTip = 'Specifies the value of the Use IT4G Transaction WS field.';
+                    ApplicationArea = All;
+                }
             }
         }
     }

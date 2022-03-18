@@ -323,15 +323,32 @@ codeunit 50011 "IT4G-POS Commands"
         rPL: Record "LSC POS Trans. Line";
         lblRecalc: Label 'Recalculate Receipt?';
     begin
-        if PosTrans."New Transaction" then begin
-            ErrorBeep(lblNewTransErr);
-            exit;
-        end;
+
         if xParam = '' then begin
             DocCodeLookupPressed;
         end else begin
             rDoc.get(xParam);
             clear(cC);
+
+            /*
+
+                        Case rDoc."LS Transaction Type" of
+                            rDoc."LS Transaction Type"::NegAdj:
+                                begin
+                                    cPOSTrans.NegAdjPressed();
+                                end;
+                            rDoc."LS Transaction Type"::
+                                begin
+                                    cPOSTrans.NegAdjPressed();
+                                end;
+                        end;
+            */
+            if PosTrans."New Transaction" then begin
+                ErrorBeep(lblNewTransErr);
+                exit;
+            end;
+
+
 
             if PosTrans."Document Code" = '' then
                 bRecalc := false

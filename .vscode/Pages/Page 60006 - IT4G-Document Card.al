@@ -1,7 +1,7 @@
-page 60006 "IT4G-Documents"
+page 60006 "IT4G-Document Card"
 {
     ApplicationArea = All;
-    Caption = 'IT4G-Documents';
+    Caption = 'IT4G-Document Card';
     PageType = Card;
     SourceTable = "IT4G-Doc. Header";
     UsageCategory = Administration;

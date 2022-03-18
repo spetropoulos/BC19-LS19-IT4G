@@ -57,6 +57,25 @@ table 60006 "IT4G-Doc. Header"
         {
             Caption = 'Created by Document No.';
         }
+        field(15; "Updated by Store No."; Code[10])
+        {
+            Caption = 'Updated by Store No.';
+            TableRelation = "LSC Store"."No.";
+        }
+        field(16; "Updated by POS Terminal No."; Code[10])
+        {
+            Caption = 'Updated by POS Terminal No.';
+            TableRelation = "LSC POS Terminal"."No.";
+            ValidateTableRelation = false;
+        }
+        field(17; "Updated by Transaction No."; Integer)
+        {
+            Caption = 'Updated by Transaction No.';
+        }
+        field(19; "Updated by Document No."; code[20])
+        {
+            Caption = 'Updated by Document No.';
+        }
         field(20; "From Store"; Code[10])
         {
             Caption = 'From Store';
@@ -139,6 +158,22 @@ table 60006 "IT4G-Doc. Header"
             FieldClass = FlowField;
             CalcFormula = sum("IT4G-Doc. Line"."Quantity Base" where("Document No." = field("Document No.")));
         }
+        field(700; "Created On"; DateTime)
+        {
+            Caption = 'Created On';
+        }
+        field(701; "Created by User"; text[100])
+        {
+            Caption = 'Created by User';
+        }
+        field(702; "Created by Staff"; Code[20])
+        {
+            Caption = 'Created by Staff';
+        }
+        field(703; "Created on Host"; Text[100])
+        {
+            Caption = 'Created on Host';
+        }
 
     }
 
@@ -149,6 +184,8 @@ table 60006 "IT4G-Doc. Header"
             Clustered = true;
         }
         Key(ToStore; "To Store") { }
+        Key(Created; "Created by Store No.", "Created by POS Terminal No.", "Created by Transaction No.", "Created by Document No.") { }
+        Key(Updated; "Updated by Store No.", "Updated by POS Terminal No.", "Updated by Transaction No.", "Updated by Document No.") { }
 
     }
 
@@ -160,13 +197,13 @@ table 60006 "IT4G-Doc. Header"
         rSource: Record "IT4G-Doc. Source";
     begin
         rL.SetRange("Document No.", "Document No.");
-        rL.Deleteall;
+        rL.Deleteall(true);
         rLB.SetRange("Document No.", "Document No.");
-        rLB.Deleteall;
+        rLB.Deleteall(true);
         rScan.SetRange("Document No.", "Document No.");
-        rScan.Deleteall;
+        rScan.Deleteall(true);
         rSource.SetRange("Document No.", "Document No.");
-        rSource.Deleteall;
+        rSource.Deleteall(true);
 
     end;
 }

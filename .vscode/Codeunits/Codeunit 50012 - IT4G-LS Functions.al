@@ -13,6 +13,14 @@ codeunit 50012 "IT4G-LS Functions"
         EXIT(rRS."IT4G Module Enabled");
     end;
 
+    procedure USEIT4GtransWS(): Boolean
+    var
+        rRS: Record "LSC Retail Setup";
+    begin
+        if not rRS.get then exit(false);
+        EXIT(rRS."Use IT4G Transaction WS");
+    end;
+
     Procedure GetDocInfo(var POSTransaction: Record "LSC POS Transaction"): text;
     var
         rDoc: Record "IT4G-LS Document";

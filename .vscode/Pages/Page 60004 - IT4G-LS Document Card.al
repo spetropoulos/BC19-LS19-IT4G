@@ -1,4 +1,4 @@
-page 60004 "IT4G-Document Card"
+page 60004 "IT4G-LS Document Card"
 {
 
     Caption = 'IT4G-LS Document Card';

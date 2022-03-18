@@ -83,6 +83,18 @@ xmlport 50001 GetIT4GDocXML
                 fieldelement(ToStore; "IT4G-Doc. Header"."To Store")
                 {
                 }
+                fieldelement(CreatedbyUser; "IT4G-Doc. Header"."Created by User")
+                {
+                }
+                fieldelement(CreatedonHost; "IT4G-Doc. Header"."Created on Host")
+                {
+                }
+                fieldelement(CreatedbyStaff; "IT4G-Doc. Header"."Created by Staff")
+                {
+                }
+                fieldelement(CreatedOn; "IT4G-Doc. Header"."Created On")
+                {
+                }
             }
             tableelement("IT4G-Doc. Line"; "IT4G-Doc. Line")
             {

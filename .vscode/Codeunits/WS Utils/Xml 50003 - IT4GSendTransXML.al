@@ -1,6 +1,6 @@
-xmlport 50003 IT4GSendTransXML
+xmlport 50003 SendTransactionIT4GXML
 {
-    Caption = 'SendTransactionXML';
+    Caption = 'SendTransactionIT4GXML';
     FormatEvaluate = Xml;
     UseDefaultNamespace = true;
 
@@ -13,101 +13,100 @@ xmlport 50003 IT4GSendTransXML
                 MinOccurs = Zero;
                 XmlName = 'TransactionHeader';
                 UseTemporary = true;
-
-                fieldelement(AmounttoAccount; "Transaction Header"."Amount to Account")
+                fieldelement(TransactionNo; "Transaction Header"."Transaction No.") { }
+                fieldelement(TransactionType; "Transaction Header"."Transaction Type")
                 {
                 }
-                fieldelement(ApplytoDocNo; "Transaction Header"."Apply to Doc. No.")
+                fieldelement(ReceiptNo; "Transaction Header"."Receipt No.")
                 {
                 }
-                fieldelement(Comment; "Transaction Header".Comment)
+                fieldelement(GenBusPostingGroup; "Transaction Header"."Gen. Bus. Posting Group")
+                {
+                    MinOccurs = Zero;
+                }
+                fieldelement(VATBusPostingGroup; "Transaction Header"."VAT Bus.Posting Group")
                 {
                 }
-                fieldelement(ContainsForecourtItems; "Transaction Header"."Contains Forecourt Items")
+                fieldelement(StoreNo; "Transaction Header"."Store No.")
                 {
                 }
-                fieldelement(CostAmount; "Transaction Header"."Cost Amount")
-                {
-                }
-                fieldelement(Counter; "Transaction Header".Counter)
+                fieldelement(POSTerminalNo; "Transaction Header"."POS Terminal No.")
                 {
                 }
                 fieldelement(CreatedonPOSTerminal; "Transaction Header"."Created on POS Terminal")
                 {
                 }
-                fieldelement(CustomerDiscGroup; "Transaction Header"."Customer Disc. Group")
-                {
-                }
-                fieldelement(CustomerDiscount; "Transaction Header"."Customer Discount")
-                {
-                }
-                fieldelement(CustomerNo; "Transaction Header"."Customer No.")
-                {
-                }
-                fieldelement(CustomerOrder; "Transaction Header"."Customer Order")
-                {
-                }
-                fieldelement(CustomerOrderID; "Transaction Header"."Customer Order ID")
+                fieldelement(StaffID; "Transaction Header"."Staff ID")
                 {
                 }
                 fieldelement(Date; "Transaction Header".Date)
                 {
+                    MinOccurs = Zero;
                 }
-                fieldelement(DiscountAmount; "Transaction Header"."Discount Amount")
+                fieldelement(OriginalDate; "Transaction Header"."Original Date")
+                {
+                    MinOccurs = Zero;
+                }
+                fieldelement(Time; "Transaction Header".Time)
+                {
+                    MinOccurs = Zero;
+                }
+                fieldelement(ShiftNo; "Transaction Header"."Shift No.")
                 {
                 }
-                fieldelement(DocumentCode; "Transaction Header"."Document Code")
+                fieldelement(ShiftDate; "Transaction Header"."Shift Date")
                 {
+                    MinOccurs = Zero;
                 }
-                fieldelement(DocumentNo; "Transaction Header"."Document No.")
-                {
-                }
-                fieldelement(EntryStatus; "Transaction Header"."Entry Status")
-                {
-                }
-                fieldelement(ExternalDocNo; "Transaction Header"."External Doc. No.")
-                {
-                }
-                fieldelement(FromLocation; "Transaction Header"."From Location")
-                {
-                }
-                fieldelement(FromStore; "Transaction Header"."From Store")
-                {
-                }
-                fieldelement(GenBusPostingGroup; "Transaction Header"."Gen. Bus. Posting Group")
-                {
-                }
-                fieldelement(GiftRegistrationNo; "Transaction Header"."Gift Registration No.")
-                {
-                }
-                fieldelement(GrossAmount; "Transaction Header"."Gross Amount")
-                {
-                }
-                fieldelement(IncludedinStatistics; "Transaction Header"."Included in Statistics")
-                {
-                }
-                fieldelement(IncomeExpAmount; "Transaction Header"."Income/Exp. Amount")
+                fieldelement(WrongShift; "Transaction Header"."Wrong Shift")
                 {
                 }
                 fieldelement(InfocodeDiscGroup; "Transaction Header"."Infocode Disc. Group")
                 {
                 }
-                fieldelement(ItemsPosted; "Transaction Header"."Items Posted")
+                fieldelement(CustomerNo; "Transaction Header"."Customer No.")
                 {
                 }
-                fieldelement(ManagerID; "Transaction Header"."Manager ID")
+                fieldelement(TransactionCode; "Transaction Header"."Transaction Code")
                 {
                 }
-                fieldelement(MemberCardNo; "Transaction Header"."Member Card No.")
+                fieldelement(TransSalePmtDiff; "Transaction Header"."Trans. Sale/Pmt. Diff.")
                 {
                 }
                 fieldelement(NetAmount; "Transaction Header"."Net Amount")
                 {
                 }
-                fieldelement(NetIncomeExpAmount; "Transaction Header"."Net Income/Exp. Amount")
+                fieldelement(CostAmount; "Transaction Header"."Cost Amount")
                 {
                 }
-                fieldelement(NoofCovers; "Transaction Header"."No. of Covers")
+                fieldelement(GrossAmount; "Transaction Header"."Gross Amount")
+                {
+                }
+                fieldelement(Payment; "Transaction Header".Payment)
+                {
+                }
+                fieldelement(DiscountAmount; "Transaction Header"."Discount Amount")
+                {
+                }
+                fieldelement(CustomerDiscount; "Transaction Header"."Customer Discount")
+                {
+                }
+                fieldelement(TotalDiscount; "Transaction Header"."Total Discount")
+                {
+                }
+                fieldelement(NoofItems; "Transaction Header"."No. of Items")
+                {
+                }
+                fieldelement(AmounttoAccount; "Transaction Header"."Amount to Account")
+                {
+                }
+                fieldelement(Rounded; "Transaction Header".Rounded)
+                {
+                }
+                fieldelement(CustomerDiscGroup; "Transaction Header"."Customer Disc. Group")
+                {
+                }
+                fieldelement(EntryStatus; "Transaction Header"."Entry Status")
                 {
                 }
                 fieldelement(NoofInvoices; "Transaction Header"."No. of Invoices")
@@ -116,55 +115,96 @@ xmlport 50003 IT4GSendTransXML
                 fieldelement(NoofItemLines; "Transaction Header"."No. of Item Lines")
                 {
                 }
-                fieldelement(NoofItems; "Transaction Header"."No. of Items")
-                {
-                }
-                fieldelement(NoofPaymentLines; "Transaction Header"."No. of Payment Lines")
-                {
-                }
-                fieldelement(OfflineDocumentNo; "Transaction Header"."Offline Document No.")
-                {
-                }
-                fieldelement(OpenDrawer; "Transaction Header"."Open Drawer")
-                {
-                }
-                fieldelement(OriginalDate; "Transaction Header"."Original Date")
-                {
-                }
-                fieldelement(POSTerminalNo; "Transaction Header"."POS Terminal No.")
-                {
-                }
-                fieldelement(Payment; "Transaction Header".Payment)
-                {
-                }
-                fieldelement(PlaybackEntryNo; "Transaction Header"."Playback Entry No.")
-                {
-                }
-                fieldelement(PlaybackRecordingID; "Transaction Header"."Playback Recording ID")
-                {
-                }
-                fieldelement(PostSeries; "Transaction Header"."Post Series")
-                {
-                }
-                fieldelement(PostasShipment; "Transaction Header"."Post as Shipment")
-                {
-                }
-                fieldelement(PostedStatementNo; "Transaction Header"."Posted Statement No.")
-                {
-                }
-                fieldelement(PostingStatus; "Transaction Header"."Posting Status")
-                {
-                }
-                fieldelement(ReasonCode; "Transaction Header"."Reason Code")
-                {
-                }
-                fieldelement(ReceiptNo; "Transaction Header"."Receipt No.")
+                fieldelement(StatementCode; "Transaction Header"."Statement Code")
                 {
                 }
                 fieldelement(RefundReceiptNo; "Transaction Header"."Refund Receipt No.")
                 {
                 }
-                fieldelement(RelatedDocNo; "Transaction Header"."Related Doc. No.")
+                fieldelement(IncomeExpAmount; "Transaction Header"."Income/Exp. Amount")
+                {
+                }
+                fieldelement(ToAccount; "Transaction Header"."To Account")
+                {
+                }
+                fieldelement(NoofPaymentLines; "Transaction Header"."No. of Payment Lines")
+                {
+                }
+                fieldelement(SaleIsReturnSale; "Transaction Header"."Sale Is Return Sale")
+                {
+                }
+                fieldelement(TransIsMixedSaleRefund; "Transaction Header"."Trans. Is Mixed Sale/Refund")
+                {
+                }
+                fieldelement(RevertedGrossAmount; "Transaction Header"."Reverted Gross Amount")
+                {
+                }
+                fieldelement(Counter; "Transaction Header".Counter)
+                {
+                }
+                fieldelement(TimewhenTotalPressed; "Transaction Header"."Time when Total Pressed")
+                {
+                    MinOccurs = Zero;
+                }
+                fieldelement(TimewhenTransClosed; "Transaction Header"."Time when Trans. Closed")
+                {
+                    MinOccurs = Zero;
+                }
+                fieldelement(TransCurrency; "Transaction Header"."Trans. Currency")
+                {
+                }
+                fieldelement(ItemsPosted; "Transaction Header"."Items Posted")
+                {
+                }
+                fieldelement(PostasShipment; "Transaction Header"."Post as Shipment")
+                {
+                }
+                fieldelement(SafeEntryNo; "Transaction Header"."Safe Entry No.")
+                {
+                }
+                fieldelement(SafeCode; "Transaction Header"."Safe Code")
+                {
+                }
+                fieldelement(ManagerID; "Transaction Header"."Manager ID")
+                {
+                }
+                fieldelement(TableNo; "Transaction Header"."Table No.")
+                {
+                }
+                fieldelement(NoofCovers; "Transaction Header"."No. of Covers")
+                {
+                }
+                fieldelement(SplitNumber; "Transaction Header"."Split Number")
+                {
+                }
+                fieldelement(Comment; "Transaction Header".Comment)
+                {
+                }
+                fieldelement("Sell-toContactNo"; "Transaction Header"."Sell-to Contact No.")
+                {
+                }
+                fieldelement(GiftRegistrationNo; "Transaction Header"."Gift Registration No.")
+                {
+                }
+                fieldelement(MemberCardNo; "Transaction Header"."Member Card No.")
+                {
+                }
+                fieldelement(SalesType; "Transaction Header"."Sales Type")
+                {
+                }
+                fieldelement(StartingPointBalance; "Transaction Header"."Starting Point Balance")
+                {
+                }
+                fieldelement(ContainsForecourtItems; "Transaction Header"."Contains Forecourt Items")
+                {
+                }
+                fieldelement(ApplytoDocNo; "Transaction Header"."Apply to Doc. No.")
+                {
+                }
+                fieldelement(SourceType; "Transaction Header"."Source Type")
+                {
+                }
+                fieldelement(OpenDrawer; "Transaction Header"."Open Drawer")
                 {
                 }
                 fieldelement(Replicated; "Transaction Header".Replicated)
@@ -176,31 +216,87 @@ xmlport 50003 IT4GSendTransXML
                 fieldelement(RetrievedfromReceiptNo; "Transaction Header"."Retrieved from Receipt No.")
                 {
                 }
-                fieldelement(RevertedGrossAmount; "Transaction Header"."Reverted Gross Amount")
+                fieldelement("Z-ReportID"; "Transaction Header"."Z-Report ID")
                 {
                 }
-                fieldelement(Rounded; "Transaction Header".Rounded)
+                fieldelement("Y-ReportID"; "Transaction Header"."Y-Report ID")
                 {
                 }
-                fieldelement(SafeCode; "Transaction Header"."Safe Code")
+                fieldelement(CustomerOrderNo; "Transaction Header"."Customer Order ID")
                 {
                 }
-                fieldelement(SafeEntryNo; "Transaction Header"."Safe Entry No.")
+                fieldelement(PlaybackRecordingID; "Transaction Header"."Playback Recording ID")
                 {
                 }
-                fieldelement(SaleIsReturnSale; "Transaction Header"."Sale Is Return Sale")
+                fieldelement(PlaybackEntryNo; "Transaction Header"."Playback Entry No.")
                 {
                 }
-                fieldelement(SalesType; "Transaction Header"."Sales Type")
+                fieldelement(CustomerOrder; "Transaction Header"."Customer Order")
                 {
                 }
-                fieldelement(SelltoContactNo; "Transaction Header"."Sell-to Contact No.")
+                fieldelement(OverridePLBItem; "Transaction Header"."Override PLB Item")
                 {
                 }
-                fieldelement(ShiftDate; "Transaction Header"."Shift Date")
+                fieldelement(OverrideStaffID; "Transaction Header"."Override Staff ID")
                 {
                 }
-                fieldelement(ShiftNo; "Transaction Header"."Shift No.")
+                fieldelement(OverrideDateTime; "Transaction Header"."Override Date Time")
+                {
+                }
+                fieldelement(RestrictedFlag; "Transaction Header".RestrictedFlag)
+                {
+                }
+                fieldelement(TaxAreaCode; "Transaction Header"."Tax Area Code")
+                {
+                    MinOccurs = Zero;
+                }
+                fieldelement(WICTransaction; "Transaction Header"."WIC Transaction")
+                {
+                    MinOccurs = Zero;
+                }
+                fieldelement(TaxLiable; "Transaction Header"."Tax Liable")
+                {
+                    MinOccurs = Zero;
+                }
+                fieldelement(TaxExemptionNo; "Transaction Header"."Tax Exemption No.")
+                {
+                    MinOccurs = Zero;
+                }
+                fieldelement(NetIncExpAmount; "Transaction Header"."Net Income/Exp. Amount")
+                {
+                    MinOccurs = Zero;
+                }
+                fieldelement(DocumentCode; "Transaction Header"."Document Code")
+                {
+                }
+                fieldelement(DocumentNo; "Transaction Header"."Document No.")
+                {
+                }
+                fieldelement(ExternalDocNo; "Transaction Header"."External Doc. No.")
+                {
+                }
+                fieldelement(FromLocation; "Transaction Header"."From Location")
+                {
+                }
+                fieldelement(FromStore; "Transaction Header"."From Store")
+                {
+                }
+                fieldelement(LocationCode; "Transaction Header"."Location Code")
+                {
+                }
+                fieldelement(OfflineDocumentNo; "Transaction Header"."Offline Document No.")
+                {
+                }
+                fieldelement(PostSeries; "Transaction Header"."Post Series")
+                {
+                }
+                fieldelement(ReasonCode; "Transaction Header"."Reason Code")
+                {
+                }
+                fieldelement(RelatedDocNo; "Transaction Header"."Related Doc. No.")
+                {
+                }
+                fieldelement(ShiptoCode; "Transaction Header"."Ship-to Code")
                 {
                 }
                 fieldelement(ShipmentMethod; "Transaction Header"."Shipment Method")
@@ -209,112 +305,16 @@ xmlport 50003 IT4GSendTransXML
                 fieldelement(ShipmentReason; "Transaction Header"."Shipment Reason")
                 {
                 }
-                fieldelement(SourceType; "Transaction Header"."Source Type")
-                {
-                }
-                fieldelement(SplitNumber; "Transaction Header"."Split Number")
-                {
-                }
-                fieldelement(StaffID; "Transaction Header"."Staff ID")
-                {
-                }
-                fieldelement(StartingPointBalance; "Transaction Header"."Starting Point Balance")
-                {
-                }
-                fieldelement(StatementCode; "Transaction Header"."Statement Code")
-                {
-                }
-                fieldelement(StatementNo; "Transaction Header"."Statement No.")
-                {
-                }
-                fieldelement(StoreNo; "Transaction Header"."Store No.")
-                {
-                }
-                fieldelement(SystemCreatedAt; "Transaction Header".SystemCreatedAt)
-                {
-                }
-                fieldelement(SystemCreatedBy; "Transaction Header".SystemCreatedBy)
-                {
-                }
-                fieldelement(SystemId; "Transaction Header".SystemId)
-                {
-                }
-                fieldelement(SystemModifiedAt; "Transaction Header".SystemModifiedAt)
-                {
-                }
-                fieldelement(SystemModifiedBy; "Transaction Header".SystemModifiedBy)
-                {
-                }
-                fieldelement(TableNo; "Transaction Header"."Table No.")
-                {
-                }
-                fieldelement(TaxAreaCode; "Transaction Header"."Tax Area Code")
-                {
-                }
-                fieldelement(TaxExemptionNo; "Transaction Header"."Tax Exemption No.")
-                {
-                }
-                fieldelement(TaxLiable; "Transaction Header"."Tax Liable")
-                {
-                }
-                fieldelement(Time; "Transaction Header".Time)
-                {
-                }
-                fieldelement(TimewhenTotalPressed; "Transaction Header"."Time when Total Pressed")
-                {
-                }
-                fieldelement(TimewhenTransClosed; "Transaction Header"."Time when Trans. Closed")
-                {
-                }
-                fieldelement(ToAccount; "Transaction Header"."To Account")
-                {
-                }
                 fieldelement(ToLocation; "Transaction Header"."To Location")
                 {
                 }
                 fieldelement(ToStore; "Transaction Header"."To Store")
                 {
                 }
-                fieldelement(TotalDiscount; "Transaction Header"."Total Discount")
-                {
-                }
-                fieldelement(TransCurrency; "Transaction Header"."Trans. Currency")
-                {
-                }
                 fieldelement(TransDocumentNo; "Transaction Header"."Trans. Document No.")
                 {
                 }
-                fieldelement(TransIsMixedSaleRefund; "Transaction Header"."Trans. Is Mixed Sale/Refund")
-                {
-                }
-                fieldelement(TransSalePmtDiff; "Transaction Header"."Trans. Sale/Pmt. Diff.")
-                {
-                }
-                fieldelement(TransactionCode; "Transaction Header"."Transaction Code")
-                {
-                }
-                fieldelement(TransactionNo; "Transaction Header"."Transaction No.")
-                {
-                }
-                fieldelement(TransactionType; "Transaction Header"."Transaction Type")
-                {
-                }
-                fieldelement(VATBusPostingGroup; "Transaction Header"."VAT Bus.Posting Group")
-                {
-                }
                 fieldelement(WEBOrderNo; "Transaction Header"."WEB Order No.")
-                {
-                }
-                fieldelement(WICTransaction; "Transaction Header"."WIC Transaction")
-                {
-                }
-                fieldelement(WrongShift; "Transaction Header"."Wrong Shift")
-                {
-                }
-                fieldelement(YReportID; "Transaction Header"."Y-Report ID")
-                {
-                }
-                fieldelement(ZReportID; "Transaction Header"."Z-Report ID")
                 {
                 }
             }
@@ -656,13 +656,28 @@ xmlport 50003 IT4GSendTransXML
                 fieldelement(CreatedbyStaffID; "Trans. Sales Entry"."Created by Staff ID")
                 {
                 }
+                fieldelement(PLBItem; "Trans. Sales Entry"."PLB Item")
+                {
+                    MinOccurs = Zero;
+                }
+                fieldelement(TaxGroupCode; "Trans. Sales Entry"."Tax Group Code")
+                {
+                }
+                fieldelement(TaxCalculationType; "Trans. Sales Entry"."VAT Calculation Type")
+                {
+                }
+                fieldelement(SalesTaxRounding; "Trans. Sales Entry"."Sales Tax Rounding")
+                {
+                }
                 fieldelement(IT4GDocNo; "Trans. Sales Entry"."IT4G-Doc. No.")
                 {
                 }
                 fieldelement(IT4GDocLineNo; "Trans. Sales Entry"."IT4G-Doc. Line No.")
                 {
                 }
-
+                fieldelement(LocationCode; "Trans. Sales Entry"."Location Code")
+                {
+                }
             }
             tableelement("Trans. Payment Entry"; "LSC Trans. Payment Entry")
             {
@@ -779,12 +794,6 @@ xmlport 50003 IT4GSendTransXML
                 fieldelement(OrderNo; "Trans. Payment Entry"."Order No.")
                 {
                 }
-                fieldelement(IT4GDocNo; "Trans. Payment Entry"."IT4G-Doc. No.")
-                {
-                }
-                fieldelement(IT4GDocLineNo; "Trans. Payment Entry"."IT4G-Doc. Line No.")
-                {
-                }
             }
             tableelement("Trans. Income/Expense Entry"; "LSC Trans. Inc./Exp. Entry")
             {
@@ -874,6 +883,14 @@ xmlport 50003 IT4GSendTransXML
                 }
                 fieldelement(ReplicationCounter; "Trans. Income/Expense Entry"."Replication Counter")
                 {
+                }
+                fieldelement(TaxGroupCode; "Trans. Income/Expense Entry"."Tax Group Code")
+                {
+                    MinOccurs = Zero;
+                }
+                fieldelement(SalesTaxRounding; "Trans. Income/Expense Entry"."Sales Tax Rounding")
+                {
+                    MinOccurs = Zero;
                 }
             }
             tableelement("Trans. Coupon Entry"; "LSC Trans. Coupon Entry")
@@ -1249,6 +1266,9 @@ xmlport 50003 IT4GSendTransXML
                 fieldelement(IT4GDocLineNo; "Trans. Inventory Entry"."IT4G-Doc. Line No.")
                 {
                 }
+                fieldelement(LocationCode; "Trans. Inventory Entry"."Location Code")
+                {
+                }
             }
             tableelement("Trans. Mix & Match Entry"; "LSC Trans. Mix & Match Entry")
             {
@@ -1532,10 +1552,10 @@ xmlport 50003 IT4GSendTransXML
                 fieldelement(EFTTransNo; "POS Card Entry"."EFT Trans. No.")
                 {
                 }
-                fieldelement(EFTTransNo; "POS Card Entry"."EFT Transaction ID")
+                fieldelement(EFTTransactionID; "POS Card Entry"."EFT Transaction ID")
                 {
                 }
-                fieldelement(EFTTransNo; "POS Card Entry"."EFT Additional ID")
+                fieldelement(EFTAdditionalID; "POS Card Entry"."EFT Additional ID")
                 {
                 }
                 fieldelement(EFTBatchNo; "POS Card Entry"."EFT Batch No.")
@@ -2527,6 +2547,22 @@ xmlport 50003 IT4GSendTransXML
                 fieldelement(PreCancelation; "Transaction Order Header"."Pre Cancelation")
                 {
                 }
+                fieldelement(TaxAreaCode; "Transaction Order Header"."Tax Area Code")
+                {
+                    MinOccurs = Zero;
+                }
+                fieldelement(TaxLiable; "Transaction Order Header"."Tax Liable")
+                {
+                    MinOccurs = Zero;
+                }
+                fieldelement(TaxExemptionNo; "Transaction Order Header"."Tax Exemption No.")
+                {
+                    MinOccurs = Zero;
+                }
+                fieldelement(NetIncExpAmount; "Transaction Order Header"."Net Income/Exp. Amount")
+                {
+                    MinOccurs = Zero;
+                }
             }
             tableelement("Transaction Order Entry"; "LSC Transaction Order Entry")
             {
@@ -2963,6 +2999,18 @@ xmlport 50003 IT4GSendTransXML
                 fieldelement(PostDeliveredQty; "Transaction Order Entry"."Post Delivered Qty.")
                 {
                 }
+                fieldelement(TaxGroupCode; "Transaction Order Entry"."Tax Group Code")
+                {
+                    MinOccurs = Zero;
+                }
+                fieldelement(TaxCalculationType; "Transaction Order Entry"."VAT Calculation Type")
+                {
+                    MinOccurs = Zero;
+                }
+                fieldelement(SalesTaxRounding; "Transaction Order Entry"."Sales Tax Rounding")
+                {
+                    MinOccurs = Zero;
+                }
             }
             tableelement("Trans. Discount Entry"; "LSC Trans. Discount Entry")
             {
@@ -3325,6 +3373,132 @@ xmlport 50003 IT4GSendTransXML
                 {
                 }
             }
+            tableelement("Transaction Signature"; "LSC Transaction Signature")
+            {
+                MinOccurs = Zero;
+                XmlName = 'TransactionSignature';
+                UseTemporary = true;
+                fieldelement(StoreNo; "Transaction Signature"."Store No.")
+                {
+                }
+                fieldelement(POSTerminalNo; "Transaction Signature"."POS Terminal No.")
+                {
+                }
+                fieldelement(TransactionNo; "Transaction Signature"."Transaction No.")
+                {
+                }
+                fieldelement(TransactionType; "Transaction Signature"."Transaction Type")
+                {
+                }
+                fieldelement(ReceiptNo; "Transaction Signature"."Receipt No.")
+                {
+                }
+                fieldelement(TransDate; "Transaction Signature"."Trans. Date")
+                {
+                    MinOccurs = Zero;
+                }
+                fieldelement(TransTime; "Transaction Signature"."Trans. Time")
+                {
+                    MinOccurs = Zero;
+                }
+                fieldelement(CreditSale; "Transaction Signature"."Credit Sale")
+                {
+                }
+                fieldelement(CreditNo; "Transaction Signature"."Credit No.")
+                {
+                }
+                fieldelement(Training; "Transaction Signature".Training)
+                {
+                }
+                fieldelement(TrainingNo; "Transaction Signature"."Training No.")
+                {
+                }
+                fieldelement(NetAmount; "Transaction Signature"."Net Amount")
+                {
+                }
+                fieldelement(Amount; "Transaction Signature".Amount)
+                {
+                }
+                fieldelement(PrivateKeyVersion; "Transaction Signature"."Private Key Version")
+                {
+                }
+                fieldelement(Signature; "Transaction Signature".Signature)
+                {
+                }
+                fieldelement(ReplicationCounter; "Transaction Signature"."Replication Counter")
+                {
+                }
+            }
+            tableelement("Trans. SalesTax Entry"; "LSC Trans. SalesTax Entry")
+            {
+                MinOccurs = Zero;
+                XmlName = 'TransSalesTaxEntry';
+                UseTemporary = true;
+                fieldelement(StoreNo; "Trans. SalesTax Entry"."Store No.")
+                {
+                }
+                fieldelement(POSTerminalNo; "Trans. SalesTax Entry"."POS Terminal No.")
+                {
+                }
+                fieldelement(TransactionNo; "Trans. SalesTax Entry"."Transaction No.")
+                {
+                }
+                fieldelement(EntryNo; "Trans. SalesTax Entry"."Entry No.")
+                {
+                }
+                fieldelement(TaxAreaCode; "Trans. SalesTax Entry"."Tax Area Code")
+                {
+                }
+                fieldelement(TaxJurisdictionCode; "Trans. SalesTax Entry"."Tax Jurisdiction Code")
+                {
+                }
+                fieldelement(TaxGroupCode; "Trans. SalesTax Entry"."Tax Group Code")
+                {
+                }
+                fieldelement(ExpenseCapitalize; "Trans. SalesTax Entry"."Expense/Capitalize")
+                {
+                }
+                fieldelement(TaxType; "Trans. SalesTax Entry"."Tax Type")
+                {
+                }
+                fieldelement(UseTax; "Trans. SalesTax Entry"."Use Tax")
+                {
+                }
+                fieldelement(Positive; "Trans. SalesTax Entry".Positive)
+                {
+                }
+                fieldelement(TaxLiable; "Trans. SalesTax Entry"."Tax Liable")
+                {
+                }
+                fieldelement(Quantity; "Trans. SalesTax Entry".Quantity)
+                {
+                }
+                fieldelement(TaxPercentage; "Trans. SalesTax Entry"."Tax %")
+                {
+                }
+                fieldelement(TaxBaseAmount; "Trans. SalesTax Entry"."Tax Base Amount")
+                {
+                }
+                fieldelement(TaxAmount; "Trans. SalesTax Entry"."Tax Amount")
+                {
+                }
+                fieldelement(TaxDifference; "Trans. SalesTax Entry"."Tax Difference")
+                {
+                }
+                fieldelement(AvaTaxJurisdiction; "Trans. SalesTax Entry"."AvaTax Jurisdiction")
+                {
+                }
+                fieldelement(AvaTaxName; "Trans. SalesTax Entry"."AvaTax Name")
+                {
+                }
+                fieldelement(AvaTaxCustomerUsageType; "Trans. SalesTax Entry"."AvaTax Customer Usage Type")
+                {
+                }
+                fieldelement(ReplicationCounter; "Trans. SalesTax Entry"."Replication Counter")
+                {
+                }
+
+            }
         }
     }
 
@@ -3421,6 +3595,12 @@ xmlport 50003 IT4GSendTransXML
 
         RecRef.GETTABLE("Trans. Inv. Adjmt. Entry St.");
         WebRequestFunctions.GetTableData(BufferUtility, RecRef);
+
+        RecRef.GETTABLE("Transaction Signature");
+        WebRequestFunctions.GetTableData(BufferUtility, RecRef);
+
+        RecRef.GETTABLE("Trans. SalesTax Entry");
+        WebRequestFunctions.GetTableData(BufferUtility, RecRef);
     end;
 
     procedure GetTransactionTables(var BufferUtility: Codeunit "LSC Buffer Utility")
@@ -3500,6 +3680,12 @@ xmlport 50003 IT4GSendTransXML
         WebRequestFunctions.LoadTableDataXML(RecRef, BufferUtility);
 
         RecRef.GETTABLE("Trans. Inv. Adjmt. Entry St.");
+        WebRequestFunctions.LoadTableDataXML(RecRef, BufferUtility);
+
+        RecRef.GETTABLE("Transaction Signature");
+        WebRequestFunctions.LoadTableDataXML(RecRef, BufferUtility);
+
+        RecRef.GETTABLE("Trans. SalesTax Entry");
         WebRequestFunctions.LoadTableDataXML(RecRef, BufferUtility);
     end;
 }

@@ -22,6 +22,27 @@
             "enableSqlInformationDebugger": true,
             "schemaUpdateMode":"ForceSync",
             "tenant": "default"
+        },        {
+            "name": "BC19-INT-HO",
+            "request": "launch",
+            "type": "al",
+            "environmentType": "OnPrem",
+            "server": "http://localhost:8080",
+
+            "serverInstance": "BC19-INT-HO",
+            "port": 19914,
+
+            "authentication": "Windows",
+
+            "startupObjectId": 60008,
+            "startupObjectType": "Page",
+            "breakOnError": true,
+
+            "launchBrowser": true,
+            "enableLongRunningSqlStatements": true,
+            "enableSqlInformationDebugger": true,
+            "schemaUpdateMode":"ForceSync",
+            "tenant": "default"
         },
         {
             "name": "BC19-INT-PANOS",
