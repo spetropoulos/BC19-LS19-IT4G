@@ -2,7 +2,7 @@
     "id": "0647fe0e-a7da-478f-a972-599707d1a7ee",
     "name": "IT4G-LS19",
     "publisher": "IT4G",
-    "version": "19.3.0.0",
+    "version": "19.4.0.0",
     "brief": "",
     "description": "",
     "privacyStatement": "",
@@ -11,7 +11,7 @@
     "url": "",
     "logo": "",
     "platform": "19.0.0.0",
-    "application": "19.3.0.0",
+    "application": "19.4.0.0",
     "runtime": "8.1",
     "target": "OnPrem",
    "resourceExposurePolicy":  {
@@ -25,7 +25,7 @@
                   "id": "5ecfc871-5d82-43f1-9c54-59685e82318d",
                   "publisher": "LS Retail",
                   "name": "LS Central",
-                  "version": "19.3.0.0"
+                  "version": "19.4.0.0"
                 }
               ],
     "screenshots": [],
