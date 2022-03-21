@@ -25,7 +25,7 @@ codeunit 50025 "IT4G-Trans. Server Util"
         cPTU: Codeunit "LSC POS Trans. Server Utility";
 
 
-    [Scope('OnPrem')]
+    //[Scope('OnPrem')]
     procedure Initialize(): Boolean
     var
         rRU: Record "LSC Retail User";
@@ -49,7 +49,7 @@ codeunit 50025 "IT4G-Trans. Server Util"
         exit(InUse);
     end;
 
-    [Scope('OnPrem')]
+    //[Scope('OnPrem')]
     procedure GetIT4GDoc(var rIT4GDoc: Record "IT4G-Doc. Header"; xIT4GDocNo: Code[20]; var ErrorText: Text): Boolean
     var
         GetIT4GDocUtils: Codeunit "IT4G-WS-IT4GUtils";
@@ -71,8 +71,8 @@ codeunit 50025 "IT4G-Trans. Server Util"
         end;
     end;
 
-    [Scope('OnPrem')]
-    procedure SendIt4GDoc(var rIT4GDoc: Record "IT4G-Doc. Header"; var ErrorText: Text): Boolean
+    //[Scope('OnPrem')]
+    procedure SendIT4GDoc(var rIT4GDoc: Record "IT4G-Doc. Header"; var ErrorText: Text): Boolean
     var
         rIT4GDoctemp: Record "IT4G-Doc. Header" temporary;
         SendIT4GDocUtils: Codeunit "IT4G-WS-IT4GUtils";

@@ -397,10 +397,12 @@ codeunit 50013 "IT4G-LS Events"
             Database::"IT4G-Doc. Header":
                 begin
                     if not rIT4GDoc.get(RetryAction_p.Key1) then
-                        Ok_p := true
+                        Ok_p := false
                     else
                         Ok_p := cIT4GTSU.SendIt4GDoc(rIT4GDoc, errTxt)
                 end;
         end;
     end;
+
+
 }

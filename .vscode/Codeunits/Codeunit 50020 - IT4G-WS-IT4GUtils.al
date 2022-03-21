@@ -204,7 +204,7 @@ codeunit 50020 "IT4G-WS-IT4GUtils"
         WebRequestHandler.AddReqTableNodeToBuffer('IT4GDocLine', IT4GDocLineTemp, ReqNodeBuffer, ReqRecRefArray);
         RecRef.GETTABLE(IT4GDocLineBoxTemp);
         WebRequestFunctions.GetTableData(BufferUtility, RecRef);
-        WebRequestHandler.AddReqTableNodeToBuffer('IT4GDocLineBoxTemp', IT4GDocLineBoxTemp, ReqNodeBuffer, ReqRecRefArray);
+        WebRequestHandler.AddReqTableNodeToBuffer('IT4GDocLineBox', IT4GDocLineBoxTemp, ReqNodeBuffer, ReqRecRefArray);
         RecRef.GETTABLE(IT4GDocScanTemp);
         WebRequestFunctions.GetTableData(BufferUtility, RecRef);
         WebRequestHandler.AddReqTableNodeToBuffer('IT4GDocScan', IT4GDocScanTemp, ReqNodeBuffer, ReqRecRefArray);
@@ -251,7 +251,6 @@ codeunit 50020 "IT4G-WS-IT4GUtils"
         IT4GDocSource.SETRANGE("Document No.", IT4GDocHeaderTemp."Document No.");
         RecRef.GETTABLE(IT4GDocSource);
         WebRequestFunctions.LoadTableData(RecRef, BufferUtility);
-
     end;
 
     //---------------------------------------------------------------------------------------------------------------------------------------------------------

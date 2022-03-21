@@ -42,6 +42,10 @@ codeunit 50016 "IT4G-Doc. Management"
         rDH."Created by Transaction No." := xTransNo;
         rDH."Created by Document No." := rTH."Document No.";
         rDH."Created by System" := rDH."Created by System"::"LS Retail";
+        rDH."Created On" := CurrentDateTime;
+        rDH."Created by User" := UserId;
+        rDH."Created by Staff" := rTH."Staff ID";
+        rDh."Created on Host" := '';
 
         clear(rTSE);
         rTSE.setrange("Store No.", xStore);
