@@ -19,14 +19,14 @@ tableextension 60001 "TE99001472-Transaction Header" extends "LSC Transaction He
             Caption = 'Offline Document No.';
             DataClassification = ToBeClassified;
         }
-        field(60003; "Trans. Document No."; Code[20])
-        {
-            Caption = 'Trans. Document No.';
-            DataClassification = ToBeClassified;
-        }
         field(60004; "Document No."; Code[20])
         {
             Caption = 'Document No.';
+            DataClassification = ToBeClassified;
+        }
+        field(60101; "Trans. Document No."; Code[20])
+        {
+            Caption = 'Trans. Document No.';
             DataClassification = ToBeClassified;
         }
         field(70001; "From Store"; Code[10])

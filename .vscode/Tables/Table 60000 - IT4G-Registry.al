@@ -58,6 +58,14 @@ table 60000 "IT4G-Registry"
         {
             DataClassification = ToBeClassified;
         }
+        field(60; "Value Date 1"; Date)
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(61; "Value Date 2"; Date)
+        {
+            DataClassification = ToBeClassified;
+        }
         field(100; Description; Text[250])
         {
             DataClassification = ToBeClassified;

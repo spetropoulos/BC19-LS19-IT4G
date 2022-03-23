@@ -56,9 +56,19 @@ table 60007 "IT4G-Doc. Line"
             Caption = 'Quantity Base';
             DataClassification = ToBeClassified;
         }
+        field(32; "Quantity Received"; Decimal)
+        {
+            Caption = 'Quantity Received';
+            DataClassification = ToBeClassified;
+        }
         field(100; "Amount"; Decimal)
         {
             Caption = 'Amount';
+            DataClassification = ToBeClassified;
+        }
+        field(101; "Amount Received"; Decimal)
+        {
+            Caption = 'Amount Received';
             DataClassification = ToBeClassified;
         }
     }
@@ -67,7 +77,7 @@ table 60007 "IT4G-Doc. Line"
         key(PK; "Document No.", "Line No.")
         {
             Clustered = true;
-            SumIndexFields = "Quantity Base";
+            SumIndexFields = "Quantity Base", Quantity, "Quantity Received";
 
         }
     }

@@ -22,10 +22,15 @@ page 60006 "IT4G-Document Card"
                     ApplicationArea = All;
                     Tooltip = '';
                 }
-                field("Document Code"; Rec."Document Code")
+                field("Source Document Code"; Rec."Source Document Code")
                 {
                     ApplicationArea = All;
                     Tooltip = '';
+                }
+                field("Dest. Document Code"; Rec."Dest. Document Code")
+                {
+                    ToolTip = 'Specifies the value of the Dest. Document Code field.';
+                    ApplicationArea = All;
                 }
                 field(Date; Rec.Date)
                 {
@@ -131,6 +136,70 @@ page 60006 "IT4G-Document Card"
                     Tooltip = '';
                 }
             }
+            group(More)
+            {
+
+                field("Created by Staff"; Rec."Created by Staff")
+                {
+                    ToolTip = 'Specifies the value of the Created by Staff field.';
+                    ApplicationArea = All;
+                }
+                field("Created by User"; Rec."Created by User")
+                {
+                    ToolTip = 'Specifies the value of the Created by User field.';
+                    ApplicationArea = All;
+                }
+                field("Created On"; Rec."Created On")
+                {
+                    ToolTip = 'Specifies the value of the Created On field.';
+                    ApplicationArea = All;
+                }
+                field("Created on Host"; Rec."Created on Host")
+                {
+                    ToolTip = 'Specifies the value of the Created on Host field.';
+                    ApplicationArea = All;
+                }
+                field("Updated by Document No."; Rec."Updated by Document No.")
+                {
+                    ToolTip = 'Specifies the value of the Updated by Document No. field.';
+                    ApplicationArea = All;
+                }
+                field("Updated by POS Terminal No."; Rec."Updated by POS Terminal No.")
+                {
+                    ToolTip = 'Specifies the value of the Updated by POS Terminal No. field.';
+                    ApplicationArea = All;
+                }
+                field("Updated by Staff"; Rec."Updated by Staff")
+                {
+                    ToolTip = 'Specifies the value of the Updated by Staff field.';
+                    ApplicationArea = All;
+                }
+                field("Updated by Store No."; Rec."Updated by Store No.")
+                {
+                    ToolTip = 'Specifies the value of the Updated by Store No. field.';
+                    ApplicationArea = All;
+                }
+                field("Updated by Transaction No."; Rec."Updated by Transaction No.")
+                {
+                    ToolTip = 'Specifies the value of the Updated by Transaction No. field.';
+                    ApplicationArea = All;
+                }
+                field("Updated by User"; Rec."Updated by User")
+                {
+                    ToolTip = 'Specifies the value of the Updated by User field.';
+                    ApplicationArea = All;
+                }
+                field("Updated On"; Rec."Updated On")
+                {
+                    ToolTip = 'Specifies the value of the Updated On field.';
+                    ApplicationArea = All;
+                }
+                field("Updated on Host"; Rec."Updated on Host")
+                {
+                    ToolTip = 'Specifies the value of the Updated on Host field.';
+                    ApplicationArea = All;
+                }
+            }
             Group(Details)
             {
                 part(Lines; "IT4G-Doc. Lines")
@@ -183,7 +252,7 @@ page 60006 "IT4G-Document Card"
                     cU: Codeunit 50020;
                 begin
                     cU.run;
-                    if not cIT4GTSU.GetIT4GDoc(rec, "Document No.", errTxt) then message(errTxt);
+                    if not cIT4GTSU.GetIT4GDoc(rec, rec."Document No.", errTxt) then message(errTxt);
 
                 end;
             }

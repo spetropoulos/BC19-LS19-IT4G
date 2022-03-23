@@ -58,7 +58,7 @@ codeunit 50025 "IT4G-Trans. Server Util"
     begin
         if not Initialize then
             exit(false);
-        if PosFuncProfile."TS Void Transactions" then begin
+        if PosFuncProfile."TS Send IT4GDoc" then begin
             GetIT4GDocUtils.SetPosFunctionalityProfile(PosFuncProfile."Profile ID");
             GetIT4GDocUtils.SendRequestGetIT4GDoc(xIT4GDocNo, ResponseCode, ErrorText, BufferUtility);
             if ErrorText <> '' then begin
@@ -67,6 +67,8 @@ codeunit 50025 "IT4G-Trans. Server Util"
                         Message(ErrorText);
                 exit(false);
             end;
+            rIT4GDoc.get(xIT4GDocNo);
+
             exit(true);
         end;
     end;
@@ -86,7 +88,7 @@ codeunit 50025 "IT4G-Trans. Server Util"
         if not Initialize then
             exit(false);
 
-        if PosFuncProfile."TS Send Transactions" then begin
+        if PosFuncProfile."TS Send IT4GDoc" then begin
             rIT4GDoctemp.Init;
             rIT4GDoctemp := rIT4GDoc;
             rIT4GDoctemp.Insert;

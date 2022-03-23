@@ -31,6 +31,17 @@ codeunit 50010 "IT4G-Functions"
         exit(true);
     end;
 
+    procedure GRV_Date(xKey: Text[100]; xLine: Integer; xVal: Integer): Date
+    var
+        rReg: Record "IT4G-Registry";
+    begin
+        IF GRV_GetRec(rReg, xKey, xLine) then begin
+            IF xVal = 1 THEN EXIT(rReg."Value Date 1");
+            IF xVal = 2 THEN EXIT(rReg."Value Date 2");
+        END else
+            EXIT(0D);
+    end;
+
     procedure GRV_T(xKey: Text[100]; xLine: Integer; xVal: Integer): Text
     var
         rReg: Record "IT4G-Registry";
@@ -84,6 +95,66 @@ codeunit 50010 "IT4G-Functions"
             IF xVal = 2 THEN EXIT(rReg."Value Int 2");
         END ELSE
             EXIT(0);
+    end;
+
+    procedure SetRV_I(xKey: Text[100]; xLine: Integer; xWhat: Integer; xVal: Integer)
+    var
+        rReg: Record "IT4G-Registry";
+    begin
+        GRV_GetRec(rReg, xKey, xLine);
+        IF xWhat = 1 THEN rReg."Value Int 1" := xVal;
+        IF xWhat = 2 THEN rReg."Value Int 2" := xVal;
+        rReg.modify;
+    end;
+
+    procedure SetRV_B(xKey: Text[100]; xLine: Integer; xWhat: Integer; xVal: Boolean)
+    var
+        rReg: Record "IT4G-Registry";
+    begin
+        GRV_GetRec(rReg, xKey, xLine);
+        IF xWhat = 1 THEN rReg."Value Bool 1" := xVal;
+        IF xWhat = 2 THEN rReg."Value Bool 2" := xVal;
+        rReg.modify;
+    end;
+
+    procedure SetRV_D(xKey: Text[100]; xLine: Integer; xWhat: Integer; xVal: Decimal)
+    var
+        rReg: Record "IT4G-Registry";
+    begin
+        GRV_GetRec(rReg, xKey, xLine);
+        IF xWhat = 1 THEN rReg."Value Dec 1" := xVal;
+        IF xWhat = 2 THEN rReg."Value Dec 2" := xVal;
+        rReg.modify;
+    end;
+
+    procedure SetRV_C(xKey: Text[100]; xLine: Integer; xWhat: Integer; xVal: Code[20])
+    var
+        rReg: Record "IT4G-Registry";
+    begin
+        GRV_GetRec(rReg, xKey, xLine);
+        IF xWhat = 1 THEN rReg."Value Code 1" := xVal;
+        IF xWhat = 2 THEN rReg."Value Code 2" := xVal;
+        rReg.modify;
+    end;
+
+    procedure SetRV_T(xKey: Text[100]; xLine: Integer; xWhat: Integer; xVal: Text)
+    var
+        rReg: Record "IT4G-Registry";
+    begin
+        GRV_GetRec(rReg, xKey, xLine);
+        IF xWhat = 1 THEN rReg."Value Text 1" := xVal;
+        IF xWhat = 2 THEN rReg."Value text 2" := xVal;
+        rReg.modify;
+    end;
+
+    procedure SetRV_Date(xKey: Text[100]; xLine: Integer; xWhat: Integer; xVal: Date)
+    var
+        rReg: Record "IT4G-Registry";
+    begin
+        GRV_GetRec(rReg, xKey, xLine);
+        IF xWhat = 1 THEN rReg."Value Date 1" := xVal;
+        IF xWhat = 2 THEN rReg."Value Date 2" := xVal;
+        rReg.modify;
     end;
 
     procedure DialogMng(DoWhat: Option Open,Update,Close; xiCount: Integer; xInputText1: Text; bShowEstimation: Boolean; xTotal: Integer; DialogSlow: Integer; iInserted: Integer; iModified: Integer; iSkipped: Integer; iError: Integer; bAnalysis: Boolean)

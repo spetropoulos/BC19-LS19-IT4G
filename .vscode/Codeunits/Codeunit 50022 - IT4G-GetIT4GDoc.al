@@ -1,9 +1,5 @@
 codeunit 50022 GetIT4GDoc
 {
-    trigger OnRun()
-    begin
-    end;
-
     procedure GetIT4GDoc(var ResponseCode: Code[30]; var ErrorText: Text; IT4GDocNo: code[20]; var GetIT4GDocXML: XmlPort GetIT4GDocXML)
     var
         GetIT4GDocUtils: Codeunit "IT4G-WS-IT4GUtils";

@@ -13,7 +13,6 @@ xmlport 50001 GetIT4GDocXML
                 MinOccurs = Zero;
                 XmlName = 'IT4GDocHeader';
                 UseTemporary = true;
-
                 fieldelement(CalcNumberofItems; "IT4G-Doc. Header"."Calc. Number of Items")
                 {
                 }
@@ -26,6 +25,9 @@ xmlport 50001 GetIT4GDocXML
                 fieldelement(CreatedbyPOSTerminalNo; "IT4G-Doc. Header"."Created by POS Terminal No.")
                 {
                 }
+                fieldelement(CreatedbyStaff; "IT4G-Doc. Header"."Created by Staff")
+                {
+                }
                 fieldelement(CreatedbyStoreNo; "IT4G-Doc. Header"."Created by Store No.")
                 {
                 }
@@ -35,13 +37,22 @@ xmlport 50001 GetIT4GDocXML
                 fieldelement(CreatedbyTransactionNo; "IT4G-Doc. Header"."Created by Transaction No.")
                 {
                 }
-                fieldelement(Date; "IT4G-Doc. Header".Date)
+                fieldelement(CreatedbyUser; "IT4G-Doc. Header"."Created by User")
+                {
+                }
+                fieldelement(CreatedOn; "IT4G-Doc. Header"."Created On")
+                {
+                }
+                fieldelement(CreatedonHost; "IT4G-Doc. Header"."Created on Host")
+                {
+                }
+                fieldelement(Date; "IT4G-Doc. Header"."Date")
+                {
+                }
+                fieldelement(DestDocumentCode; "IT4G-Doc. Header"."Dest. Document Code")
                 {
                 }
                 fieldelement(DestinationStore; "IT4G-Doc. Header"."Destination Store")
-                {
-                }
-                fieldelement(DocumentCode; "IT4G-Doc. Header"."Document Code")
                 {
                 }
                 fieldelement(DocumentNo; "IT4G-Doc. Header"."Document No.")
@@ -71,6 +82,9 @@ xmlport 50001 GetIT4GDocXML
                 fieldelement(RelatedDocumentNo; "IT4G-Doc. Header"."Related Document No.")
                 {
                 }
+                fieldelement(SourceDocumentCode; "IT4G-Doc. Header"."Source Document Code")
+                {
+                }
                 fieldelement(SourceNo; "IT4G-Doc. Header"."Source No.")
                 {
                 }
@@ -83,18 +97,31 @@ xmlport 50001 GetIT4GDocXML
                 fieldelement(ToStore; "IT4G-Doc. Header"."To Store")
                 {
                 }
-                fieldelement(CreatedbyUser; "IT4G-Doc. Header"."Created by User")
+                fieldelement(UpdatedbyDocumentNo; "IT4G-Doc. Header"."Updated by Document No.")
                 {
                 }
-                fieldelement(CreatedonHost; "IT4G-Doc. Header"."Created on Host")
+                fieldelement(UpdatedbyPOSTerminalNo; "IT4G-Doc. Header"."Updated by POS Terminal No.")
                 {
                 }
-                fieldelement(CreatedbyStaff; "IT4G-Doc. Header"."Created by Staff")
+                fieldelement(UpdatedbyStoreNo; "IT4G-Doc. Header"."Updated by Store No.")
                 {
                 }
-                fieldelement(CreatedOn; "IT4G-Doc. Header"."Created On")
+                fieldelement(UpdatedbyTransactionNo; "IT4G-Doc. Header"."Updated by Transaction No.")
                 {
                 }
+                fieldelement(UpdatedOn; "IT4G-Doc. Header"."Updated On")
+                {
+                }
+                fieldelement(UpdatedbyUser; "IT4G-Doc. Header"."Updated by User")
+                {
+                }
+                fieldelement(UpdatedonHost; "IT4G-Doc. Header"."Updated on Host")
+                {
+                }
+                fieldelement(UpdatedbyStaff; "IT4G-Doc. Header"."Updated by Staff")
+                {
+                }
+
             }
             tableelement("IT4G-Doc. Line"; "IT4G-Doc. Line")
             {
@@ -129,6 +156,12 @@ xmlport 50001 GetIT4GDocXML
                 {
                 }
                 fieldelement(Amount; "IT4G-Doc. Line".Amount)
+                {
+                }
+                fieldelement(QuantityReceived; "IT4G-Doc. Line"."Quantity Received")
+                {
+                }
+                fieldelement(AmountReceived; "IT4G-Doc. Line"."Amount Received")
                 {
                 }
             }

@@ -22,7 +22,8 @@
             "enableSqlInformationDebugger": true,
             "schemaUpdateMode":"ForceSync",
             "tenant": "default"
-        },        {
+        },        
+        {
             "name": "BC19-INT-HO",
             "request": "launch",
             "type": "al",

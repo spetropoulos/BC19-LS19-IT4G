@@ -24,6 +24,9 @@ xmlport 50000 SendIT4GDocXML
                 fieldelement(CreatedbyPOSTerminalNo; "IT4G-Doc. Header"."Created by POS Terminal No.")
                 {
                 }
+                fieldelement(CreatedbyStaff; "IT4G-Doc. Header"."Created by Staff")
+                {
+                }
                 fieldelement(CreatedbyStoreNo; "IT4G-Doc. Header"."Created by Store No.")
                 {
                 }
@@ -31,6 +34,21 @@ xmlport 50000 SendIT4GDocXML
                 {
                 }
                 fieldelement(CreatedbyTransactionNo; "IT4G-Doc. Header"."Created by Transaction No.")
+                {
+                }
+                fieldelement(CreatedbyUser; "IT4G-Doc. Header"."Created by User")
+                {
+                }
+                fieldelement(CreatedOn; "IT4G-Doc. Header"."Created On")
+                {
+                }
+                fieldelement(CreatedonHost; "IT4G-Doc. Header"."Created on Host")
+                {
+                }
+                fieldelement(Date; "IT4G-Doc. Header"."Date")
+                {
+                }
+                fieldelement(DestDocumentCode; "IT4G-Doc. Header"."Dest. Document Code")
                 {
                 }
                 fieldelement(DestinationStore; "IT4G-Doc. Header"."Destination Store")
@@ -63,6 +81,9 @@ xmlport 50000 SendIT4GDocXML
                 fieldelement(RelatedDocumentNo; "IT4G-Doc. Header"."Related Document No.")
                 {
                 }
+                fieldelement(SourceDocumentCode; "IT4G-Doc. Header"."Source Document Code")
+                {
+                }
                 fieldelement(SourceNo; "IT4G-Doc. Header"."Source No.")
                 {
                 }
@@ -75,19 +96,28 @@ xmlport 50000 SendIT4GDocXML
                 fieldelement(ToStore; "IT4G-Doc. Header"."To Store")
                 {
                 }
-                fieldelement(Date; "IT4G-Doc. Header".Date)
+                fieldelement(UpdatedbyDocumentNo; "IT4G-Doc. Header"."Updated by Document No.")
                 {
                 }
-                fieldelement(CreatedOn; "IT4G-Doc. Header"."Created On")
+                fieldelement(UpdatedbyPOSTerminalNo; "IT4G-Doc. Header"."Updated by POS Terminal No.")
                 {
                 }
-                fieldelement(CreatedbyUser; "IT4G-Doc. Header"."Created by User")
+                fieldelement(UpdatedbyStoreNo; "IT4G-Doc. Header"."Updated by Store No.")
                 {
                 }
-                fieldelement(CreatedonHost; "IT4G-Doc. Header"."Created on Host")
+                fieldelement(UpdatedbyTransactionNo; "IT4G-Doc. Header"."Updated by Transaction No.")
                 {
                 }
-                fieldelement(CreatedbyStaff; "IT4G-Doc. Header"."Created by Staff")
+                fieldelement(UpdatedOn; "IT4G-Doc. Header"."Updated On")
+                {
+                }
+                fieldelement(UpdatedbyUser; "IT4G-Doc. Header"."Updated by User")
+                {
+                }
+                fieldelement(UpdatedonHost; "IT4G-Doc. Header"."Updated on Host")
+                {
+                }
+                fieldelement(UpdatedbyStaff; "IT4G-Doc. Header"."Updated by Staff")
                 {
                 }
             }
@@ -124,6 +154,12 @@ xmlport 50000 SendIT4GDocXML
                 {
                 }
                 fieldelement(Amount; "IT4G-Doc. Line".Amount)
+                {
+                }
+                fieldelement(QuantityReceived; "IT4G-Doc. Line"."Quantity Received")
+                {
+                }
+                fieldelement(AmountReceived; "IT4G-Doc. Line"."Amount Received")
                 {
                 }
             }

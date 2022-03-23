@@ -46,7 +46,7 @@ codeunit 50013 "IT4G-LS Events"
 
         if Transaction."Post Series" = '' then error(lblSeriesNotFound + Transaction."Document Code");
         Transaction."Document No." := cNSM.GetNextNo(Transaction."Post Series", Today, true);
-
+        Transaction."Trans. Document No." := POSTrans."Trans. Document No.";
         Transaction.Comment := Transaction."Document No.";
 
         Transaction."Offline Document No." := POSTrans."Offline Document No.";
@@ -110,6 +110,7 @@ codeunit 50013 "IT4G-LS Events"
 
     begin
         cC.LSCreateIT4GDoc(TransactionHeader_p."Store No.", TransactionHeader_p."POS Terminal No.", TransactionHeader_p."Transaction No.");
+        cC.LSApplyIT4GDoc(TransactionHeader_p."Store No.", TransactionHeader_p."POS Terminal No.", TransactionHeader_p."Transaction No.");
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"LSC POS Transaction Events", 'OnAfterStartNewTransaction', '', false, false)]
@@ -148,7 +149,10 @@ codeunit 50013 "IT4G-LS Events"
     local procedure OnAfterGetContext_IT4G(var POSTransaction: Record "LSC POS Transaction"; var POSTransLine: Record "LSC POS Trans. Line"; var CurrInput: Text)
     var
         cPosSession: Codeunit "LSC POS Session";
+        rRetailSetup: Record "LSC Retail Setup";
+        cF: Codeunit "IT4G-Functions";
     begin
+        rRetailSetup.get;
         if not cC.IsIT4GRetailActive() then exit;
         cPosSession.SetValue('IT4G_DocInfo', cC.GetDocInfo(POSTransaction));
         cPosSession.SetValue('IT4G_FromStore', POSTransaction."From Store");
@@ -163,6 +167,8 @@ codeunit 50013 "IT4G-LS Events"
         cPosSession.SetValue('IT4G_ExtDocNo', POSTransaction."External Doc. No.");
         cPosSession.SetValue('IT4G_RelDocNo', POSTransaction."Related Doc. No.");
         cPosSession.SetValue('IT4G_WEBOrderNo', POSTransaction."WEB Order No.");
+
+        cPosSession.SetValue('IT4G_Version', 'IT4G VS:' + format(cF.GRV_Date('IT4G_Version', 0, 1)));
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"LSC POS Transaction Events", 'OnAfterTenderKeyPressedEx', '', false, false)]
@@ -404,5 +410,44 @@ codeunit 50013 "IT4G-LS Events"
         end;
     end;
 
+    [EventSubscriber(ObjectType::Codeunit, codeunit::"LSC POS Transaction Events", 'OnBeforeInit', '', false, false)]
+    procedure OnBeforeInit(var POSTransaction: Record "LSC POS Transaction")
 
+    begin
+        Codeunit.run(50030);
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, codeunit::"LSC POS Transaction Events", 'OnBeforeProcessBarcode', '', false, false)]
+    local procedure OnBeforeProcessBarcode(var POSTransaction: Record "LSC POS Transaction"; var POSTransLine: Record "LSC POS Trans. Line"; var CurrInput: Text; var IsHandled: Boolean)
+    var
+        cC: Codeunit "IT4G-POS Commands";
+    begin
+        IsHandled := false;
+        //        if (StrLen(CurrInput) in [14, 20]) and (CopyStr(CurrInput, 1, 1) in ['G']) then begin
+        if (CopyStr(CurrInput, 1, 1) in ['G']) then begin
+            cC.GetIT4GDocPressed(CurrInput);
+            IsHandled := true;
+        end;
+    end;
+
+    [EventSubscriber(ObjectType::Table, Database::"LSC POS Func. Profile Web Req.", 'OnAfterGetWebRequestList', '', false, false)]
+    local procedure OnAfterGetWebRequestList(pProfileID: Code[20]; pServiceGrId: Integer; var pWSRequestTemp: Record "LSC POS Func. Profile Web Req." temporary)
+    var
+    begin
+        case pServiceGrId of
+            1:
+                begin
+                    pWSRequestTemp.InsertWebRequest(pProfileID, 'SendTransactionIT4G', pWSRequestTemp);
+                end;
+            2:
+                begin
+                    pWSRequestTemp.InsertWebRequest(pProfileID, 'GetTransactionIT4G', pWSRequestTemp);
+                end;
+            100:
+                begin
+                    pWSRequestTemp.InsertWebRequest(pProfileID, 'GetIT4GDoc', pWSRequestTemp);
+                    pWSRequestTemp.InsertWebRequest(pProfileID, 'SendIT4GDoc', pWSRequestTemp);
+                end;
+        end;
+    end;
 }

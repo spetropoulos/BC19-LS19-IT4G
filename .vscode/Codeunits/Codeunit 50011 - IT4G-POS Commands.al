@@ -5,13 +5,16 @@ codeunit 50011 "IT4G-POS Commands"
     TableNo = "LSC POS Menu Line";
 
     trigger OnRun()
+
     begin
         rRetailSetup.get;
         if not rRetailSetup."IT4G Module Enabled" then error(lblSetUpErr);
 
+
+
         GlobalRec := Rec;
 
-        if "Registration Mode" then
+        if rec."Registration Mode" then
             Register(Rec)
         else begin
             POSTerminal.Get(POSSESSION.TerminalNo);
@@ -21,8 +24,8 @@ codeunit 50011 "IT4G-POS Commands"
 
             POSTransFound := true;
 
-            if PosTrans.Get("Current-RECEIPT") then begin
-                if sl.Get(PosTrans."Receipt No.", "Current-LINE") then;
+            if PosTrans.Get(rec."Current-RECEIPT") then begin
+                if sl.Get(PosTrans."Receipt No.", rec."Current-LINE") then;
             end else
                 POSTransFound := false;
             if POSTransFound then begin
@@ -36,15 +39,15 @@ codeunit 50011 "IT4G-POS Commands"
                 clear(rDoc);
             end;
 
-            case Command of
+            case rec.Command of
                 'FORCE_DOC':
-                    ForceDocPressed(Parameter);
+                    ForceDocPressed(rec.Parameter);
                 'CH_EXT_DOC':
-                    ChangeExternalDocPressed(Parameter);
+                    ChangeExternalDocPressed(rec.Parameter);
                 'CH_REL_DOC':
-                    ChangeRelatedDocPressed(Parameter);
+                    ChangeRelatedDocPressed(rec.Parameter);
                 'CH_WEB_DOC':
-                    ChangeWEBDocPressed(Parameter);
+                    ChangeWEBDocPressed(rec.Parameter);
                 'CH_SHIPREA':
                     ChangeShipmentReasonPressed();
                 'CH_SHIPADD':
@@ -54,11 +57,17 @@ codeunit 50011 "IT4G-POS Commands"
                 'CH_REASONC':
                     ChangeShipmentReasonPressed();
                 'CH_LOC_TO':
-                    ChangeLocPressed(Parameter, "Current-INPUT", gLocType::"To");
+                    ChangeLocPressed(rec.Parameter, rec."Current-INPUT", gLocType::"To");
                 'CH_LOC_FR':
-                    ChangeLocPressed(Parameter, "Current-INPUT", gLocType::"From");
+                    ChangeLocPressed(rec.Parameter, rec."Current-INPUT", gLocType::"From");
                 'DYNPAYMENU':
                     DynemicPaymenuPressed();
+                'GET_IT4GDOC':
+                    GetIT4GDocPressed(rec."Current-INPUT");
+                'IT4G_UPGRADE':
+                    begin
+                        Codeunit.run(50030);
+                    end;
             end;
             Rec := GlobalRec;
         end;
@@ -95,17 +104,19 @@ codeunit 50011 "IT4G-POS Commands"
         RecRef: RecordRef;
         lblSetUpErr: Label 'You must enable IT4G Module in Retail Setup card to enable such Functionality!!!';
         lblNewTransErr: Label 'You can not do that in a new Transaction!!!\Select Transaction First!!!!';
+        lblCurrTransNotNew: Label 'Current transaction must be finished!';
         gLocType: Option From,To;
         rDOC: Record "IT4G-LS Document";
         gDoc: Code[20];
 
-    [Scope('OnPrem')]
+    Internal
     procedure Register(var MenuLine: Record "LSC POS Menu Line")
     var
         Module: Code[20];
         xtagType: Option System,Transaction,Session,"Multiple Use","Data Table Source Expression";
         POSCommand: Record "LSC POS Command";
         ParameterType: Enum "LSC POS Command Parameter Type";
+        rPA: Record "LSC POS Actions";
     begin
         //Registrate.
         rRetailSetup.get;
@@ -131,6 +142,8 @@ codeunit 50011 "IT4G-POS Commands"
         CommandFunc.RegisterExtCommand('CH_LOC_TO', 'Change Destination Location', 50011, ParameterType::" ", Module, false);
         CommandFunc.RegisterExtCommand('CH_LOC_FR', 'Change Source Location', 50011, ParameterType::" ", Module, false);
 
+        CommandFunc.RegisterExtCommand('GET_IT4GDOC', 'Get IT4G Document', 50011, ParameterType::" ", Module, false);
+        CommandFunc.RegisterExtCommand('IT4G_UPGRADE', 'Upgrade  IT4G Module', 50011, ParameterType::" ", Module, false);
 
         createTag('<#IT4G_DocInfo>', 'Document Code Information', xtagType::Transaction);
         createTag('<#IT4G_FromStore>', 'From Store Code', xtagType::Transaction);
@@ -146,10 +159,25 @@ codeunit 50011 "IT4G-POS Commands"
         createTag('<#IT4G_RelDocNo>', 'Related Doc. No.', xtagType::Transaction);
         createTag('<#IT4G_WEBOrderNo>', 'WEB Order No.', xtagType::Transaction);
 
+        createTag('<#IT4G_Version>', 'IT4G Version', xtagType::Transaction);
+
         MenuLine."Registration Mode" := false;
+
+        /*
+                clear(rPA);
+                rPA.ID := 10000;
+                rPA.Relation := rPA.Relation::Global;
+                rPA."Action Trigger" := rPA."Action Trigger"::"Start POS";
+                rPA."Sequence No." := 0;
+                rPA."Do Action" := rPA."Do Action"::"Run Command";
+                rPA."Action ID" := 'IT4G_UPGRADE';
+                rPA.Active := true;
+                if rPA.Insert then;
+        */
+
     end;
 
-    [Scope('OnPrem')]
+    Internal
     procedure ConfirmBeep(Txt: Text[150]): Boolean
     begin
         //ConfirmBeep
@@ -161,7 +189,7 @@ codeunit 50011 "IT4G-POS Commands"
         exit(false);
     end;
 
-    [Scope('OnPrem')]
+    Internal
     procedure ErrorBeep(Txt: Text[150])
     begin
         //ErrorBeep
@@ -190,8 +218,6 @@ codeunit 50011 "IT4G-POS Commands"
 
     end;
 
-    [Scope('OnPrem')]
-
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"LSC POS Transaction", 'OnBeforeProcessKeyBoardResult', '', false, false)]
     local procedure OnBeforeProcessKeyBoardResult_IT4G(Payload: Text; InputValue: Text; ResultOK: Boolean; var IsHandled: Boolean);
     var
@@ -199,7 +225,6 @@ codeunit 50011 "IT4G-POS Commands"
         ProcessKeyboardResult(Payload, InputValue, ResultOK, IsHandled);
     end;
 
-    [Scope('OnPrem')]
     procedure ProcessKeyboardResult(Payload: Text; InputValue: Text; ResultOK: Boolean; var IsHandled: Boolean);
     var
     begin
@@ -256,7 +281,7 @@ codeunit 50011 "IT4G-POS Commands"
         exit(true);
     end;
 
-    [Scope('OnPrem')]
+    Internal
     procedure ProcessLookupResult(): Boolean
     var
         KeyVal: Code[20];
@@ -330,25 +355,26 @@ codeunit 50011 "IT4G-POS Commands"
             rDoc.get(xParam);
             clear(cC);
 
-            /*
-
-                        Case rDoc."LS Transaction Type" of
-                            rDoc."LS Transaction Type"::NegAdj:
-                                begin
-                                    cPOSTrans.NegAdjPressed();
-                                end;
-                            rDoc."LS Transaction Type"::
-                                begin
-                                    cPOSTrans.NegAdjPressed();
-                                end;
-                        end;
-            */
             if PosTrans."New Transaction" then begin
-                ErrorBeep(lblNewTransErr);
-                exit;
+                Case rDoc."LS Transaction Type" of
+                    rDoc."LS Transaction Type"::NegAdj:
+                        begin
+                            cPosTrans.NegAdjPressed();
+
+                        end;
+                    rDoc."LS Transaction Type"::Sales:
+                        begin
+                            cPOSTrans.SalePressed(true);
+
+                        end;
+                end;
+                commit;
+                PosTrans.Get(PosTrans."Receipt No.");
+                /*
+                    ErrorBeep(lblNewTransErr);
+                    exit;
+                */
             end;
-
-
 
             if PosTrans."Document Code" = '' then
                 bRecalc := false
@@ -544,5 +570,135 @@ codeunit 50011 "IT4G-POS Commands"
         POSGui.Lookup(POSLookup, '', sl, true, '', RecRef);
     end;
 
+    procedure GetIT4GDocPressed(xDocNo: Code[20]): Boolean;
+    var
+        cIT4GTSU: Codeunit "IT4G-Trans. Server Util";
+        errTxt: Text;
+        cU: Codeunit "IT4G-WS-IT4GUtils";
+        rIT4GDoc: Record "IT4G-Doc. Header";
+        rIT4GDocL: Record "IT4G-Doc. Line";
+        cPT: Codeunit "LSC POS Transaction";
+        NewLine: Record "LSC POS Trans. Line";
+        rI: Record Item;
+        rIV: Record "Item Variant";
+        rIUOM: Record "Item Unit of Measure";
+    begin
+        errTxt := '';
+        IF not PosTrans."New Transaction" then begin
+            POSGUI.PosMessage(lblCurrTransNotNew);
+            exit(false);
+        end;
+        //        cU.run;
+        clear(cIT4GTSU);
+        if not cIT4GTSU.GetIT4GDoc(rIT4GDoc, xDocNo, errTxt) then begin
+            POSGUI.PosMessage(errTxt);
+            exit(false);
+        end;
+
+        rIT4GDoc.get(xDocNo);
+
+        if Not CheckDocBeforeImport(rIT4GDoc, errTxt) then begin
+            POSGUI.PosMessage(errTxt);
+            exit(false);
+        end;
+
+        rIT4GDocL.setrange("Document No.", rIT4GDoc."Document No.");
+        rIT4GDocL.setfilter("Line Type", '%1|%2|%3', rIT4GDocL."Line Type"::Item, rIT4GDocL."Line Type"::"Trans. Inventory Entry", rIT4GDocL."Line Type"::"Trans. Sales Entry");
+
+        ForceDocPressed(rIT4GDoc."Dest. Document Code");
+        PosTrans."Trans. Document No." := rIT4GDoc."Document No.";
+        PosTrans.modify;
+
+        if rIT4GDocL.findset then begin
+            InsertTextLine(100, 0, format(rIT4GDoc."Document Type") + '-' + rIT4GDoc."Document No.", PosTrans);
+            repeat
+                clear(rI);
+                clear(rIV);
+                clear(rIUOM);
+                Clear(NewLine);
+                NewLine."Store No." := PosTrans."Store No.";
+                NewLine."POS Terminal No." := PosTrans."POS Terminal No.";
+                NewLine."Receipt No." := PosTrans."Receipt No.";
+                NewLine."Line No." := rIT4GDocL."Line No.";
+                NewLine."Entry Type" := NewLine."Entry Type"::Item;
+                rI.GET(rIT4GDocL.Number);
+                if rIT4GDocL."Variant Code" <> '' then rIV.get(rIT4GDocL.Number, rIT4GDocL."Variant Code");
+                NewLine.validate(Number, rIT4GDocL.Number);
+                NewLine.validate("Variant Code", rIT4GDocL."Variant Code");
+                //                NewLine.Description := rIT4GDocL;
+                //                NewLine."Lot No." := rIT4GDocL.lot;
+                //                NewLine."Expiration Date" := GS1BestBeforeDate;
+
+                NewLine."Parent Line" := 0;
+
+
+                NewLine."System-Exclude from Offers" := true;
+
+                NewLine."Created by Staff ID" := POSSESSION.StaffID;
+
+                If rIUOM.get(NewLine.Number, rIT4GDocL."Unit of Measure") then
+                    If rIUOM."Qty. per Unit of Measure" <> 1 then
+                        NewLine."Unit of Measure" := rIT4GDocL."Unit of Measure";
+
+                NewLine.validate(Quantity, rIT4GDocL.Quantity);
+
+                NewLine."IT4G-Doc. No." := rIT4GDocL."Document No.";
+                NewLine."IT4G-Doc. Line No." := rIT4GDocL."Line No.";
+                newline.insert(TRUE);
+
+            until rIT4GDocL.next = 0;
+        end;
+    end;
+
+    procedure InsertTextLine(LineNo: Integer; RefLine: Integer; Txt: Text; PosTransGlobal: Record "LSC POS Transaction")
+    var
+        PosItemLine: Record "LSC POS Trans. Line";
+        POSTransLine: Record "LSC POS Trans. Line";
+    begin
+        if (LineNo = 0) and (RefLine <> 0) then begin
+
+            POSTransLine.SetRange("Receipt No.", PosTransGlobal."Receipt No.");
+            POSTransLine.SetRange("Line No.", RefLine, RefLine - (RefLine mod 10000) + 9998);
+            if POSTransLine.FindLast then
+                LineNo := POSTransLine."Line No." + 1
+            else
+                LineNo := RefLine + 1;
+        end;
+        PosItemLine.Init;
+        PosItemLine."Store No." := PosTransGlobal."Store No.";
+        PosItemLine."POS Terminal No." := PosTransGlobal."POS Terminal No.";
+        PosItemLine."Receipt No." := PosTransGlobal."Receipt No.";
+        PosItemLine."Entry Type" := PosItemLine."Entry Type"::FreeText;
+        PosItemLine."Text Type" := PosItemLine."Text Type"::"Freetext Input";
+        PosItemLine.Description := CopyStr(Txt, 1, 100);
+        if RefLine <> 0 then
+            PosItemLine."Parent Line" := RefLine;
+
+        if LineNo = 0 then
+            PosItemLine.InsertLine
+        else begin
+            PosItemLine."Line No." := LineNo;
+            PosItemLine.Insert(true);
+        end;
+        Commit;
+    end;
+
+    procedure CheckDocBeforeImport(var rR: record "IT4G-Doc. Header"; var RetText: text): Boolean
+    var
+        lblDocReceived: label 'Document %1 received with Document %2 on %3 by User %4';
+        lblWrongStore: label 'Document %1 is for Store %2';
+    begin
+        If rR."Updated by Document No." <> '' then begin
+            RetText := (StrSubstNo(lblDocReceived, rR."Document No.", rR."Updated by Document No.",
+                format(rR."Updated On"), rR."Updated by Staff"));
+            exit(false);
+        end;
+        if rR."Destination Store" <> POSSESSION.StoreNo() then begin
+            RetText := (StrSubstNo(lblWrongStore, rR."Document No.", rR."Destination Store"));
+            exit(false);
+        end;
+
+        exit(true);
+    end;
 }
 

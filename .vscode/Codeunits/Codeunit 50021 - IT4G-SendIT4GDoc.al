@@ -1,9 +1,5 @@
 codeunit 50021 SendIT4GDoc
 {
-    trigger OnRun()
-    begin
-    end;
-
     procedure SendIT4GDoc(var ResponseCode: Code[30]; var ErrorText: Text; AddOnly: Boolean; UpdateReplicationCounter: Boolean; SendIT4GDocXML: XmlPort SendIT4GDocXML)
     var
         SendIT4GUtils: Codeunit "IT4G-WS-IT4GUtils";

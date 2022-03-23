@@ -28,9 +28,15 @@ table 60006 "IT4G-Doc. Header"
             DataClassification = ToBeClassified;
             TableRelation = "LSC Store"."No.";
         }
-        field(5; "Document Code"; Code[10])
+        field(5; "Source Document Code"; Code[10])
         {
-            Caption = 'Document Code';
+            Caption = 'Source Document Code';
+            DataClassification = ToBeClassified;
+            TableRelation = "IT4G-LS Document";
+        }
+        field(6; "Dest. Document Code"; Code[10])
+        {
+            Caption = 'Dest. Document Code';
             DataClassification = ToBeClassified;
             TableRelation = "IT4G-LS Document";
         }
@@ -173,6 +179,22 @@ table 60006 "IT4G-Doc. Header"
         field(703; "Created on Host"; Text[100])
         {
             Caption = 'Created on Host';
+        }
+        field(710; "Updated On"; DateTime)
+        {
+            Caption = 'Updated On';
+        }
+        field(711; "Updated by User"; text[100])
+        {
+            Caption = 'Updated by User';
+        }
+        field(712; "Updated by Staff"; Code[20])
+        {
+            Caption = 'Updated by Staff';
+        }
+        field(713; "Updated on Host"; Text[100])
+        {
+            Caption = 'Updated on Host';
         }
 
     }

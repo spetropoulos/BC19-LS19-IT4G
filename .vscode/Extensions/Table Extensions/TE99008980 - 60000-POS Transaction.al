@@ -24,6 +24,11 @@ tableextension 60000 "TE99008980-POS Transaction" extends "LSC POS Transaction"
             TableRelation = "LSC Store Location"."Location Code" where("Store No." = field("Store No."));
             DataClassification = ToBeClassified;
         }
+        field(60101; "Trans. Document No."; Code[20])
+        {
+            Caption = 'Trans. Document No.';
+            DataClassification = ToBeClassified;
+        }
         field(70001; "From Store"; Code[10])
         {
             Caption = 'From Store';

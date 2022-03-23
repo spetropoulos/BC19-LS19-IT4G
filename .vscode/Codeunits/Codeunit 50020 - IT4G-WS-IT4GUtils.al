@@ -313,7 +313,7 @@ codeunit 50020 "IT4G-WS-IT4GUtils"
         if WSServerBuffer.FindSet then
             repeat
                 if WSServerBuffer."Local Request" then begin
-                    //CEN-2186 -
+
                     IF not Handled then begin
                         Clear(GetIT4GDocXML);
                         GetIT4GDoc.GetIT4GDoc(ResponseCode, ErrorText, xIT4GDocNo, GetIT4GDocXML);
@@ -374,35 +374,33 @@ codeunit 50020 "IT4G-WS-IT4GUtils"
         ResponseCode := WebRequestHandler.GetNodeValueFromBuffer('responseCode', ResNodeBuffer);
         ErrorText := WebRequestHandler.GetNodeValueFromBuffer('errorText', ResNodeBuffer);
         //Retrieve IT4GDoc and save to local (POS) database
-        //CEN-2186 WebRequestFunctions.GetXmlPortFields(RequestID, 10032999, WebRequestFieldMappingTemp);
-        //Cen-2186 -
 
         WebRequestFunctions.GetXmlPortFields(RequestID_txt, 50001, WebRequestFieldMappingTemp);
-        //Cen-2186 +
+
         WebRequestFunctions.ClearTable(IT4GDocHeaderTemp);
         WebRequestHandler.GetTableNodeFromBuffer('IT4GDocHeader', ResNodeBuffer, ResRecRefArray, IT4GDocHeaderTemp);
         WebRequestFunctions.UpdateTableByTempTable(RequestID_txt, false, IT4GDocHeaderTemp, true, WebRequestFieldMappingTemp);
-        WebRequestFunctions.LoadTableData(IT4GDocHeaderTemp, BufferUtility_p); //CEN-2186
+        WebRequestFunctions.LoadTableData(IT4GDocHeaderTemp, BufferUtility_p);
 
         WebRequestFunctions.ClearTable(IT4GDocLineTemp);
         WebRequestHandler.GetTableNodeFromBuffer('IT4GDocLine', ResNodeBuffer, ResRecRefArray, IT4GDocLineTemp);
         WebRequestFunctions.UpdateTableByTempTable(RequestID_txt, false, IT4GDocLineTemp, true, WebRequestFieldMappingTemp);
-        WebRequestFunctions.LoadTableData(IT4GDocLineTemp, BufferUtility_p); //CEN-2186
+        WebRequestFunctions.LoadTableData(IT4GDocLineTemp, BufferUtility_p);
 
         WebRequestFunctions.ClearTable(IT4GDocLineBoxTemp);
         WebRequestHandler.GetTableNodeFromBuffer('IT4GDocLineBox', ResNodeBuffer, ResRecRefArray, IT4GDocLineBoxTemp);
         WebRequestFunctions.UpdateTableByTempTable(RequestID_txt, false, IT4GDocLineBoxTemp, true, WebRequestFieldMappingTemp);
-        WebRequestFunctions.LoadTableData(IT4GDocLineBoxTemp, BufferUtility_p); //CEN-2186
+        WebRequestFunctions.LoadTableData(IT4GDocLineBoxTemp, BufferUtility_p);
 
         WebRequestFunctions.ClearTable(IT4GDocScanTemp);
         WebRequestHandler.GetTableNodeFromBuffer('IT4GDocScan', ResNodeBuffer, ResRecRefArray, IT4GDocScanTemp);
         WebRequestFunctions.UpdateTableByTempTable(RequestID_txt, false, IT4GDocScanTemp, true, WebRequestFieldMappingTemp);
-        WebRequestFunctions.LoadTableData(IT4GDocScanTemp, BufferUtility_p); //CEN-2186
+        WebRequestFunctions.LoadTableData(IT4GDocScanTemp, BufferUtility_p);
 
         WebRequestFunctions.ClearTable(IT4GDocSourceTemp);
         WebRequestHandler.GetTableNodeFromBuffer('IT4GDocSource', ResNodeBuffer, ResRecRefArray, IT4GDocSourceTemp);
         WebRequestFunctions.UpdateTableByTempTable(RequestID_txt, false, IT4GDocSourceTemp, true, WebRequestFieldMappingTemp);
-        WebRequestFunctions.LoadTableData(IT4GDocSourceTemp, BufferUtility_p); //CEN-2186
+        WebRequestFunctions.LoadTableData(IT4GDocSourceTemp, BufferUtility_p);
 
     end;
 

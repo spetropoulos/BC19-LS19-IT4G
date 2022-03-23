@@ -58,9 +58,14 @@ page 60010 "IT4G-Documents List"
                     ToolTip = 'Specifies the value of the Destination Store field.';
                     ApplicationArea = All;
                 }
-                field("Document Code"; Rec."Document Code")
+                field("Source Document Code"; Rec."Source Document Code")
                 {
                     ToolTip = 'Specifies the value of the Document Code field.';
+                    ApplicationArea = All;
+                }
+                field("Dest. Document Code"; Rec."Dest. Document Code")
+                {
+                    ToolTip = 'Specifies the value of the Dest. Document Code field.';
                     ApplicationArea = All;
                 }
                 field("Document No."; Rec."Document No.")
