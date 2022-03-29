@@ -10,8 +10,6 @@ codeunit 50011 "IT4G-POS Commands"
         rRetailSetup.get;
         if not rRetailSetup."IT4G Module Enabled" then error(lblSetUpErr);
 
-
-
         GlobalRec := Rec;
 
         if rec."Registration Mode" then
@@ -64,6 +62,7 @@ codeunit 50011 "IT4G-POS Commands"
                     DynemicPaymenuPressed();
                 'GET_IT4GDOC':
                     GetIT4GDocPressed(rec."Current-INPUT");
+
                 'IT4G_UPGRADE':
                     begin
                         Codeunit.run(50030);
@@ -105,6 +104,7 @@ codeunit 50011 "IT4G-POS Commands"
         lblSetUpErr: Label 'You must enable IT4G Module in Retail Setup card to enable such Functionality!!!';
         lblNewTransErr: Label 'You can not do that in a new Transaction!!!\Select Transaction First!!!!';
         lblCurrTransNotNew: Label 'Current transaction must be finished!';
+        Text001: Label '%1 %2 must exist to run the guest list';
         gLocType: Option From,To;
         rDOC: Record "IT4G-LS Document";
         gDoc: Code[20];
@@ -603,7 +603,7 @@ codeunit 50011 "IT4G-POS Commands"
         end;
 
         rIT4GDocL.setrange("Document No.", rIT4GDoc."Document No.");
-        rIT4GDocL.setfilter("Line Type", '%1|%2|%3', rIT4GDocL."Line Type"::Item, rIT4GDocL."Line Type"::"Trans. Inventory Entry", rIT4GDocL."Line Type"::"Trans. Sales Entry");
+        rIT4GDocL.setRange("Line Type", rIT4GDocL."Line Type"::Item);
 
         ForceDocPressed(rIT4GDoc."Dest. Document Code");
         PosTrans."Trans. Document No." := rIT4GDoc."Document No.";
@@ -700,5 +700,6 @@ codeunit 50011 "IT4G-POS Commands"
 
         exit(true);
     end;
+
 }
 

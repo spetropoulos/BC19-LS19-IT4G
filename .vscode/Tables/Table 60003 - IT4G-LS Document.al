@@ -236,6 +236,10 @@ table 60003 "IT4G-LS Document"
         {
             DataClassification = ToBeClassified;
         }
+        field(90008; "Tax Printer Doc. Code"; Code[10])
+        {
+            DataClassification = ToBeClassified;
+        }
 
 
         /*
@@ -303,10 +307,6 @@ table 60003 "IT4G-LS Document"
                                 OptionMembers = Ask,Allow,"Not Allow";
                             }
                             field(90007; "Reverse Float Entry"; Boolean)
-                            {
-                                DataClassification = ToBeClassified;
-                            }
-                            field(90008; "Tax Printer Doc. Code"; Code[10])
                             {
                                 DataClassification = ToBeClassified;
                             }

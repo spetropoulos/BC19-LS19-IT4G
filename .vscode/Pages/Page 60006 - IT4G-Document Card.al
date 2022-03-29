@@ -45,10 +45,15 @@ page 60006 "IT4G-Document Card"
             }
             group(Other)
             {
-                field("Calc. Number of Items"; Rec."Calc. Number of Items")
+                field("Calc. Quantity"; Rec."Calc. Quantity")
                 {
+                    ToolTip = 'Specifies the value of the Calc. Quantity field.';
                     ApplicationArea = All;
-                    Tooltip = '';
+                }
+                field("Calc. Scanned Quantity"; Rec."Calc. Scanned Quantity")
+                {
+                    ToolTip = 'Specifies the value of the Calc. Scanned Quantity  field.';
+                    ApplicationArea = All;
                 }
                 field("Calc. Number of Lines"; Rec."Calc. Number of Lines")
                 {

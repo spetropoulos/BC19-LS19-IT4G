@@ -274,7 +274,7 @@ codeunit 50020 "IT4G-WS-IT4GUtils"
 
     local procedure RunGetIT4GDocRequest()
     var
-        NotFound: Label '%1 not found.';
+        NotFound: Label '%1 %2 not found on server .';
         rIT4GDoc: Record "IT4G-Doc. Header";
     begin
         rIT4GDoc.SetRange("Document No.", gIT4GDocNo);

@@ -111,6 +111,11 @@ page 60004 "IT4G-LS Document Card"
                     ToolTip = 'Specifies the value of the Do not Export field.';
                     ApplicationArea = All;
                 }
+                field("Tax Printer Doc. Code"; Rec."Tax Printer Doc. Code")
+                {
+                    ToolTip = 'Specifies the value of the Tax Printer Doc. Code field.';
+                    ApplicationArea = All;
+                }
             }
             group(Menus)
             {

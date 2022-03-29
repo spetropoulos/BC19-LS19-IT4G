@@ -4,11 +4,14 @@ codeunit 50030 "IT4G-Upgrade Version"
         rRetailSetUp: record "LSC Retail Setup";
         CurrVersionDate: date;
         LatestVersionDate: Date;
+        LatestWSVersionDate: Date;
         cF: Codeunit "IT4G-Functions";
+        cPCR: Codeunit "LSC POS Command Registration";
 
     trigger OnRun()
     begin
-        LatestVersionDate := 20220323D;
+        LatestVersionDate := 20220327D;
+        LatestWSVersionDate := 20220320D;
 
 
         rRetailSetUp.get();
@@ -20,17 +23,45 @@ codeunit 50030 "IT4G-Upgrade Version"
 
         If CurrVersionDate <> LatestVersionDate then
             if not confirm('Upgrade IT4G Version?') then exit;
-
-        ProcessUpgrade();
+        If (CurrVersionDate <> LatestVersionDate) or (LatestWSVersionDate >= CurrVersionDate) then
+            ProcessUpgrade();
     end;
 
     procedure ProcessUpgrade()
+    var
+        MenuLine: Record "LSC POS Menu Line";
+        Text001: Label 'Codeunit %1 does not support Registration Mode';
+        Text002: Label 'Codeunit %1 is now registered as a Retail Module';
+        dDLG: Dialog;
+        dlgTxt: Text;
     begin
+        if GuiAllowed then dDLG.Open('Upgrading From #1######### to #2#########\#3#######################', CurrVersionDate, LatestVersionDate, dlgTxt);
         If CurrVersionDate <> LatestVersionDate then begin
+            dlgTxt := 'Registering Codeunit 50011 - IT4G POS Commands';
+            dDLG.Update;
+            commit;
+            if not CODEUNIT.Run(50011, MenuLine) then
+                Error(Text001 + ' ' + GetLastErrorText, 50011);
+            cPCR.SetupModule('IT4G');
+            commit;
+            dlgTxt := 'Registering Codeunit 50018 - IT4G Scan Document';
+            dDLG.Update;
+            if not CODEUNIT.Run(50018, MenuLine) then
+                Error(Text001 + ' ' + GetLastErrorText, 50018);
+            cPCR.SetupModule('IT4GSCAN');
+            commit;
+        end;
+
+        If LatestWSVersionDate >= CurrVersionDate then begin
+            dlgTxt := 'Registering IT4G WEB Services';
+            dDLG.Update;
             RegisterWEBRequests;
             UpdatePOSFuncProfileWebReq;
         end;
+
         CF.SetRV_Date('IT4G_Version', 0, 1, LatestVersionDate);
+        if GuiAllowed then dDLG.Close;
+        commit;
 
     end;
 

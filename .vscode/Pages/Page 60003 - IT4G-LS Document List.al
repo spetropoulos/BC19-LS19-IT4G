@@ -4,7 +4,7 @@ page 60003 "IT4G-LS Document List"
     Caption = 'IT4G-LS Document List';
     PageType = List;
     SourceTable = "IT4G-LS Document";
-    CardPageId = "IT4G-Document Card";
+    CardPageId = "IT4G-LS Document Card";
     UsageCategory = Administration;
     layout
     {

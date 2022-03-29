@@ -21,6 +21,24 @@ table 60009 "IT4G-Doc. Scan"
             Caption = 'Box No.';
             DataClassification = ToBeClassified;
         }
+        field(4; "Item No."; code[20])
+        {
+            Caption = 'Number';
+            DataClassification = ToBeClassified;
+            TableRelation = "Item"."No.";
+        }
+        field(5; "Variant Code"; code[20])
+        {
+            Caption = 'Variant Code';
+            DataClassification = ToBeClassified;
+            TableRelation = "Item Variant"."Code" where("Item No." = field("Item No."));
+        }
+        field(6; "Barcode No."; code[30])
+        {
+            Caption = 'Barcode No.';
+            DataClassification = ToBeClassified;
+        }
+
         field(20; "Unit of Measure"; code[20])
         {
             Caption = 'Unit of Measure';
@@ -41,12 +59,39 @@ table 60009 "IT4G-Doc. Scan"
             Caption = 'Scanned Quantity Base';
             DataClassification = ToBeClassified;
         }
+        field(700; "Created On"; DateTime)
+        {
+            Caption = 'Created On';
+        }
+        field(701; "Created by User"; text[100])
+        {
+            Caption = 'Created by User';
+        }
+        field(702; "Created by Staff"; Code[20])
+        {
+            Caption = 'Created by Staff';
+        }
+        field(703; "Created by Store No."; Code[10])
+        {
+            Caption = 'Created by Store No.';
+            TableRelation = "LSC Store"."No.";
+        }
+        field(704; "Created by POS Terminal No."; Code[10])
+        {
+            Caption = 'Created by POS Terminal No.';
+            TableRelation = "LSC POS Terminal"."No.";
+            ValidateTableRelation = false;
+        }
     }
     keys
     {
         key(PK; "Document No.", "Scan Identifier")
         {
             Clustered = true;
+        }
+        key(key1; "Document No.", "Item No.", "Variant Code")
+        {
+            SumIndexFields = "Scanned Quantity", "Scanned Quantity Base";
         }
     }
 

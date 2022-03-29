@@ -158,11 +158,17 @@ table 60006 "IT4G-Doc. Header"
             FieldClass = FlowField;
             CalcFormula = count("IT4G-Doc. Line" where("Document No." = field("Document No.")));
         }
-        field(601; "Calc. Number of Items"; Decimal)
+        field(601; "Calc. Quantity"; Decimal)
         {
-            Caption = 'Calc. Number of Items';
+            Caption = 'Calc. Quantity';
             FieldClass = FlowField;
-            CalcFormula = sum("IT4G-Doc. Line"."Quantity Base" where("Document No." = field("Document No.")));
+            CalcFormula = sum("IT4G-Doc. Line"."Quantity" where("Document No." = field("Document No."), "Line Type" = const(Item)));
+        }
+        field(602; "Calc. Scanned Quantity"; Decimal)
+        {
+            Caption = 'Calc. Scanned Quantity ';
+            FieldClass = FlowField;
+            CalcFormula = sum("IT4G-Doc. Scan"."Scanned Quantity" where("Document No." = field("Document No.")));
         }
         field(700; "Created On"; DateTime)
         {

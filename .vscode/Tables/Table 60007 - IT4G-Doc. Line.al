@@ -16,6 +16,11 @@ table 60007 "IT4G-Doc. Line"
             Caption = 'Line No.';
             DataClassification = ToBeClassified;
         }
+        field(3; "Line Source"; Enum "IT4G-Doc. Line Source")
+        {
+            Caption = 'Line Source';
+            DataClassification = ToBeClassified;
+        }
         field(10; "Line Type"; Enum "IT4G-Doc. Line type")
         {
             Caption = 'Line Type';
@@ -71,6 +76,17 @@ table 60007 "IT4G-Doc. Line"
             Caption = 'Amount Received';
             DataClassification = ToBeClassified;
         }
+        field(200; "Quantity Scanned"; Decimal)
+        {
+            Caption = 'Quantity Scanned';
+            FieldClass = FlowField;
+            CalcFormula = sum("IT4G-Doc. Scan"."Scanned Quantity" where(
+                "Document No." = FIELD("Document No."),
+                "Item No." = FIELD(Number),
+                "Variant Code" = FIELD("Variant Code")
+                ));
+        }
+
     }
     keys
     {

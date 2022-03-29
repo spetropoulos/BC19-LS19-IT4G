@@ -13,11 +13,6 @@ page 60010 "IT4G-Documents List"
             repeater(General)
             {
 
-                field("Calc. Number of Items"; Rec."Calc. Number of Items")
-                {
-                    ToolTip = 'Specifies the value of the Calc. Number of Items field.';
-                    ApplicationArea = All;
-                }
                 field("Calc. Number of Lines"; Rec."Calc. Number of Lines")
                 {
                     ToolTip = 'Specifies the value of the Calc. Number of Lines field.';
@@ -151,6 +146,56 @@ page 60010 "IT4G-Documents List"
                 field("Updated by Transaction No."; Rec."Updated by Transaction No.")
                 {
                     ToolTip = 'Specifies the value of the Updated by Transaction No. field.';
+                    ApplicationArea = All;
+                }
+                field("Calc. Quantity"; Rec."Calc. Quantity")
+                {
+                    ToolTip = 'Specifies the value of the Calc. Quantity field.';
+                    ApplicationArea = All;
+                }
+                field("Calc. Scanned Quantity"; Rec."Calc. Scanned Quantity")
+                {
+                    ToolTip = 'Specifies the value of the Calc. Scanned Quantity  field.';
+                    ApplicationArea = All;
+                }
+                field("Created On"; Rec."Created On")
+                {
+                    ToolTip = 'Specifies the value of the Created On field.';
+                    ApplicationArea = All;
+                }
+                field("Created by Staff"; Rec."Created by Staff")
+                {
+                    ToolTip = 'Specifies the value of the Created by Staff field.';
+                    ApplicationArea = All;
+                }
+                field("Created by User"; Rec."Created by User")
+                {
+                    ToolTip = 'Specifies the value of the Created by User field.';
+                    ApplicationArea = All;
+                }
+                field("Created on Host"; Rec."Created on Host")
+                {
+                    ToolTip = 'Specifies the value of the Created on Host field.';
+                    ApplicationArea = All;
+                }
+                field("Updated On"; Rec."Updated On")
+                {
+                    ToolTip = 'Specifies the value of the Updated On field.';
+                    ApplicationArea = All;
+                }
+                field("Updated by Staff"; Rec."Updated by Staff")
+                {
+                    ToolTip = 'Specifies the value of the Updated by Staff field.';
+                    ApplicationArea = All;
+                }
+                field("Updated by User"; Rec."Updated by User")
+                {
+                    ToolTip = 'Specifies the value of the Updated by User field.';
+                    ApplicationArea = All;
+                }
+                field("Updated on Host"; Rec."Updated on Host")
+                {
+                    ToolTip = 'Specifies the value of the Updated on Host field.';
                     ApplicationArea = All;
                 }
             }

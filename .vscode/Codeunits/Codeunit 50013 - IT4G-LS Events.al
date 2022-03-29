@@ -418,7 +418,7 @@ codeunit 50013 "IT4G-LS Events"
     end;
 
     [EventSubscriber(ObjectType::Codeunit, codeunit::"LSC POS Transaction Events", 'OnBeforeProcessBarcode', '', false, false)]
-    local procedure OnBeforeProcessBarcode(var POSTransaction: Record "LSC POS Transaction"; var POSTransLine: Record "LSC POS Trans. Line"; var CurrInput: Text; var IsHandled: Boolean)
+    local procedure OnBeforeProcessBarcode_IT4G(var POSTransaction: Record "LSC POS Transaction"; var POSTransLine: Record "LSC POS Trans. Line"; var CurrInput: Text; var IsHandled: Boolean)
     var
         cC: Codeunit "IT4G-POS Commands";
     begin
@@ -427,6 +427,18 @@ codeunit 50013 "IT4G-LS Events"
         if (CopyStr(CurrInput, 1, 1) in ['G']) then begin
             cC.GetIT4GDocPressed(CurrInput);
             IsHandled := true;
+        end;
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, codeunit::"LSC POS Transaction Events", 'OnBeforeItemLine', '', false, false)]
+    local procedure OnBeforeItemLine_IT4G(var POSTransaction: Record "LSC POS Transaction"; var POSTransLine: Record "LSC POS Trans. Line"; var CurrInput: Text)
+    var
+        cC: Codeunit "IT4G-POS Commands";
+    begin
+        //        if (StrLen(CurrInput) in [14, 20]) and (CopyStr(CurrInput, 1, 1) in ['G']) then begin
+        if (CopyStr(CurrInput, 1, 1) in ['G']) then begin
+            cC.GetIT4GDocPressed(CurrInput);
+            CurrInput := '';
         end;
     end;
 

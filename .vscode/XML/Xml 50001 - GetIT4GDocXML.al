@@ -13,9 +13,6 @@ xmlport 50001 GetIT4GDocXML
                 MinOccurs = Zero;
                 XmlName = 'IT4GDocHeader';
                 UseTemporary = true;
-                fieldelement(CalcNumberofItems; "IT4G-Doc. Header"."Calc. Number of Items")
-                {
-                }
                 fieldelement(CalcNumberofLines; "IT4G-Doc. Header"."Calc. Number of Lines")
                 {
                 }
@@ -128,6 +125,13 @@ xmlport 50001 GetIT4GDocXML
                 MinOccurs = Zero;
                 XmlName = 'IT4GDocLine';
                 UseTemporary = true;
+
+                fieldelement(Amount; "IT4G-Doc. Line".Amount)
+                {
+                }
+                fieldelement(AmountReceived; "IT4G-Doc. Line"."Amount Received")
+                {
+                }
                 fieldelement(BaseUnitofMeasure; "IT4G-Doc. Line"."Base Unit of Measure")
                 {
                 }
@@ -140,6 +144,9 @@ xmlport 50001 GetIT4GDocXML
                 fieldelement(LineType; "IT4G-Doc. Line"."Line Type")
                 {
                 }
+                fieldelement(LineSource; "IT4G-Doc. Line"."Line Source")
+                {
+                }
                 fieldelement(Number; "IT4G-Doc. Line".Number)
                 {
                 }
@@ -149,19 +156,16 @@ xmlport 50001 GetIT4GDocXML
                 fieldelement(QuantityBase; "IT4G-Doc. Line"."Quantity Base")
                 {
                 }
+                fieldelement(QuantityReceived; "IT4G-Doc. Line"."Quantity Received")
+                {
+                }
+                fieldelement(QuantityScanned; "IT4G-Doc. Line"."Quantity Scanned")
+                {
+                }
                 fieldelement(UnitofMeasure; "IT4G-Doc. Line"."Unit of Measure")
                 {
                 }
                 fieldelement(VariantCode; "IT4G-Doc. Line"."Variant Code")
-                {
-                }
-                fieldelement(Amount; "IT4G-Doc. Line".Amount)
-                {
-                }
-                fieldelement(QuantityReceived; "IT4G-Doc. Line"."Quantity Received")
-                {
-                }
-                fieldelement(AmountReceived; "IT4G-Doc. Line"."Amount Received")
                 {
                 }
             }
@@ -206,25 +210,50 @@ xmlport 50001 GetIT4GDocXML
                 MinOccurs = Zero;
                 XmlName = 'IT4GDocScan';
                 UseTemporary = true;
+
+                fieldelement(BarcodeNo; "IT4G-Doc. Scan"."Barcode No.")
+                {
+                }
                 fieldelement(BaseUnitofMeasure; "IT4G-Doc. Scan"."Base Unit of Measure")
                 {
                 }
                 fieldelement(BoxNo; "IT4G-Doc. Scan"."Box No.")
                 {
                 }
+                fieldelement(CreatedbyPOSTerminalNo; "IT4G-Doc. Scan"."Created by POS Terminal No.")
+                {
+                }
+                fieldelement(CreatedbyStaff; "IT4G-Doc. Scan"."Created by Staff")
+                {
+                }
+                fieldelement(CreatedbyStoreNo; "IT4G-Doc. Scan"."Created by Store No.")
+                {
+                }
+                fieldelement(CreatedbyUser; "IT4G-Doc. Scan"."Created by User")
+                {
+                }
+                fieldelement(CreatedOn; "IT4G-Doc. Scan"."Created On")
+                {
+                }
                 fieldelement(DocumentNo; "IT4G-Doc. Scan"."Document No.")
                 {
                 }
+                fieldelement(ItemNo; "IT4G-Doc. Scan"."Item No.")
+                {
+                }
                 fieldelement(ScanIdentifier; "IT4G-Doc. Scan"."Scan Identifier")
+                {
+                }
+                fieldelement(UnitofMeasure; "IT4G-Doc. Scan"."Unit of Measure")
+                {
+                }
+                fieldelement(VariantCode; "IT4G-Doc. Scan"."Variant Code")
                 {
                 }
                 fieldelement(ScannedQuantity; "IT4G-Doc. Scan"."Scanned Quantity")
                 {
                 }
                 fieldelement(ScannedQuantityBase; "IT4G-Doc. Scan"."Scanned Quantity Base")
-                {
-                }
-                fieldelement(UnitofMeasure; "IT4G-Doc. Scan"."Unit of Measure")
                 {
                 }
             }

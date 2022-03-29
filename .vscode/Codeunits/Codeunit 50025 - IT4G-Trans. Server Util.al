@@ -55,7 +55,12 @@ codeunit 50025 "IT4G-Trans. Server Util"
         GetIT4GDocUtils: Codeunit "IT4G-WS-IT4GUtils";
         ResponseCode: Code[30];
         BufferUtility: Codeunit "LSC Buffer Utility";
+        rWT: Record "LSC Trans. Server Work Table";
     begin
+        if rWT.Get(60006, xIT4GDocNo, '', '', '', 0) then begin
+            ErrorText := 'Unsend Entry Found!!!';
+            exit(true);
+        End;
         if not Initialize then
             exit(false);
         if PosFuncProfile."TS Send IT4GDoc" then begin

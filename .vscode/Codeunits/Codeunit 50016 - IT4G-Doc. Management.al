@@ -72,7 +72,8 @@ codeunit 50016 "IT4G-Doc. Management"
                 clear(rDL);
                 rDL."Document No." := rDH."Document No.";
                 rDL."Line No." := rTSE."Line No.";
-                rDL."Line Type" := rDL."Line Type"::"Trans. Sales Entry";
+                rDL."Line Type" := rDL."Line Type"::Item;
+                rDL."Line Source" := rDL."Line Source"::"Trans. Sales Entry";
                 rDL.Number := rTSE."Item No.";
                 rDL."Variant Code" := rTSE."Variant Code";
                 rDL."Unit of Measure" := rTSE."Unit of Measure";
@@ -96,7 +97,8 @@ codeunit 50016 "IT4G-Doc. Management"
                 clear(rDL);
                 rDL."Document No." := rDH."Document No.";
                 rDL."Line No." := rTIE."Line No.";
-                rDL."Line Type" := rDL."Line Type"::"Trans. Inventory Entry";
+                rDL."Line Type" := rDL."Line Type"::Item;
+                rDL."Line Source" := rDL."Line Source"::"Trans. Inventory Entry";
                 rDL.Number := rTIE."Item No.";
                 rDL."Variant Code" := rTIE."Variant Code";
                 rDL."Unit of Measure" := rTIE."Unit of Measure";
@@ -119,6 +121,8 @@ codeunit 50016 "IT4G-Doc. Management"
                 rDL."Document No." := rDH."Document No.";
                 rDL."Line No." := rTPE."Line No.";
                 rDL."Line Type" := rDL."Line Type"::Payment;
+                rDL."Line Source" := rDL."Line Source"::"Trans. Payment Entry";
+
                 rDL.Number := rTPE."Tender Type";
                 rDl.Amount := rTPE."Amount Tendered";
                 rDL.Insert;

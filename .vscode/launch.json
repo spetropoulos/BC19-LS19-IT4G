@@ -52,8 +52,8 @@
             "environmentType": "OnPrem",
             "server": "http://panos-pc:8080",
 
-            "serverInstance": "BC190-INT",
-            "port": 1924,
+            "serverInstance": "BC194",
+            "port": 1934,
 
             "authentication": "Windows",
 

@@ -345,4 +345,249 @@ codeunit 50012 "IT4G-LS Functions"
             end;
         exit(true);
     end;
+
+    procedure CreateLSTaxSignature(pTransHeader: Record "LSC Transaction Header"; pTaxFree: Boolean) rSignature: Text[1000];
+    var
+        lRetailSetup: Record "LSC Retail Setup";
+        lCompanyInfo: Record "Company Information";
+        lStartSymbols: Label '"<%SL;"';
+        lEndSymbols: Label '>';
+        lSeparator: Label '";"';
+        lCustomer: Record Customer;
+        lTransSalesEntry: Record "LSC Trans. Sales Entry";
+        lPOSVATCode: Record "LSC POS VAT Code";
+        lNetAmount: array[5] of Decimal;
+        lVATAmount: array[4] of Decimal;
+        lTotalAmount: Decimal;
+        lErr001: TextConst ELL = 'Δεν έχει οριστεί %1 για %2: %3', ENU = '%1 not set for %2: %3';
+        lInfocode: Record "IT4G-LS Document";
+        lInfocodePrinterSetup: Record "IT4G-Doc. Series Printer Setup";
+        rPOS: Record "LSC POS Terminal";
+    begin
+        rPOS.GET(pTransHeader."POS Terminal No.");
+
+        CASE rPOS."Fiscal Printer Software" OF
+            rPOS."Fiscal Printer Software"::SignPro:
+                EXIT(TaxSignature_SignPro(pTransHeader, pTaxFree));
+            rPOS."Fiscal Printer Software"::TaxSpooler:
+                EXIT(TaxSignature_TaxSpooler(pTransHeader, pTaxFree));
+            ELSE
+                EXIT('');
+        END;
+    end;
+
+    procedure TaxSignature_SignPro(pTransHeader: Record "LSC Transaction Header"; pTaxFree: Boolean) rSignature: Text[1000];
+    var
+        lRetailSetup: Record "LSC Retail Setup";
+        lCompanyInfo: Record "Company Information";
+        lStartSymbols: Label '"<%SL;"';
+        lEndSymbols: Label '>';
+        lSeparator: Label '";"';
+        lCustomer: Record Customer;
+        lTransSalesEntry: Record "LSC Trans. Sales Entry";
+        lPOSVATCode: Record "LSC POS VAT Code";
+        lNetAmount: array[5] of Decimal;
+        lVATAmount: array[4] of Decimal;
+        lTotalAmount: Decimal;
+        lErr001: TextConst ELL = 'Δεν έχει οριστεί %1 για %2: %3', ENU = '%1 not set for %2: %3';
+        lInfocode: Record "IT4G-LS Document";
+        lInfocodePrinterSetup: Record "IT4G-Doc. Series Printer Setup";
+    begin
+        lRetailSetup.GET();
+
+        lCompanyInfo.GET;
+
+        rSignature := lStartSymbols;
+
+        //#1  ΑΦΜ ΕΚΔΟΤΗ
+        rSignature += lCompanyInfo."VAT Registration No." + lSeparator;
+
+        //#2  ΑΦΜ Παραλήπτη
+        IF lCustomer.GET(pTransHeader."Customer No.") THEN
+            rSignature += lCustomer."VAT Registration No." + lSeparator
+        ELSE
+            rSignature += lSeparator;
+
+        //#3Αριθμός Κάρτας Αποδείξεων Πελάτη
+        rSignature += lSeparator;
+
+        rSignature += FORMAT(pTransHeader.Date, 0, '<Year4><Month,2><Day,2>') +
+                    FORMAT(pTransHeader.Time, 0, '<Hours24><Minutes,2>') + lSeparator;   //#4Ημερομηνία και Ώρα
+
+        //#5Περιγραφή Παραστατικού
+        IF pTaxFree THEN
+            rSignature += '#22' + lSeparator
+        ELSE
+            rSignature += lSeparator;   //Document Type
+
+        rSignature += lSeparator;
+        rSignature += lSeparator;
+        rSignature += lSeparator;
+
+        //#6Σειρά Θεώρησης
+        IF lInfocode.GET(pTransHeader."Document Code") AND
+          lInfocodePrinterSetup.GET(lInfocodePrinterSetup."Data Type"::Series, lInfocode."Series Document", pTransHeader."Store No.", pTransHeader."POS Terminal No.")
+          AND (lInfocodePrinterSetup."Tax Printer Series" <> '') THEN
+            rSignature += lInfocodePrinterSetup."Tax Printer Series" + lSeparator
+        ELSE
+            rSignature += pTransHeader."Post Series" + lSeparator;  //Document Series
+
+        //#7Αριθμός Παραστατικού
+        rSignature += COPYSTR(pTransHeader."Document No.", STRLEN(pTransHeader."Post Series") + 2) + lSeparator;  //Document No.
+
+        lTransSalesEntry.SETRANGE("Store No.", pTransHeader."Store No.");
+        lTransSalesEntry.SETRANGE("POS Terminal No.", pTransHeader."POS Terminal No.");
+        lTransSalesEntry.SETRANGE("Transaction No.", pTransHeader."Transaction No.");
+        IF lTransSalesEntry.FINDSET THEN
+            REPEAT
+                lPOSVATCode.GET(lTransSalesEntry."VAT Code");
+                CASE lPOSVATCode."Tax Printer VAT Category" OF
+                    lPOSVATCode."Tax Printer VAT Category"::A,
+                    lPOSVATCode."Tax Printer VAT Category"::B,
+                    lPOSVATCode."Tax Printer VAT Category"::C,
+                    lPOSVATCode."Tax Printer VAT Category"::D:
+                        BEGIN
+                            lNetAmount[lPOSVATCode."Tax Printer VAT Category"] += -lTransSalesEntry."Net Amount";
+                            lVATAmount[lPOSVATCode."Tax Printer VAT Category"] += -lTransSalesEntry."VAT Amount";
+                        END;
+                    lPOSVATCode."Tax Printer VAT Category"::E:
+                        ;
+                    ELSE
+                        ERROR(lErr001, lPOSVATCode.FIELDCAPTION("Tax Printer VAT Category"), lPOSVATCode.FIELDCAPTION("VAT Code"), lPOSVATCode."VAT Code");
+                END;
+            UNTIL lTransSalesEntry.NEXT = 0;
+
+        //#8Καθαρό Ποσό Α
+        rSignature += FORMAT(lNetAmount[1], 0, '<Precision,2:2><Standard Format,9>') + lSeparator;   //Net Amount A
+        //#9Καθαρό Ποσό Β
+        rSignature += FORMAT(lNetAmount[2], 0, '<Precision,2:2><Standard Format,9>') + lSeparator;   //Net Amount B
+        //#10Καθαρό Ποσό Γ
+        rSignature += FORMAT(lNetAmount[3], 0, '<Precision,2:2><Standard Format,9>') + lSeparator;   //Net Amount C
+        //#11Καθαρό Ποσό Δ
+        rSignature += FORMAT(lNetAmount[4], 0, '<Precision,2:2><Standard Format,9>') + lSeparator;   //Net Amount D
+        //#12Καθαρό Ποσό Ε
+        rSignature += FORMAT(lNetAmount[5], 0, '<Precision,2:2><Standard Format,9>') + lSeparator;   //Net Amount E
+
+        //#13ΦΠΑ Α
+        rSignature += FORMAT(lVATAmount[1], 0, '<Precision,2:2><Standard Format,9>') + lSeparator;   //VAT Amount A
+        //#14ΦΠΑ Β
+        rSignature += FORMAT(lVATAmount[2], 0, '<Precision,2:2><Standard Format,9>') + lSeparator;   //VAT Amount B
+        //#15ΦΠΑ Γ
+        rSignature += FORMAT(lVATAmount[3], 0, '<Precision,2:2><Standard Format,9>') + lSeparator;   //VAT Amount C
+        //#16ΦΠΑ Δ
+        rSignature += FORMAT(lVATAmount[4], 0, '<Precision,2:2><Standard Format,9>') + lSeparator;   //VAT Amount D
+
+        //#17Γενικό Σύνολο Παρ/κού
+        rSignature += FORMAT(-pTransHeader."Gross Amount", 0, '<Precision,2:2><Precision,2:2><Standard Format,9>') + lSeparator;   //Gross Amount
+        //#18Κωδικός νομίσματος
+        rSignature += '0' + lEndSymbols;   //For Euro=0 , for other currencies use ISO code
+    end;
+
+    procedure TaxSignature_TaxSpooler(pTransHeader: Record "LSC Transaction Header"; pTaxFree: Boolean) rSignature: Text[1000];
+    var
+        lRetailSetup: Record "LSC Retail Setup";
+        lCompanyInfo: Record "Company Information";
+        lStartSymbols: Label '"<%SL;"';
+        lEndSymbols: Label '>';
+        lSeparator: Label '";"';
+        lCustomer: Record Customer;
+        lTransSalesEntry: Record "LSC Trans. Sales Entry";
+        lPOSVATCode: Record "LSC POS VAT Code";
+        lNetAmount: array[5] of Decimal;
+        lVATAmount: array[4] of Decimal;
+        lTotalAmount: Decimal;
+        lErr001: TextConst ELL = 'Δεν έχει οριστεί %1 για %2: %3', ENU = '%1 not set for %2: %3';
+        rI: Record "IT4G-LS Document";
+        lInfocode: Record "IT4G-LS Document";
+        lInfocodePrinterSetup: Record "IT4G-Doc. Series Printer Setup";
+    begin
+
+        lCompanyInfo.GET;
+
+        rSignature := lStartSymbols;
+
+        //#1  ΑΦΜ ΕΚΔΟΤΗ
+        rSignature += lCompanyInfo."VAT Registration No." + lSeparator;
+
+        //#2  ΑΦΜ Παραλήπτη
+        IF lCustomer.GET(pTransHeader."Customer No.") THEN
+            rSignature += lCustomer."VAT Registration No." + lSeparator
+        ELSE
+            rSignature += lSeparator;
+
+        //#3Αριθμός Κάρτας Αποδείξεων Πελάτη
+        rSignature += lSeparator;
+
+        rSignature += FORMAT(pTransHeader.Date, 0, '<Year4><Month,2><Day,2>') +
+                    FORMAT(pTransHeader.Time, 0, '<Hours24><Minutes,2>') + lSeparator;   //#4Ημερομηνία και Ώρα
+
+        //#5Περιγραφή Παραστατικού
+
+        rI.GET(pTransHeader."Document Code");
+        IF pTaxFree THEN
+            rSignature += '#22' + lSeparator
+        ELSE
+            rSignature += rI."Tax Printer Doc. Code" + lSeparator;   //Document Type
+
+        //#6Σειρά Θεώρησης
+        IF lInfocode.GET(pTransHeader."Document Code") AND
+          lInfocodePrinterSetup.GET(lInfocodePrinterSetup."Data Type"::Series, lInfocode."Series Document", pTransHeader."Store No.", pTransHeader."POS Terminal No.")
+          AND (lInfocodePrinterSetup."Tax Printer Series" <> '') THEN
+            rSignature += lInfocodePrinterSetup."Tax Printer Series" + lSeparator
+        ELSE
+            rSignature += pTransHeader."Post Series" + lSeparator;  //Document Series
+
+        //#7Αριθμός Παραστατικού
+        //rSignature+=COPYSTR(pTransHeader."Document No.",STRLEN(pTransHeader."Post Series")+2)+lSeparator;  //Document No.
+
+        rSignature += pTransHeader."Document No." + lSeparator;
+
+        lTransSalesEntry.SETRANGE("Store No.", pTransHeader."Store No.");
+        lTransSalesEntry.SETRANGE("POS Terminal No.", pTransHeader."POS Terminal No.");
+        lTransSalesEntry.SETRANGE("Transaction No.", pTransHeader."Transaction No.");
+        IF lTransSalesEntry.FINDSET THEN
+            REPEAT
+                lPOSVATCode.GET(lTransSalesEntry."VAT Code");
+                CASE lPOSVATCode."Tax Printer VAT Category" OF
+                    lPOSVATCode."Tax Printer VAT Category"::A,
+                    lPOSVATCode."Tax Printer VAT Category"::B,
+                    lPOSVATCode."Tax Printer VAT Category"::C,
+                    lPOSVATCode."Tax Printer VAT Category"::D:
+                        BEGIN
+                            lNetAmount[lPOSVATCode."Tax Printer VAT Category"] += -lTransSalesEntry."Net Amount";
+                            lVATAmount[lPOSVATCode."Tax Printer VAT Category"] += -lTransSalesEntry."VAT Amount";
+                        END;
+                    lPOSVATCode."Tax Printer VAT Category"::E:
+                        ;
+                    ELSE
+                        ERROR(lErr001, lPOSVATCode.FIELDCAPTION("Tax Printer VAT Category"), lPOSVATCode.FIELDCAPTION("VAT Code"), lPOSVATCode."VAT Code");
+                END;
+            UNTIL lTransSalesEntry.NEXT = 0;
+
+        //#8Καθαρό Ποσό Α
+        rSignature += FORMAT(lNetAmount[1], 0, '<Precision,2:2><Standard Format,9>') + lSeparator;   //Net Amount A
+        //#9Καθαρό Ποσό Β
+        rSignature += FORMAT(lNetAmount[2], 0, '<Precision,2:2><Standard Format,9>') + lSeparator;   //Net Amount B
+        //#10Καθαρό Ποσό Γ
+        rSignature += FORMAT(lNetAmount[3], 0, '<Precision,2:2><Standard Format,9>') + lSeparator;   //Net Amount C
+        //#11Καθαρό Ποσό Δ
+        rSignature += FORMAT(lNetAmount[4], 0, '<Precision,2:2><Standard Format,9>') + lSeparator;   //Net Amount D
+        //#12Καθαρό Ποσό Ε
+        rSignature += FORMAT(lNetAmount[5], 0, '<Precision,2:2><Standard Format,9>') + lSeparator;   //Net Amount E
+
+        //#13ΦΠΑ Α
+        rSignature += FORMAT(lVATAmount[1], 0, '<Precision,2:2><Standard Format,9>') + lSeparator;   //VAT Amount A
+        //#14ΦΠΑ Β
+        rSignature += FORMAT(lVATAmount[2], 0, '<Precision,2:2><Standard Format,9>') + lSeparator;   //VAT Amount B
+        //#15ΦΠΑ Γ
+        rSignature += FORMAT(lVATAmount[3], 0, '<Precision,2:2><Standard Format,9>') + lSeparator;   //VAT Amount C
+        //#16ΦΠΑ Δ
+        rSignature += FORMAT(lVATAmount[4], 0, '<Precision,2:2><Standard Format,9>') + lSeparator;   //VAT Amount D
+
+        //#17Γενικό Σύνολο Παρ/κού
+        rSignature += FORMAT(-pTransHeader."Gross Amount", 0, '<Precision,2:2><Precision,2:2><Standard Format,9>') + lSeparator;   //Gross Amount
+        //#18Κωδικός νομίσματος
+        rSignature += '0' + lEndSymbols;   //For Euro=0 , for other currencies use ISO code
+    end;
+
 }
