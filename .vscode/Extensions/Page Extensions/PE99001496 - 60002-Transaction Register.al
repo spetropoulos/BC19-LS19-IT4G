@@ -30,5 +30,19 @@ pageextension 60002 "Transaction Register" extends "LSC Transaction Register"
                 ApplicationArea = All;
             }
         }
+        addlast(Control1)
+        {
+            field("IT4G-Loyalty ID"; Rec."IT4G-Loyalty ID")
+            {
+                ToolTip = 'Specifies the value of the IT4G-Loyalty ID field.';
+                ApplicationArea = All;
+            }
+            field("IT4G-Loyalty Card"; Rec."IT4G-Loyalty Card")
+            {
+                ToolTip = 'Specifies the value of the IT4G-Loyalty Card field.';
+                ApplicationArea = All;
+            }
+        }
+
     }
 }

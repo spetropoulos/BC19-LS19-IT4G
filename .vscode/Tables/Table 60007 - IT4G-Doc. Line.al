@@ -21,6 +21,11 @@ table 60007 "IT4G-Doc. Line"
             Caption = 'Line Source';
             DataClassification = ToBeClassified;
         }
+        field(8; "Scan Identifier"; Guid)
+        {
+            Caption = 'Scan Identifier';
+            DataClassification = ToBeClassified;
+        }
         field(10; "Line Type"; Enum "IT4G-Doc. Line type")
         {
             Caption = 'Line Type';
@@ -90,7 +95,7 @@ table 60007 "IT4G-Doc. Line"
     }
     keys
     {
-        key(PK; "Document No.", "Line No.")
+        key(PK; "Document No.", "Line No.", "Scan Identifier")
         {
             Clustered = true;
             SumIndexFields = "Quantity Base", Quantity, "Quantity Received";

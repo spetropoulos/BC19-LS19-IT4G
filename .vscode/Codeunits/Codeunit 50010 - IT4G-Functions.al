@@ -25,7 +25,7 @@ codeunit 50010 "IT4G-Functions"
             if not rReg.GET('', xKey, xLine) THEN BEGIN
                 rReg.Key := xKey;
                 rReg."Line No." := xLine;
-                IF rReg.INSERT(TRUE) THEN;
+                IF rReg.INSERT(TRUE) THEN commit;
                 exit(false);
             end;
         exit(true);
@@ -277,11 +277,25 @@ codeunit 50010 "IT4G-Functions"
         EXIT(rLog."Entry No.");
     end;
 
-    local procedure "----"()
+    procedure GetLoyaltyInfo(xType: integer; xReceiptNo: Text): Text
+    var
+        rPTIE: record "LSC POS Trans. Infocode Entry";
     begin
+        clear(rPTIE);
+        rPTIE.setrange("Receipt No.", xReceiptNo);
+        rPTIE.SetRange("Line No.", 0);
+        case xType of
+            1:
+                rPTIE.setrange(Infocode, 'LOY_MEMB_MOB');
+            2:
+                rPTIE.setrange(Infocode, 'LOY_MEMB_NAME');
+            3:
+                rPTIE.setrange(Infocode, 'LOY_MEMB_POINTS');
+            4:
+                rPTIE.setrange(Infocode, 'LOY_MEMB_MAIL');
+        end;
+        if rPTIE.findfirst then exit(rPTIE.Information);
+        exit('');
     end;
-
-
-
 }
 

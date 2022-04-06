@@ -6,6 +6,7 @@ Enum 60011 "IT4G-Doc. Line Source"
     value(2; "Trans. Inventory Entry") { Caption = 'Trans. Inventory Entry'; }
     value(3; "Trans. Payment Entry") { Caption = 'Trans. Payment Entry'; }
     value(4; "External System") { Caption = 'External System'; }
+    value(5; "Scanning") { Caption = 'Scanning'; }
 
 
 }

@@ -126,6 +126,9 @@ xmlport 50000 SendIT4GDocXML
                 fieldelement(Amount; "IT4G-Doc. Line".Amount)
                 {
                 }
+                fieldelement(ScanIdentifier; "IT4G-Doc. Line"."Scan Identifier")
+                {
+                }
                 fieldelement(AmountReceived; "IT4G-Doc. Line"."Amount Received")
                 {
                 }
@@ -172,6 +175,9 @@ xmlport 50000 SendIT4GDocXML
                 XmlName = 'IT4GDocLineBox';
                 UseTemporary = true;
                 fieldelement(BarcodeNo; "IT4G-Doc. Line Box"."Barcode No.")
+                {
+                }
+                fieldelement(ScanIdentifier; "IT4G-Doc. Line Box"."Scan Identifier")
                 {
                 }
                 fieldelement(BaseUnitofMeasure; "IT4G-Doc. Line Box"."Base Unit of Measure")

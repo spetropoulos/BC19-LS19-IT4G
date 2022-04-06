@@ -62,7 +62,8 @@ codeunit 50011 "IT4G-POS Commands"
                     DynemicPaymenuPressed();
                 'GET_IT4GDOC':
                     GetIT4GDocPressed(rec."Current-INPUT");
-
+                'IT4G_MEMBER':
+                    ScanLoyaltyMemberPressed(rec."Current-INPUT");
                 'IT4G_UPGRADE':
                     begin
                         Codeunit.run(50030);
@@ -144,6 +145,7 @@ codeunit 50011 "IT4G-POS Commands"
 
         CommandFunc.RegisterExtCommand('GET_IT4GDOC', 'Get IT4G Document', 50011, ParameterType::" ", Module, false);
         CommandFunc.RegisterExtCommand('IT4G_UPGRADE', 'Upgrade  IT4G Module', 50011, ParameterType::" ", Module, false);
+        CommandFunc.RegisterExtCommand('IT4G_MEMBER', 'Scan Loyalty member', 50011, ParameterType::" ", Module, false);
 
         createTag('<#IT4G_DocInfo>', 'Document Code Information', xtagType::Transaction);
         createTag('<#IT4G_FromStore>', 'From Store Code', xtagType::Transaction);
@@ -286,6 +288,7 @@ codeunit 50011 "IT4G-POS Commands"
     var
         KeyVal: Code[20];
         cC: Codeunit "IT4G-POS Commands";
+        newCurrInput: Text;
     begin
         bLookupActive := false;
         KeyVal := POSGUI.GetLookupKeyValue(LookupID);
@@ -302,13 +305,23 @@ codeunit 50011 "IT4G-POS Commands"
                         end;
                 end;
                     */
-                'IT4G_DOC', 'IT4G_SHIP_REASON', 'IT4G_SHIP_METHOD', 'IT4G_REASON_CODE', 'IT4G_LOCATION':
+                'IT4G_SHIP_REASON', 'IT4G_SHIP_METHOD', 'IT4G_REASON_CODE':
+                    begin
+                        ChangeShipmentReasonPressed();
+                    end;
+                'IT4G_DOC':
                     begin
                         if rDoc.get(KeyVal) then begin
                             globalrec.parameter := keyval;
                             cPOSTrans.RUN(GLOBALREC);
                             exit;
                         end;
+                    end;
+                else begin
+                        newCurrInput := KeyVal;
+                        cPOSTrans.SetCurrInput(newCurrInput);
+                        cPOSTrans.RUN(GLOBALREC);
+                        exit;
                     end;
             end;
         end;
@@ -513,39 +526,75 @@ codeunit 50011 "IT4G-POS Commands"
     procedure ChangeShipmentReasonPressed()
     var
         rList: Record "IT4G-Help Table";
+        lblErrShipReason: Label 'Shipment Reason %1 not found on Database';
     begin
-        if not InitLookup('IT4G_SHIP_REASON') then
-            exit;
-
-        bLookupActive := true;
-        rList.setrange("Type", rList.type::"Shipment Reason");
-        recref.GetTable(rList);
-        POSGui.Lookup(POSLookup, '', sl, true, '', RecRef);
+        If GlobalRec."Current-INPUT" <> '' then begin
+            if not rList.get(rList.Type::"Shipment Reason", GlobalRec."Current-INPUT") then begin
+                ErrorBeep(StrSubstNo(lblErrShipReason, GlobalRec."Current-INPUT"));
+            end else begin
+                PosTrans.Modify();
+                Exit;
+            end;
+        end else begin
+            if not InitLookup('IT4G_SHIP_REASON') then exit;
+            bLookupActive := true;
+            rList.setrange("Type", rList.type::"Shipment Reason");
+            recref.GetTable(rList);
+            POSGui.Lookup(POSLookup, '', sl, true, '', RecRef);
+        end;
     end;
 
     procedure ChangeShipmentMethodPressed()
     var
         rList: Record "Shipment Method";
+        lblErrShipMethod: Label 'Shipment Method %1 not found on Database';
     begin
-        if not InitLookup('IT4G_SHIP_METHOD') then
-            exit;
-
-        bLookupActive := true;
-        recref.GetTable(rList);
-        POSGui.Lookup(POSLookup, '', sl, true, '', RecRef);
+        If GlobalRec."Current-INPUT" <> '' then begin
+            if not rList.get(GlobalRec."Current-INPUT") then begin
+                ErrorBeep(StrSubstNo(lblErrShipMethod, GlobalRec."Current-INPUT"));
+            end else begin
+                PosTrans.Modify();
+                Exit;
+            end;
+        end else begin
+            if not InitLookup('IT4G_SHIP_METHOD') then exit;
+            bLookupActive := true;
+            recref.GetTable(rList);
+            POSGui.Lookup(POSLookup, '', sl, true, '', RecRef);
+        end;
     end;
 
     procedure ChangeReasonCodePressed()
     var
         VendorRec: Record "Vendor";
         rList: Record "Reason Code";
+        lblErrReasonCode: Label 'Reason Code %1 not found on Database';
     begin
-        if not InitLookup('IT4G_REASON_CODE') then
-            exit;
+        If GlobalRec."Current-INPUT" <> '' then begin
+            if not rList.get(GlobalRec."Current-INPUT") then begin
+                ErrorBeep(StrSubstNo(lblErrReasonCode, GlobalRec."Current-INPUT"));
+            end else begin
+                PosTrans.Modify();
+                Exit;
+            end;
+        end else begin
+            if not InitLookup('IT4G_REASON_CODE') then exit;
+            bLookupActive := true;
+            recref.GetTable(rList);
+            POSGui.Lookup(POSLookup, '', sl, true, '', RecRef);
+        end;
+    end;
 
-        bLookupActive := true;
-        recref.GetTable(rList);
-        POSGui.Lookup(POSLookup, '', sl, true, '', RecRef);
+    procedure ScanLoyaltyMemberPressed(xParam: Text)
+    var
+        lblKeyboardCaption: label 'Scan Loyalty Card';
+    begin
+        if not InitLookup('IT4G_LOY_MEMBER') then exit;
+        /*
+                bLookupActive := true;
+                recref.GetTable(rList);
+                POSGui.Lookup(POSLookup, '', sl, true, '', RecRef);
+        */
     end;
 
     procedure DynemicPaymenuPressed()

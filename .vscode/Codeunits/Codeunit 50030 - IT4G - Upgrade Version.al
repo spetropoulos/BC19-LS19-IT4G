@@ -7,11 +7,13 @@ codeunit 50030 "IT4G-Upgrade Version"
         LatestWSVersionDate: Date;
         cF: Codeunit "IT4G-Functions";
         cPCR: Codeunit "LSC POS Command Registration";
+        dDLG: Dialog;
+        dlgTxt: Text;
 
     trigger OnRun()
     begin
-        LatestVersionDate := 20220327D;
-        LatestWSVersionDate := 20220320D;
+        LatestVersionDate := 20220406D;
+        LatestWSVersionDate := 20220405D;
 
 
         rRetailSetUp.get();
@@ -23,7 +25,7 @@ codeunit 50030 "IT4G-Upgrade Version"
 
         If CurrVersionDate <> LatestVersionDate then
             if not confirm('Upgrade IT4G Version?') then exit;
-        If (CurrVersionDate <> LatestVersionDate) or (LatestWSVersionDate >= CurrVersionDate) then
+        If (CurrVersionDate <> LatestVersionDate) or (LatestWSVersionDate > CurrVersionDate) then
             ProcessUpgrade();
     end;
 
@@ -32,23 +34,32 @@ codeunit 50030 "IT4G-Upgrade Version"
         MenuLine: Record "LSC POS Menu Line";
         Text001: Label 'Codeunit %1 does not support Registration Mode';
         Text002: Label 'Codeunit %1 is now registered as a Retail Module';
-        dDLG: Dialog;
-        dlgTxt: Text;
     begin
         if GuiAllowed then dDLG.Open('Upgrading From #1######### to #2#########\#3#######################', CurrVersionDate, LatestVersionDate, dlgTxt);
         If CurrVersionDate <> LatestVersionDate then begin
+
             dlgTxt := 'Registering Codeunit 50011 - IT4G POS Commands';
             dDLG.Update;
             commit;
+            MenuLine."Registration Mode" := true;
             if not CODEUNIT.Run(50011, MenuLine) then
                 Error(Text001 + ' ' + GetLastErrorText, 50011);
             cPCR.SetupModule('IT4G');
             commit;
+
             dlgTxt := 'Registering Codeunit 50018 - IT4G Scan Document';
             dDLG.Update;
+            MenuLine."Registration Mode" := true;
             if not CODEUNIT.Run(50018, MenuLine) then
                 Error(Text001 + ' ' + GetLastErrorText, 50018);
-            cPCR.SetupModule('IT4GSCAN');
+            cPCR.SetupModule('IT4GDOC_SCAN');
+
+            dlgTxt := 'Registering Codeunit 50026 - IT4G Loyalty';
+            dDLG.Update;
+            MenuLine."Registration Mode" := true;
+            if not CODEUNIT.Run(50026, MenuLine) then
+                Error(Text001 + ' ' + GetLastErrorText, 50026);
+            cPCR.SetupModule('IT4G_LOYALTY');
             commit;
         end;
 
@@ -70,7 +81,11 @@ codeunit 50030 "IT4G-Upgrade Version"
         cWRF: Codeunit "LSC Web Request Functions";
     begin
         clear(cWRF);
+        dlgTxt := 'Updating WEB Services Publishers';
+        dDLG.Update;
         cWRF.InitAllRequests(0);
+        dlgTxt := 'Updating WEB Services Subscribers';
+        dDLG.Update;
         cWRF.InitAllRequests(1);
     end;
 

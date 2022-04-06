@@ -16,6 +16,12 @@ xmlport 50004 GetTransactionIT4GXML
                 fieldelement(TransactionNo; "Transaction Header"."Transaction No.")
                 {
                 }
+                fieldelement(IT4GLoyaltyID; "Transaction Header"."IT4G-Loyalty ID")
+                {
+                }
+                fieldelement(IT4GLoyaltyCard; "Transaction Header"."IT4G-Loyalty Card")
+                {
+                }
                 fieldelement(TransactionType; "Transaction Header"."Transaction Type")
                 {
                 }

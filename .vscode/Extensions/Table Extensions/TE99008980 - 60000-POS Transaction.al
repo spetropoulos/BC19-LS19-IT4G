@@ -71,6 +71,16 @@ tableextension 60000 "TE99008980-POS Transaction" extends "LSC POS Transaction"
             DataClassification = ToBeClassified;
             TableRelation = "Reason Code";
         }
+        field(71000; "IT4G-Loyalty Card"; Code[20])
+        {
+            Caption = 'IT4G-Loyalty Card';
+            DataClassification = ToBeClassified;
+        }
+        field(71001; "IT4G-Loyalty ID"; Text[50])
+        {
+            Caption = 'IT4G-Loyalty ID';
+            DataClassification = ToBeClassified;
+        }
         field(80000; "External Doc. No."; Code[20])
         {
             Caption = 'External Doc. No.';

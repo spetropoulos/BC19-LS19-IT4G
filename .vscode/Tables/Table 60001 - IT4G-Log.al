@@ -22,6 +22,18 @@ table 60001 "IT4G-Log"
         {
             DataClassification = ToBeClassified;
         }
+        field(5; "WEB Service URL"; Text[250])
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(6; "WEB Service Status"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+        }
+        field(7; "WEB Service Code"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+        }
         field(100; "Table ID"; Integer)
         {
             DataClassification = ToBeClassified;
@@ -29,8 +41,8 @@ table 60001 "IT4G-Log"
         field(101; Type; Option)
         {
             DataClassification = ToBeClassified;
-            OptionCaption = 'Bridge Job,Rec,Batch';
-            OptionMembers = "Bridge Job",Rec,Batch;
+            OptionCaption = 'Bridge Job,Rec,Batch,WS';
+            OptionMembers = "Bridge Job",Rec,Batch,WS;
         }
         field(10000; User; Text[100])
         {

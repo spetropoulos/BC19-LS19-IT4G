@@ -38,6 +38,11 @@ table 60008 "IT4G-Doc. Line Box"
             Caption = 'Barcode No.';
             DataClassification = ToBeClassified;
         }
+        field(8; "Scan Identifier"; Guid)
+        {
+            Caption = 'Scan Identifier';
+            DataClassification = ToBeClassified;
+        }
         field(20; "Unit of Measure"; code[20])
         {
             Caption = 'Unit of Measure';

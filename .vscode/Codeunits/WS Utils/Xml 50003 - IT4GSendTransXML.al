@@ -13,7 +13,15 @@ xmlport 50003 SendTransactionIT4GXML
                 MinOccurs = Zero;
                 XmlName = 'TransactionHeader';
                 UseTemporary = true;
-                fieldelement(TransactionNo; "Transaction Header"."Transaction No.") { }
+                fieldelement(TransactionNo; "Transaction Header"."Transaction No.")
+                {
+                }
+                fieldelement(IT4GLoyaltyID; "Transaction Header"."IT4G-Loyalty ID")
+                {
+                }
+                fieldelement(IT4GLoyaltyCard; "Transaction Header"."IT4G-Loyalty Card")
+                {
+                }
                 fieldelement(TransactionType; "Transaction Header"."Transaction Type")
                 {
                 }

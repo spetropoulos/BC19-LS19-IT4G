@@ -13,7 +13,7 @@
 
             "authentication": "Windows",
 
-            "startupObjectId": 60008,
+            "startupObjectId": 60011,
             "startupObjectType": "Page",
             "breakOnError": true,
 

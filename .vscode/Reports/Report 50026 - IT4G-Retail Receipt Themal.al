@@ -1,9 +1,9 @@
-report 50026 "IT4G-Receipt Themal New"
+report 50026 "IT4G-Retail Receipt Themal"
 {
     DefaultLayout = RDLC;
-    RDLCLayout = './IT4G-Receipt Themal New.rdlc';
+    RDLCLayout = './IT4G-Retail Receipt Themal.rdlc';
     ApplicationArea = All;
-    AdditionalSearchTerms = 'POS therma Receipt';
+    AdditionalSearchTerms = 'POS thermal Receipt';
     UsageCategory = Administration;
 
 
@@ -12,8 +12,9 @@ report 50026 "IT4G-Receipt Themal New"
         dataitem("Transaction Header"; "LSC Transaction Header")
         {
             RequestFilterFields = "Store No.", "POS Terminal No.", "Transaction No.", "Receipt No.", "Document No.";
-            //            column(etxt; gPOSPrintUtil.CreateTaxSignature("Transaction Header", FALSE))
-
+            column(etxt; cPF.CreateLSTaxSignature("Transaction Header", FALSE))
+            {
+            }
             column(ReceiptNoBarcode; ReceiptNoBarcode)
             {
             }
@@ -218,10 +219,10 @@ report 50026 "IT4G-Receipt Themal New"
             column(MemberCardNo; "Transaction Header"."Member Card No.")
             {
             }
-            column(recTmpBlob1_Blob; recTmpBlob1.)
+            column(recTmpBlob1_Blob; recBC1.Picture)
             {
             }
-            column(recTmpBlob2_Blob; recTmpBlob2.Blob)
+            column(recTmpBlob2_Blob; recBC2.Picture)
             {
             }
             column(bcT; bcT)
@@ -229,13 +230,13 @@ report 50026 "IT4G-Receipt Themal New"
             }
             dataitem(Integer4; Integer)
             {
-                column(Temp3DescrCoupon; Temp3.Text1)
+                column(Temp3DescrCoupon; Temp3.Description)
                 {
                 }
-                column(Temp3EntryNo; Temp3.EntryNo)
+                column(Temp3EntryNo; Temp3.Code)
                 {
                 }
-                column(Temp3Text2; Temp3.Text2)
+                column(Temp3Text2; Temp3."Description 2")
                 {
                 }
 
@@ -321,33 +322,31 @@ report 50026 "IT4G-Receipt Themal New"
                     LineAmt := "Trans. Sales Entry"."Total Rounded Amt." * -Sign;
                     LineDisc := "Trans. Sales Entry"."Discount Amount" * -Sign;
                     LineStartValue := ABS(("Trans. Sales Entry".Price)); //RCID30112017.n
-                    //RCXS08012018.sr
-                    //"LineDisc%" := FORMAT((ROUND("Trans. Sales Entry"."Discount Amount" / ("Trans. Sales Entry".Quantity * "Trans. Sales Entry".Price) * 100,0.01,'<'))  * -Sign)  + ' %'
                     IF ("Trans. Sales Entry".Quantity * "Trans. Sales Entry".Price) <> 0 THEN
                         "LineDisc%" := FORMAT((ROUND("Trans. Sales Entry"."Discount Amount" / ("Trans. Sales Entry".Quantity * "Trans. Sales Entry".Price) * 100, 0.01, '<')) * -Sign) + ' %'
                     ELSE
                         CLEAR("LineDisc%");
-                    //RCXS08012018.er
+
                     TotalQty += ("Trans. Sales Entry".Quantity * -Sign);
 
                     VatPercentage := 1;
                     IF ("Trans. Sales Entry"."VAT Amount" <> 0) AND ("Trans. Sales Entry"."VAT Code" <> '') THEN
                         IF POSVATCode.GET("Trans. Sales Entry"."VAT Code") THEN
                             VatPercentage += POSVATCode."VAT %" / 100;
-                    Temp2.SETRANGE(Code3, "Trans. Sales Entry"."VAT Code");
+                    Temp2.SETRANGE("Item No.", "Trans. Sales Entry"."VAT Code");
                     IF Temp2.FINDFIRST THEN BEGIN
-                        Temp2.Dec01 += "Trans. Sales Entry"."VAT Amount";
-                        Temp2.Dec02 += "Trans. Sales Entry"."Net Amount";
-                        Temp2.Dec03 += "Trans. Sales Entry"."Total Rounded Amt.";
+                        Temp2."VAT Amount" += "Trans. Sales Entry"."VAT Amount";
+                        Temp2."Net Amount" += "Trans. Sales Entry"."Net Amount";
+                        Temp2."Total Rounded Amt." += "Trans. Sales Entry"."Total Rounded Amt.";
                         Temp2.MODIFY;
                     END ELSE BEGIN
                         Temp2.INIT;
-                        Temp2.EntryNo += 1;
-                        Temp2.Code3 := "Trans. Sales Entry"."VAT Code";
-                        Temp2.Dec01 := "Trans. Sales Entry"."VAT Amount";
-                        Temp2.Dec02 := "Trans. Sales Entry"."Net Amount";
-                        Temp2.Dec03 := "Trans. Sales Entry"."Total Rounded Amt.";
-                        Temp2.Int01 := 1;
+                        Temp2."Line No." += 1;
+                        Temp2."Item No." := "Trans. Sales Entry"."VAT Code";
+                        Temp2."VAT Amount" := "Trans. Sales Entry"."VAT Amount";
+                        Temp2."Net Amount" := "Trans. Sales Entry"."Net Amount";
+                        Temp2."Total Rounded Amt." := "Trans. Sales Entry"."Total Rounded Amt.";
+                        Temp2."Store No." := '1';
                         Temp2.INSERT;
                     END;
                 end;
@@ -356,13 +355,13 @@ report 50026 "IT4G-Receipt Themal New"
             {
                 DataItemTableView = SORTING(Number);
                 UseTemporary = false;
-                column(TenderAMount2; ROUND(Temp.Dec01, 0.01))
+                column(TenderAMount2; ROUND(Temp."Amount Tendered", 0.01))
                 {
                 }
-                column(TenderType2; Temp.Text1)
+                column(TenderType2; 'To be fixed')
                 {
                 }
-                column(EntryNo; Temp.EntryNo)
+                column(EntryNo; Temp."Line No.")
                 {
                 }
 
@@ -383,22 +382,22 @@ report 50026 "IT4G-Receipt Themal New"
             dataitem(Integer3; Integer)
             {
                 UseTemporary = false;
-                column(Temp2dec01; ROUND(Temp2.Dec01, 0.01))
+                column(Temp2dec01; ROUND(Temp2."Net Amount", 0.01))
                 {
                 }
-                column(Temp2dec02; ROUND(Temp2.Dec02, 0.01))
+                column(Temp2dec02; ROUND(Temp2."VAT Amount", 0.01))
                 {
                 }
-                column(Temp2dec03; ROUND(Temp2.Dec03, 0.01))
+                column(Temp2dec03; ROUND(Temp2."Total Rounded Amt.", 0.01))
                 {
                 }
-                column(Temp2code3; Temp2.Code3)
+                column(Temp2code3; Temp2."Item No.")
                 {
                 }
-                column(Temp2int01; Temp2.Int01)
+                column(Temp2int01; Temp2."Store No.")
                 {
                 }
-                column(NetAmt; ABS(Temp.Dec02))
+                column(NetAmt; ABS(Temp."Amount Tendered"))
                 {
                 }
                 column(DiscTotal; ABS("Transaction Header"."Total Discount" + "Transaction Header"."Discount Amount"))
@@ -410,7 +409,7 @@ report 50026 "IT4G-Receipt Themal New"
                 column(TotLine; ABS("Transaction Header".Payment))
                 {
                 }
-                column(Temp2int02; Temp2.EntryNo)
+                column(Temp2int02; Temp2."Line No.")
                 {
                 }
 
@@ -480,7 +479,14 @@ report 50026 "IT4G-Receipt Themal New"
                         FORMAT("Transaction No.", 9, '<Integer,9><Filler Character,0>');
 
                 cduBarcodeMgt.EncodeCode128(bcT, 2, FALSE, recTmpBlob1);
+                recBC1.Picture.CreateOutStream(streamOut);
+                recTmpBlob1.CreateInStream(streamIn);
+                CopyStream(streamOut, streamIn);
+
                 cduBarcodeMgt.EncodeCode128("Document No.", 2, FALSE, recTmpBlob2);
+                recBC2.Picture.CreateOutStream(streamOut);
+                recTmpBlob2.CreateInStream(streamIn);
+                CopyStream(streamOut, streamIn);
 
                 StoreName := Store.Name;
                 StoreAddress := Store.Address;
@@ -489,17 +495,17 @@ report 50026 "IT4G-Receipt Themal New"
                 StorePostCode := Store."Post Code";
                 StorePhone := Store."Phone No.";
 
-                rRC.GET(Store."Responsibility Center");
-                CompAddress := rRC.Address;
-                CompAddress2 := rRC."Address 2";
-                CompCity := rRC.City;
-                CompPostCode := rRC."Post Code";
-                CompVATRegNo := rRC."VAT Registration No.";
-                CompTaxOffice := rRC."Tax Office";
-                CompPhoneNo := rRC."Phone No.";
-                CompName := rRC.Name;
-                CompProfession := rRC.Profession;
-
+                if rRC.GET(Store."Responsibility Center") then begin
+                    CompAddress := rRC.Address;
+                    CompAddress2 := rRC."Address 2";
+                    CompCity := rRC.City;
+                    CompPostCode := rRC."Post Code";
+                    //                CompVATRegNo := rRC."VAT Registration No.";
+                    //                CompTaxOffice := rRC."Tax Office";
+                    CompPhoneNo := rRC."Phone No.";
+                    CompName := rRC.Name;
+                    //                CompProfession := rRC.Profession;
+                end;
 
                 IF "Transaction Header"."Sale Is Return Sale" THEN
                     Sign := -1
@@ -510,9 +516,9 @@ report 50026 "IT4G-Receipt Themal New"
 
                 ReceiptNoBarcode := '*' + COPYSTR("Transaction Header"."Receipt No.", 7) + '*'; //RCIDTEST.n
 
-                IF gInfocode.GET("Transaction Header"."Document Code") THEN BEGIN
-                    gWithCustDetails := gInfocode."Customer Requirement" <> gInfocode."Customer Requirement"::None;
-                END;
+                //                IF gInfocode.GET("Transaction Header"."Document Code") THEN BEGIN
+                //                    gWithCustDetails := gInfocode."Customer Requirement" <> gInfocode."Customer Requirement"::None;
+                //                END;
 
                 CustomerPrintStatus := 0;
 
@@ -522,9 +528,9 @@ report 50026 "IT4G-Receipt Themal New"
                     CustAddr := Customer.Address;
                     CustPostCode := Customer."Post Code";
                     CustVAT := Customer."VAT Registration No.";
-                    CustTaxOffice := Customer."Tax Office";
+                    //                    CustTaxOffice := Customer."Tax Office";
                     CustPhone := Customer."Phone No.";
-                    CustProfession := Customer.Profession;
+                    //                    CustProfession := Customer.Profession;
                     gWithCustDetails := TRUE;
                 END ELSE BEGIN
                     TransInfoEntry.RESET;
@@ -642,29 +648,29 @@ report 50026 "IT4G-Receipt Themal New"
                 TranPaymEntry.SETRANGE("Transaction No.", "Transaction No.");
                 IF TranPaymEntry.FINDSET THEN BEGIN
                     REPEAT
-                        Temp.SETRANGE(Code4, TranPaymEntry."Tender Type");
+                        Temp.SETRANGE("Tender Type", TranPaymEntry."Tender Type");
                         IF TranPaymEntry."Change Line" THEN
-                            Temp.SETRANGE(Int01, 1)
+                            Temp.SETRANGE("Store No.", '1')
                         ELSE
-                            Temp.SETRANGE(Int01, 0);
+                            Temp.SETRANGE("Store No.", '0');
                         IF Temp.FINDFIRST THEN BEGIN
-                            Temp.Dec01 += TranPaymEntry."Amount Tendered";
+                            Temp."Amount Tendered" += TranPaymEntry."Amount Tendered";
                             Temp.MODIFY;
                         END ELSE BEGIN
                             Temp.INIT;
-                            Temp.EntryNo += 1;
+                            Temp."Line No." += 1;
                             "Trans. Sales Entry"."Line No." := 0;
-                            Temp.Code4 := TranPaymEntry."Tender Type";
-                            Temp.Dec01 := (ROUND((TranPaymEntry."Amount Tendered" * Sign), 0.01));
-                            Temp.Dec02 := (ROUND(("Transaction Header"."Net Amount" * Sign), 0.01));
+                            Temp."Tender Type" := TranPaymEntry."Tender Type";
+                            Temp."Amount Tendered" := (ROUND((TranPaymEntry."Amount Tendered" * Sign), 0.01));
+                            Temp."Amount in Currency" := (ROUND(("Transaction Header"."Net Amount" * Sign), 0.01));
 
                             IF TranPaymEntry."Change Line" THEN BEGIN
-                                Temp.Int01 := 1;
-                                Temp.Text1 := 'Ρέστα';
+                                Temp."Store No." := '1';
+                                //                                Temp.Text1 := 'Ρέστα';
                             END ELSE BEGIN
-                                Temp.Int01 := 0;
+                                Temp."Store No." := '0';
                                 Tender.GET(TranPaymEntry."Store No.", TranPaymEntry."Tender Type");
-                                Temp.Text1 := Tender.Description;
+                                //                                Temp.Text1 := Tender.Description;
                             END;
                             Temp.INSERT;
                         END;
@@ -681,9 +687,9 @@ report 50026 "IT4G-Receipt Themal New"
                         mCouponHeader.SETRANGE(mCouponHeader.Code, mTransCouponEntry."Coupon Code");
                         IF mCouponHeader.FINDSET THEN BEGIN
                             Temp3.INIT;
-                            Temp3.EntryNo += 1;
-                            Temp3.Text1 := mCouponHeader.Description;
-                            Temp3.Text2 := 'T. ' + FORMAT(Temp3.EntryNo);
+                            Temp3.Code := Incstr(Temp3.Code);
+                            Temp3.Description := mCouponHeader.Description;
+                            Temp3."Description 2" := 'T. ' + FORMAT(Temp3.Code);
                             Temp3.INSERT;
                         END;
                     UNTIL mTransCouponEntry.NEXT = 0;
@@ -723,20 +729,21 @@ report 50026 "IT4G-Receipt Themal New"
                     ELSE
                         mNextDiscount := '';
                     //RCXS.er
-                    POSTerminalReceiptTextL.RESET;
-                    POSTerminalReceiptTextL.SETFILTER("No.", '%1', '');
-                    POSTerminalReceiptTextL.SETRANGE(Relation, POSTerminalReceiptTextL.Relation::Store);
-                    POSTerminalReceiptTextL.SETRANGE(Number, "Store No.");
-                    POSTerminalReceiptTextL.SETRANGE(Type, POSTerminalReceiptTextL.Type::"5");
-                    IF POSTerminalReceiptTextL.FINDSET THEN BEGIN
-                        c := 1;
-                        REPEAT
-                            ExtendedReceiptText[c] := POSTerminalReceiptTextL."Receipt Text";
-                            IsBold[c] := POSTerminalReceiptTextL.Bold;
-                            c += 1;
-                        UNTIL ((POSTerminalReceiptTextL.NEXT = 0) OR (c = 11));
-                    END;
-                    //RCKMRCAS-16561-J4Y5.en
+                    /*
+                                        POSTerminalReceiptTextL.RESET;
+                                        POSTerminalReceiptTextL.SETFILTER("No.", '%1', '');
+                                        POSTerminalReceiptTextL.SETRANGE(Relation, POSTerminalReceiptTextL.Relation::Store);
+                                        POSTerminalReceiptTextL.SETRANGE(Number, "Store No.");
+                                        POSTerminalReceiptTextL.SETRANGE(Type, POSTerminalReceiptTextL.Type::"5");
+                                        IF POSTerminalReceiptTextL.FINDSET THEN BEGIN
+                                            c := 1;
+                                            REPEAT
+                                                ExtendedReceiptText[c] := POSTerminalReceiptTextL."Receipt Text";
+                                                IsBold[c] := POSTerminalReceiptTextL.Bold;
+                                                c += 1;
+                                            UNTIL ((POSTerminalReceiptTextL.NEXT = 0) OR (c = 11));
+                                        END;
+                      */
                 END;
 
             end;
@@ -799,7 +806,6 @@ report 50026 "IT4G-Receipt Themal New"
         POSText: Record "LSC POS Terminal Receipt Text";
         TranPaymEntry: Record "LSC Trans. Payment Entry";
         Tender: Record "LSC Tender Type";
-        Temp: Record "Sorting Table" temporary;
         Staff: Record "LSC Staff";
         DocumentType: Text;
         Customer: Record Customer;
@@ -835,8 +841,9 @@ report 50026 "IT4G-Receipt Themal New"
         TransInfoEntry: Record "LSC Trans. Infocode Entry";
         CustomerPrintStatus: Integer;
         TotalQty: Decimal;
-        Temp2: Record "LSC Sorting Buffer" temporary;
-        Temp3: Record "52061566" temporary;
+        Temp: Record "LSC Trans. Payment Entry" temporary;
+        Temp2: Record "LSC Trans. Sales Entry" temporary;
+        Temp3: Record "LSC Coupon Header" temporary;
         VatPercentage: Decimal;
         POSVATCode: Record "LSC POS VAT Code";
         VatText: Text;
@@ -893,5 +900,10 @@ report 50026 "IT4G-Receipt Themal New"
         xx0006: TextConst BGR = 'Used Points:', ELL = 'Πόντοι Εξαργύρωσης:', ENU = 'Πόντοι Εξαργύρωσης:';
         recTmpBlob1: Codeunit "Temp Blob";
         recTmpBlob2: Codeunit "Temp Blob";
+        recBC1: Record "Company Information" temporary;
+        recBC2: Record "Company Information" temporary;
+        streamIn: InStream;
+        streamOut: OutStream;
+        cPF: Codeunit "IT4G-LS Functions";
 }
 

@@ -62,6 +62,9 @@ codeunit 50013 "IT4G-LS Events"
         Transaction."WEB Order No." := POSTrans."WEB Order No.";
         Transaction."Location Code" := POSTrans."Location Code";
 
+        Transaction."IT4G-Loyalty Card" := POSTrans."IT4G-Loyalty Card";
+        Transaction."IT4G-Loyalty ID" := POSTrans."IT4G-Loyalty ID";
+
     end;
 
     [EventSubscriber(ObjectType::Codeunit, codeunit::"LSC POS Post Utility", 'SalesEntryOnBeforeInsertV2', '', false, false)]
@@ -135,6 +138,9 @@ codeunit 50013 "IT4G-LS Events"
         POSTransaction."Related Doc. No." := '';
         POSTransaction."WEB Order No." := '';
 
+        POSTransaction."IT4G-Loyalty Card" := '';
+        POSTransaction."IT4G-Loyalty ID" := '';
+
         if POSTransaction."Transaction Type" = POSTransaction."Transaction Type"::Sales then
             If POSTransaction."Sale Is Return Sale" then
                 rDoc.SetRange("Default for", rDoc."Default for"::"Refund Sale")
@@ -151,6 +157,7 @@ codeunit 50013 "IT4G-LS Events"
         cPosSession: Codeunit "LSC POS Session";
         rRetailSetup: Record "LSC Retail Setup";
         cF: Codeunit "IT4G-Functions";
+        cInfo: Codeunit "LSC POS Infocode Utility";
     begin
         rRetailSetup.get;
         if not cC.IsIT4GRetailActive() then exit;
@@ -167,6 +174,14 @@ codeunit 50013 "IT4G-LS Events"
         cPosSession.SetValue('IT4G_ExtDocNo', POSTransaction."External Doc. No.");
         cPosSession.SetValue('IT4G_RelDocNo', POSTransaction."Related Doc. No.");
         cPosSession.SetValue('IT4G_WEBOrderNo', POSTransaction."WEB Order No.");
+
+        cPosSession.SetValue('<#IT4G_Loy_MemberID>', POSTransaction."IT4G-Loyalty ID");
+        cPosSession.SetValue('<#IT4G_Loy_MemberCard>', POSTransaction."IT4G-Loyalty Card");
+
+        cPosSession.SetValue('<#IT4G_Loy_MemberMOB>', cF.GetLoyaltyInfo(1, POSTransaction."Receipt No."));
+        cPosSession.SetValue('<#IT4G_Loy_Membername>', cF.GetLoyaltyInfo(2, POSTransaction."Receipt No."));
+        cPosSession.SetValue('<#IT4G_Loy_MemberEmail>', cF.GetLoyaltyInfo(4, POSTransaction."Receipt No."));
+        cPosSession.SetValue('<#IT4G_Loy_MemberPrevPoints>', cF.GetLoyaltyInfo(3, POSTransaction."Receipt No."));
 
         cPosSession.SetValue('IT4G_Version', 'IT4G VS:' + format(cF.GRV_Date('IT4G_Version', 0, 1)));
     end;

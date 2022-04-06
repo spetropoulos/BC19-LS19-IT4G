@@ -12,6 +12,11 @@ pageextension 60005 "PE99001485-60010-POS Term.Card" extends "LSC POS Terminal C
                     ToolTip = 'Specifies the value of the Fiscal Printer Software field.';
                     ApplicationArea = All;
                 }
+                field("Loyalty System"; Rec."Loyalty System")
+                {
+                    ToolTip = 'Specifies the value of the Loyalty System field.';
+                    ApplicationArea = All;
+                }
             }
         }
     }
