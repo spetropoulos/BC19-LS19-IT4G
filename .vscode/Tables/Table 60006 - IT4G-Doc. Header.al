@@ -202,6 +202,11 @@ table 60006 "IT4G-Doc. Header"
         {
             Caption = 'Updated on Host';
         }
+        field(800; "Status"; Option)
+        {
+            OptionMembers = Send,Received,Canceled;
+            Caption = 'Updated on Host';
+        }
 
     }
 

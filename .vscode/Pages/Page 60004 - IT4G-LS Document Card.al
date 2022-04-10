@@ -101,6 +101,11 @@ page 60004 "IT4G-LS Document Card"
                     ToolTip = 'Specifies the value of the Collect To Series field.';
                     ApplicationArea = All;
                 }
+                field("Cancel Document Code"; Rec."Cancel Document Code")
+                {
+                    ToolTip = 'Specifies the value of the Cancel Document field.';
+                    ApplicationArea = All;
+                }
                 field("Collect Series Document"; Rec."Collect Series Document")
                 {
                     ToolTip = 'Specifies the value of the Collect Series Document field.';

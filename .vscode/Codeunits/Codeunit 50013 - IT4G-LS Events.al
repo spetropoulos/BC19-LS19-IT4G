@@ -110,8 +110,9 @@ codeunit 50013 "IT4G-LS Events"
     local procedure OnAfterPostTransaction_IT4G(var TransactionHeader_p: Record "LSC Transaction Header")
     var
         cC: Codeunit "IT4G-Doc. Management";
-
+        cWS: Codeunit "IT4G - WEB Service Functions";
     begin
+        cWS.IT4G_SendTransaction(TransactionHeader_p."Store No.", TransactionHeader_p."POS Terminal No.", TransactionHeader_p."Transaction No.");
         cC.LSCreateIT4GDoc(TransactionHeader_p."Store No.", TransactionHeader_p."POS Terminal No.", TransactionHeader_p."Transaction No.");
         cC.LSApplyIT4GDoc(TransactionHeader_p."Store No.", TransactionHeader_p."POS Terminal No.", TransactionHeader_p."Transaction No.");
     end;
@@ -178,10 +179,10 @@ codeunit 50013 "IT4G-LS Events"
         cPosSession.SetValue('<#IT4G_Loy_MemberID>', POSTransaction."IT4G-Loyalty ID");
         cPosSession.SetValue('<#IT4G_Loy_MemberCard>', POSTransaction."IT4G-Loyalty Card");
 
-        cPosSession.SetValue('<#IT4G_Loy_MemberMOB>', cF.GetLoyaltyInfo(1, POSTransaction."Receipt No."));
-        cPosSession.SetValue('<#IT4G_Loy_Membername>', cF.GetLoyaltyInfo(2, POSTransaction."Receipt No."));
-        cPosSession.SetValue('<#IT4G_Loy_MemberEmail>', cF.GetLoyaltyInfo(4, POSTransaction."Receipt No."));
-        cPosSession.SetValue('<#IT4G_Loy_MemberPrevPoints>', cF.GetLoyaltyInfo(3, POSTransaction."Receipt No."));
+        cPosSession.SetValue('<#IT4G_Loy_MemberMOB>', cF.GetLoyaltyInfoPOS(1, POSTransaction."Receipt No."));
+        cPosSession.SetValue('<#IT4G_Loy_MemberName>', cF.GetLoyaltyInfoPOS(2, POSTransaction."Receipt No."));
+        cPosSession.SetValue('<#IT4G_Loy_MemberEmail>', cF.GetLoyaltyInfoPOS(4, POSTransaction."Receipt No."));
+        cPosSession.SetValue('<#IT4G_Loy_MemberPrevPoints>', cF.GetLoyaltyInfoPOS(3, POSTransaction."Receipt No."));
 
         cPosSession.SetValue('IT4G_Version', 'IT4G VS:' + format(cF.GRV_Date('IT4G_Version', 0, 1)));
     end;
@@ -233,7 +234,6 @@ codeunit 50013 "IT4G-LS Events"
         end;
 
     end;
-
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::lscGetTransactionUtils, 'OnAfterGetXmlPortNo', '', false, false)]
     local procedure OnAfterGetXmlPortNo(var XmlPortNo: Integer)

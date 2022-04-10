@@ -8,9 +8,13 @@ codeunit 50041 "IT4G - WEB Service Utils"
             'Test':
                 Run_Test();
             'Pobuca_RetrieveAccount':
-                PobucaRetrieveAccount();
+                Pobuca_RetrieveAccount();
+            'Pobuca_CreateAccount':
+                Pobuca_RetrieveAccount();
             'Pobuca_SubmitInvoice':
-                PobucaSubmitInvoice();
+                Pobuca_SubmitInvoice();
+            'Pobuca_SendProduct':
+                Pobuca_SendProduct();
         End;
     end;
 
@@ -153,7 +157,7 @@ codeunit 50041 "IT4G - WEB Service Utils"
 
     end;
 
-    procedure PobucaRetrieveAccount();
+    procedure Pobuca_RetrieveAccount();
     var
         xInput: Text;
     begin
@@ -184,17 +188,17 @@ codeunit 50041 "IT4G - WEB Service Utils"
                         if JObject2.get('errors', jToken2) then
                             if jToken2.IsArray then begin
                                 jArray := jToken2.AsArray();
-
                                 jArray.get(0, jToken2);
                                 JObject2 := jToken2.AsObject();
-                                JObject2.get('description', jToken2);
+                                JObject2.get('code', jToken2);
+                                gParams[1] := jToken2.AsValue().AsText();
                                 error(jToken2.AsValue().AsText());
-
+                                JObject2.get('description', jToken2);
+                                gParams[2] := jToken2.AsValue().AsText();
+                                error(jToken2.AsValue().AsText());
                             end;
                     end;
             end;
-
-
         Clear(gParams);
 
         gParams[1] := getJsonValue('contactId');
@@ -203,9 +207,10 @@ codeunit 50041 "IT4G - WEB Service Utils"
         gParams[4] := getJsonValue('mobilePhone');
         gParams[5] := getJsonValue('sfmCard');
         gParams[6] := getJsonValue('points');
+        gParams[7] := getJsonValue('email');
     end;
 
-    procedure PobucaSubmitInvoice();
+    procedure Pobuca_SubmitInvoice();
     var
         xStore: Code[20];
         xPOS: Code[20];
@@ -219,8 +224,10 @@ codeunit 50041 "IT4G - WEB Service Utils"
         jItems: JsonArray;
         jPayments: JsonArray;
         jCoupons: JsonArray;
+        jCustomAttributes: JsonObject;
         rI: Record Item;
         rTTS: Record "LSC Tender Type Setup";
+        rTIE: Record "LSC Trans. Infocode Entry";
     begin
         gURL := StrSubstNo(gURL, rGWSS."URL var 1", rGWSS."Authentication Key");
         xStore := gParams[1];
@@ -230,6 +237,9 @@ codeunit 50041 "IT4G - WEB Service Utils"
         rTH.GET(xStore, xPOS, xTransNo);
 
         jInvoice.Add('transactionId', rTH."Store No." + '-' + rTH."POS Terminal No." + '-' + format(rTH."Transaction No."));
+
+        jInvoice.Add('orderId', rTH."WEB Order No.");   //no Value for guest Orders
+
         jInvoice.Add('customerId', rTH."IT4G-Loyalty ID");
         jInvoice.Add('customerType', 'Contact');
         jInvoice.Add('storeIdOrCode', rTH."Store No.");
@@ -242,6 +252,7 @@ codeunit 50041 "IT4G - WEB Service Utils"
         iF rTSE.findset then begin
             repeat
                 clear(jLine);
+                Clear(jCustomAttributes);
                 rI.GET(rTSE."Item No.");
                 jLine.Add('invoiceLineNumber', rTSE."Line No.");
                 jLine.Add('productIdOrSku', rTSE."Item No.");
@@ -252,8 +263,9 @@ codeunit 50041 "IT4G - WEB Service Utils"
                 jLine.Add('isDiscount', true);
                 //				jLine.Add('discount', rTSE.disc
                 jLine.Add('valueForPoints', -(rTSE."Net Amount" + rTSE."VAT Amount"));
-                //				jLine.Add('customEntityAttributes': {
-                //					"pb_fullproductcode": "2100000003002"
+
+                jCustomAttributes.Add('pb_fullproductcode', rTSE."Item No." + rTSE."Variant Code");
+                jLine.Add('customEntityAttributes', jCustomAttributes);
                 jItems.Add(jLine);
             until rTSE.Next() = 0;
             jInvoice.add('items', jItems);
@@ -278,8 +290,11 @@ codeunit 50041 "IT4G - WEB Service Utils"
         rTIEE.SETRANGE("POS Terminal No.", xPOS);
         rTIEE.SETRANGE("Transaction No.", xTransNo);
 
+        clear(jCustomAttributes);
+        jCustomAttributes.Add('pb_documentnumber', rTH."Document No.");
+        jCustomAttributes.Add('pb_order', rTH."WEB Order No.");  //Only for Guest WEB orders
+        jInvoice.Add('customEntityAttributes', jCustomAttributes);
 
-        jInvoice.Add('searchOnlyLoyalty', true);
         JObject.Add('invoice', jInvoice);
         JObject.WriteTo(JsonText);
 
@@ -290,6 +305,72 @@ codeunit 50041 "IT4G - WEB Service Utils"
         Clear(gParams);
 
         gParams[1] := getJsonValue('points');
+
+        clear(rTIE);
+        rTIE."Store No." := xStore;
+        rTIE."POS Terminal No." := xPOS;
+        rTIE."Transaction No." := xTransNo;
+        rTIE.Infocode := 'LOY_MEMB_TR_POINTS';
+        rTIE.Information := gParams[1];
+        rTIE."Transaction Type" := rTIE."Transaction Type"::Header;
+        rTIE.Date := Today;
+        rTIE.Time := Time;
+        rTIE."Type of Input" := rTIE."Type of Input"::Numeric;
+        if not rTIE.Insert(TRUE) then rTIE.Modify(TRUE);
+        rTIE.Infocode := 'LOY_MEMB_TR_SEND';
+        rTIE."Type of Input" := rTIE."Type of Input"::Numeric;
+        rTIE.Information := 'true';
+        if not rTIE.Insert(TRUE) then rTIE.Modify(TRUE);
+    end;
+
+    procedure Pobuca_SendProduct();
+    var
+        jItem: JsonObject;
+        rI: Record Item;
+        i: Integer;
+        t: Integer;
+        cF: Codeunit "IT4G-Functions";
+        maxRecs: Integer;
+        rSeason: Record "LSC Season";
+    begin
+        maxRecs := cF.GRV_I('IT4G_Pobuca_MaxItemsExport', 0, 1);
+        if maxRecs = 0 then maxRecs := 100;
+        gURL := StrSubstNo(gURL, rGWSS."URL var 1", rGWSS."Authentication Key");
+
+        If gParams[1] <> '' then rI.SetRange("No.", gParams[1]);
+
+        if rI.findset then begin
+            t := rI.Count;
+            i := 0;
+            repeat
+                i += 1;
+                jItem.Add('productNo', rI."No.");
+
+                jItem.Add('shortDescription', rI.Description);   //no Value for guest Orders
+                jItem.Add('longDescription', rI."Description 2");
+
+                jItem.Add('fedas', '');
+                jItem.Add('category', '');
+                jItem.Add('activity', '');
+                jItem.Add('mainGroup', '');
+                jItem.Add('subGroup', '');
+                jItem.Add('seasonCode', rI."LSC Season Code");
+                if rSeason.Get(rI."LSC Season Code") then jItem.Add('seasonDescription', rSeason.Description);
+                jItem.Add('brandCode', '');
+                jItem.Add('brandDescription', '');
+            until (rI.Next = 0) or (i >= maxRecs);
+        end;
+
+        //        JObject.Add('invoice', jInvoice);
+        //        JObject.WriteTo(JsonText);
+
+        if rGWSS.Debug and (rGWSS."Debug Path" <> '') then ExportFile(JsonText, '_request.json');
+
+        CreateJsonCall;
+
+        Clear(gParams);
+
+
     end;
 
     local procedure getJsonValue(xVal: text): Text

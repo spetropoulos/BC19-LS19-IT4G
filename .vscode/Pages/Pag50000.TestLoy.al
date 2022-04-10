@@ -53,7 +53,7 @@ page 50000 "Test Loy"
                 var
                     cC: Codeunit "IT4G - WEB Service Functions";
                 begin
-                    cC.Pobuca_RetrieveAccount(xInput, xRet);
+                    cC.IT4G_getMember(xInput, xRet);
                 end;
             }
             action("Send POBUCA Invoice")
@@ -68,7 +68,7 @@ page 50000 "Test Loy"
                 var
                     cC: Codeunit "IT4G - WEB Service Functions";
                 begin
-                    cC.Pobuca_SubmitInvoice(xStore, xPOS, xTransNo, xRet);
+                    cC.IT4G_SendTransaction(xStore, xPOS, xTransNo, xRet);
                 end;
             }
         }

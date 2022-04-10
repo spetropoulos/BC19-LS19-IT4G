@@ -62,8 +62,6 @@ codeunit 50011 "IT4G-POS Commands"
                     DynemicPaymenuPressed();
                 'GET_IT4GDOC':
                     GetIT4GDocPressed(rec."Current-INPUT");
-                'IT4G_MEMBER':
-                    ScanLoyaltyMemberPressed(rec."Current-INPUT");
                 'IT4G_UPGRADE':
                     begin
                         Codeunit.run(50030);
@@ -145,7 +143,6 @@ codeunit 50011 "IT4G-POS Commands"
 
         CommandFunc.RegisterExtCommand('GET_IT4GDOC', 'Get IT4G Document', 50011, ParameterType::" ", Module, false);
         CommandFunc.RegisterExtCommand('IT4G_UPGRADE', 'Upgrade  IT4G Module', 50011, ParameterType::" ", Module, false);
-        CommandFunc.RegisterExtCommand('IT4G_MEMBER', 'Scan Loyalty member', 50011, ParameterType::" ", Module, false);
 
         createTag('<#IT4G_DocInfo>', 'Document Code Information', xtagType::Transaction);
         createTag('<#IT4G_FromStore>', 'From Store Code', xtagType::Transaction);
@@ -583,18 +580,6 @@ codeunit 50011 "IT4G-POS Commands"
             recref.GetTable(rList);
             POSGui.Lookup(POSLookup, '', sl, true, '', RecRef);
         end;
-    end;
-
-    procedure ScanLoyaltyMemberPressed(xParam: Text)
-    var
-        lblKeyboardCaption: label 'Scan Loyalty Card';
-    begin
-        if not InitLookup('IT4G_LOY_MEMBER') then exit;
-        /*
-                bLookupActive := true;
-                recref.GetTable(rList);
-                POSGui.Lookup(POSLookup, '', sl, true, '', RecRef);
-        */
     end;
 
     procedure DynemicPaymenuPressed()

@@ -29,6 +29,16 @@ pageextension 60002 "Transaction Register" extends "LSC Transaction Register"
                 ToolTip = 'Specifies the value of the Trans. Document No. field';
                 ApplicationArea = All;
             }
+            field("Cancellation Type"; Rec."Cancellation Type")
+            {
+                ToolTip = 'Specifies the value of the Cancellation Type field.';
+                ApplicationArea = All;
+            }
+            field("Cancellation Entry No."; Rec."Cancellation Entry No.")
+            {
+                ToolTip = 'Specifies the value of the Cancellation Entry No. field.';
+                ApplicationArea = All;
+            }
         }
         addlast(Control1)
         {

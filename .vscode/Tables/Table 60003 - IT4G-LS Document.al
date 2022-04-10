@@ -112,6 +112,12 @@ table 60003 "IT4G-LS Document"
             DataClassification = ToBeClassified;
             TableRelation = "IT4G-LS Document".Code where("Type" = const(Printer));
         }
+        field(60002; "Cancel Document Code"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+            TableRelation = "IT4G-LS Document".Code where("Type" = const(Series),
+                "LS Transaction Type" = field("LS Transaction Type"));
+        }
 
         field(90100; "Change Doc. POS Behavior"; enum "IT4G-Change Doc. POS Behavior")
         {

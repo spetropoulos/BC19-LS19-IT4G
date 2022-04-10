@@ -24,9 +24,25 @@ tableextension 60001 "TE99001472-Transaction Header" extends "LSC Transaction He
             Caption = 'Document No.';
             DataClassification = ToBeClassified;
         }
+        field(60010; "Cancellation Type"; Enum "IT4G-Cancellation Type")
+        {
+            Caption = 'Cancellation Type';
+            DataClassification = ToBeClassified;
+        }
+        field(60011; "Cancellation Entry No."; Integer)
+        {
+            Caption = 'Cancellation Entry No.';
+            DataClassification = ToBeClassified;
+        }
         field(60101; "Trans. Document No."; Code[20])
         {
             Caption = 'Trans. Document No.';
+            DataClassification = ToBeClassified;
+        }
+        field(60100; "Location Code"; Code[20])
+        {
+            Caption = 'Location Code';
+            TableRelation = "LSC Store Location"."Location Code" where("Store No." = field("Store No."));
             DataClassification = ToBeClassified;
         }
         field(70001; "From Store"; Code[10])
@@ -101,12 +117,5 @@ tableextension 60001 "TE99001472-Transaction Header" extends "LSC Transaction He
             Caption = 'Ship-to Code';
             TableRelation = "Ship-to Address".Code WHERE("Customer No." = FIELD("Customer No."));
         }
-        field(60100; "Location Code"; Code[20])
-        {
-            Caption = 'Location Code';
-            TableRelation = "LSC Store Location"."Location Code" where("Store No." = field("Store No."));
-            DataClassification = ToBeClassified;
-        }
-
     }
 }

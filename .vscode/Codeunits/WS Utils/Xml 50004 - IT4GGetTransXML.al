@@ -16,6 +16,12 @@ xmlport 50004 GetTransactionIT4GXML
                 fieldelement(TransactionNo; "Transaction Header"."Transaction No.")
                 {
                 }
+                fieldelement(CancellationEntryNo; "Transaction Header"."Cancellation Entry No.")
+                {
+                }
+                fieldelement(CancellationType; "Transaction Header"."Cancellation Type")
+                {
+                }
                 fieldelement(IT4GLoyaltyID; "Transaction Header"."IT4G-Loyalty ID")
                 {
                 }

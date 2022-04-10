@@ -590,4 +590,5 @@ codeunit 50012 "IT4G-LS Functions"
         rSignature += '0' + lEndSymbols;   //For Euro=0 , for other currencies use ISO code
     end;
 
+
 }

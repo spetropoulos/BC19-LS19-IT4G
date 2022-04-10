@@ -12,8 +12,8 @@ codeunit 50030 "IT4G-Upgrade Version"
 
     trigger OnRun()
     begin
-        LatestVersionDate := 20220406D;
-        LatestWSVersionDate := 20220405D;
+        LatestVersionDate := 20220407D;
+        LatestWSVersionDate := 20220407D;
 
 
         rRetailSetUp.get();
@@ -40,29 +40,33 @@ codeunit 50030 "IT4G-Upgrade Version"
 
             dlgTxt := 'Registering Codeunit 50011 - IT4G POS Commands';
             dDLG.Update;
-            commit;
             MenuLine."Registration Mode" := true;
+            commit;
             if not CODEUNIT.Run(50011, MenuLine) then
                 Error(Text001 + ' ' + GetLastErrorText, 50011);
             cPCR.SetupModule('IT4G');
-            commit;
+            sleep(5000);
 
             dlgTxt := 'Registering Codeunit 50018 - IT4G Scan Document';
             dDLG.Update;
             MenuLine."Registration Mode" := true;
+            commit;
             if not CODEUNIT.Run(50018, MenuLine) then
                 Error(Text001 + ' ' + GetLastErrorText, 50018);
             cPCR.SetupModule('IT4GDOC_SCAN');
+            sleep(5000);
 
             dlgTxt := 'Registering Codeunit 50026 - IT4G Loyalty';
             dDLG.Update;
             MenuLine."Registration Mode" := true;
+            commit;
             if not CODEUNIT.Run(50026, MenuLine) then
                 Error(Text001 + ' ' + GetLastErrorText, 50026);
             cPCR.SetupModule('IT4G_LOYALTY');
-            commit;
+            sleep(5000);
         end;
 
+        commit;
         If LatestWSVersionDate >= CurrVersionDate then begin
             dlgTxt := 'Registering IT4G WEB Services';
             dDLG.Update;

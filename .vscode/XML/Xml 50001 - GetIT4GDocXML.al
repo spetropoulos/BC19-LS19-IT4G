@@ -118,7 +118,9 @@ xmlport 50001 GetIT4GDocXML
                 fieldelement(UpdatedbyStaff; "IT4G-Doc. Header"."Updated by Staff")
                 {
                 }
-
+                fieldelement(Status; "IT4G-Doc. Header".Status)
+                {
+                }
             }
             tableelement("IT4G-Doc. Line"; "IT4G-Doc. Line")
             {

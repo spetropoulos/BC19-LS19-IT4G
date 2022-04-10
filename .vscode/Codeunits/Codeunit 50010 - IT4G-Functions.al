@@ -277,7 +277,7 @@ codeunit 50010 "IT4G-Functions"
         EXIT(rLog."Entry No.");
     end;
 
-    procedure GetLoyaltyInfo(xType: integer; xReceiptNo: Text): Text
+    procedure GetLoyaltyInfoPOS(xType: integer; xReceiptNo: Text): Text
     var
         rPTIE: record "LSC POS Trans. Infocode Entry";
     begin
@@ -293,6 +293,32 @@ codeunit 50010 "IT4G-Functions"
                 rPTIE.setrange(Infocode, 'LOY_MEMB_POINTS');
             4:
                 rPTIE.setrange(Infocode, 'LOY_MEMB_MAIL');
+        end;
+        if rPTIE.findfirst then exit(rPTIE.Information);
+        exit('');
+    end;
+
+    procedure GetLoyaltyInfoTrans(xType: integer; xStore: Code[20]; xPOS: code[20]; xTransNo: Integer): Text
+    var
+        rPTIE: record "LSC Trans. Infocode Entry";
+    begin
+        clear(rPTIE);
+        rPTIE.setrange("Store No.", xStore);
+        rPTIE.SetRange("POS Terminal No.", xPOS);
+        rPTIE.SetRange("Transaction No.", xTransNo);
+        rPTIE.SetRange("Line No.", 0);
+
+        case xType of
+            1:
+                rPTIE.setrange(Infocode, 'LOY_MEMB_MOB');
+            2:
+                rPTIE.setrange(Infocode, 'LOY_MEMB_NAME');
+            3:
+                rPTIE.setrange(Infocode, 'LOY_MEMB_POINTS');
+            4:
+                rPTIE.setrange(Infocode, 'LOY_MEMB_MAIL');
+            5:
+                rPTIE.setrange(Infocode, 'LOY_MEMB_TR_POINTS');
         end;
         if rPTIE.findfirst then exit(rPTIE.Information);
         exit('');

@@ -1,6 +1,7 @@
 codeunit 50040 "IT4G - WEB Service Functions"
 {
     var
+        dDLG: Dialog;
         cUtil: Codeunit "IT4G - WEB Service Utils";
         rLog: Record "IT4G-Log";
         LogEntryNo: Integer;
@@ -16,7 +17,14 @@ codeunit 50040 "IT4G - WEB Service Functions"
         GlobalPOS: Text;
         cF: Codeunit "IT4G-Functions";
 
-    procedure GetIT4GMember(xInput: Text; var RetText: Text; var retVal: Array[20] of Text): Boolean
+    procedure IT4G_LOY_SendProduct(xInput: Text; var RetText: Text): Boolean
+    var
+        retVal: Array[20] of Text;
+    begin
+        exit(IT4G_LOY_SendProduct(xInput, RetText, retVal));
+    end;
+
+    procedure IT4G_LOY_SendProduct(xInput: Text; var RetText: Text; var retVal: Array[20] of Text): Boolean
     var
         rRU: Record "LSC Retail User";
         rPOS: Record "LSC POS Terminal";
@@ -27,7 +35,71 @@ codeunit 50040 "IT4G - WEB Service Functions"
         case rPOS."Loyalty System" of
             rPOS."Loyalty System"::POBUCA:
                 begin
-                    exit(Pobuca_RetrieveAccount(xInput, RetText, retVal));
+                    exit(Pobuca_SendProduct(xInput, RetText, retVal));
+                end;
+        end;
+    end;
+
+    procedure IT4G_GetMember(xInput: Text; var RetText: Text): Boolean
+    var
+        retVal: Array[20] of Text;
+    begin
+        exit(IT4G_GetMember(xInput, RetText, retVal));
+    end;
+
+    procedure IT4G_GetMember(xInput: Text; var RetText: Text; var retVal: Array[20] of Text): Boolean
+    var
+        rRU: Record "LSC Retail User";
+        rPOS: Record "LSC POS Terminal";
+    begin
+        GlobalStore := cPS.StoreNo();
+        GlobalPOS := cPS.TerminalNo();
+        rPOS.Get(GlobalPOS);
+        case rPOS."Loyalty System" of
+            rPOS."Loyalty System"::POBUCA:
+                begin
+                    exit(Pobuca_GetAccount(xInput, RetText, retVal));
+                end;
+        end;
+    end;
+
+    procedure IT4G_SendTransaction(xStore: Code[20]; xPOS: Code[20]; xTransNo: Integer): Boolean
+    var
+        retVal: Array[20] of Text;
+        RetText: Text;
+    begin
+        exit(IT4G_SendTransaction(xStore, xPOS, xTransNo, RetText, retVal));
+    end;
+
+    procedure IT4G_SendTransaction(xStore: Code[20]; xPOS: Code[20]; xTransNo: Integer; var RetText: Text): Boolean
+    var
+        retVal: Array[20] of Text;
+    begin
+        exit(IT4G_SendTransaction(xStore, xPOS, xTransNo, RetText, retVal));
+    end;
+
+    procedure IT4G_SendTransaction(xStore: Code[20]; xPOS: Code[20]; xTransNo: Integer; var RetText: Text; var retVal: Array[20] of Text): Boolean
+    var
+        rPOS: Record "LSC POS Terminal";
+        rTH: Record "LSC Transaction Header";
+        lblError1: label 'Transaction Not Found!!!';
+        lblError2: label 'Transaction has not a Loyalty member Assigned!!!';
+    begin
+        If not rTh.get(xStore, xPOS, xTransNo) then begin
+            RetText := lblError1;
+            exit(true);
+        end;
+        If rTh."IT4G-Loyalty ID" = '' then begin
+            RetText := lblError2;
+            exit(true);
+        end;
+
+        GlobalPOS := xPOS;
+        rPOS.Get(GlobalPOS);
+        case rPOS."Loyalty System" of
+            rPOS."Loyalty System"::POBUCA:
+                begin
+                    exit(Pobuca_SendTransaction(xStore, xPOS, xTransNo, RetText, retVal));
                 end;
         end;
     end;
@@ -42,6 +114,7 @@ codeunit 50040 "IT4G - WEB Service Functions"
 
     procedure ProcessService() bOK: Boolean
     begin
+        commit;
         bOK := cUtil.run;
 
         CreateWEBLogEntry(bOK);
@@ -111,16 +184,12 @@ codeunit 50040 "IT4G - WEB Service Functions"
 
     end;
 
-    procedure Pobuca_RetrieveAccount(xInput: Text; var RetText: Text): Boolean
+    local procedure Pobuca_GetAccount(xInput: Text; var RetText: Text; var retVal: Array[20] of Text) bOK: Boolean
     var
-        retVal: Array[20] of Text;
+        lblSend: Label 'Getting Member Data from POBUCA\Please Wait...';
+        lblMobNotFound: Label 'Mobile %1 not found on Database.\Create new Loyalty User with mobile %1?';
     begin
-        exit(Pobuca_RetrieveAccount(xInput, RetText, RetVal));
-    end;
-
-    procedure Pobuca_RetrieveAccount(xInput: Text; var RetText: Text; var retVal: Array[20] of Text): Boolean
-    var
-    begin
+        IF GuiAllowed THEN dDLG.Open(lblSend);
         Init('POBUCA', 'GET_ACC');
 
         IF COPYSTR(xInput, 1, strlen(cF.GRV_T('IT4G_Loy_Mobile_Prefix', 0, 1))) = cF.GRV_T('IT4G_Loy_Mobile_Prefix', 0, 1) THEN
@@ -129,46 +198,90 @@ codeunit 50040 "IT4G - WEB Service Functions"
             IF STRLEN(xInput) = cF.GRV_I('IT4G_Loy_OTP_Length', 0, 1) THEN
                 gParams[1] := 'OTP'
             else
-                gParams[1] := 'CRD';
-
+                IF STRLEN(xInput) <= 20 THEN
+                    gParams[1] := 'CRD'
+                else
+                    gParams[1] := '';
         gParams[2] := xInput;
         cUtil.SetService('Pobuca_RetrieveAccount', 'POBUCA', 'GET_ACC', gKey + '-' + xInput, gParams);
-        if ProcessService() then begin
+        bOK := ProcessService();
+        if bOK then begin
             cUtil.getRetvalues(retVal);
         end else begin
             RetText := GetLastErrorText();
-            exit(false);
+            cUtil.getRetvalues(retVal);
+            if gParams[1] = 'MOB' then
+                if retVal[1] = 'UserNotFound' Then
+                    if Confirm(StrSubstNo(lblMobNotFound, xInput)) then begin
+                        IF GuiAllowed THEN dDLG.Close();
+                        exit(Pobuca_CreateAccount(xInput, RetText, retVal));
+                    end;
         end;
-        exit(true);
+
+        exit(bOK);
     end;
 
-    procedure Pobuca_SubmitInvoice(xStore: Code[20]; xPOS: Code[20]; xTransNo: Integer; var RetText: Text): Boolean
+    local procedure Pobuca_CreateAccount(xInput: Text; var RetText: Text; var retVal: Array[20] of Text) bOK: Boolean
     var
-        retVal: Array[20] of Text;
+        lblSend: Label 'Create Member From mobile POBUCA\Please Wait...';
     begin
-        exit(Pobuca_SubmitInvoice(xStore, xPOS, xTransNo, RetText, retVal));
+        IF GuiAllowed THEN dDLG.Open(lblSend);
+        Init('POBUCA', 'ACC_CREATE');
+
+        gParams[1] := 'MOB';
+        gParams[2] := xInput;
+
+        cUtil.SetService('Pobuca_CreateAccount', 'POBUCA', 'ACC_CREATE', gKey + '-' + xInput, gParams);
+        bOK := ProcessService();
+        if bOK then begin
+            cUtil.getRetvalues(retVal);
+        end else begin
+            RetText := GetLastErrorText();
+        end;
+        IF GuiAllowed THEN dDLG.Close();
+        exit(bOK);
     end;
 
-    procedure Pobuca_SubmitInvoice(xStore: Code[20]; xPOS: Code[20]; xTransNo: Integer; var RetText: Text; var retVal: Array[20] of Text): Boolean
+    local procedure Pobuca_SendTransaction(xStore: Code[20]; xPOS: Code[20]; xTransNo: Integer; var RetText: Text; var retVal: Array[20] of Text) bOK: Boolean
     var
-        rTH: Record "LSC Transaction Header";
+        lblSend: Label 'Sending Transaction to POBUCA!!!\Please Wait...';
     begin
+        IF GuiAllowed THEN dDLG.Open(lblSend);
         Init('POBUCA', 'INV_SEND');
         gParams[1] := xStore;
         gParams[2] := xPOS;
         gParams[3] := format(xTransNo);
-        If not rTh.get(xStore, xPOS, xTransNo) then exit(true);
-        If rTh."IT4G-Loyalty ID" = '' then exit(true);
 
         cUtil.SetService('Pobuca_SubmitInvoice', 'POBUCA', 'INV_SEND', gKey + '-' + gParams[1] + '-' + gParams[2] + '-' + gParams[3], gParams);
-        if ProcessService() then begin
-            cUtil.getRetvalues(gParams);
+        bOK := ProcessService();
+        if bOK then begin
+            cUtil.getRetvalues(retVal);
+            RetText := retVal[1];
         end else begin
             RetText := GetLastErrorText();
-            exit(false);
         end;
-        exit(true);
+        IF GuiAllowed THEN dDLG.Close();
+        exit(bOK);
+    end;
 
+    local procedure Pobuca_SendProduct(xItem: Code[20]; var RetText: Text; var retVal: Array[20] of Text) bOK: Boolean
+    var
+        lblSend: Label 'Sending Items to POBUCA!!!\Please Wait...';
+    begin
+        IF GuiAllowed THEN dDLG.Open(lblSend);
+        Init('POBUCA', 'ITEM_SEND');
+        gParams[1] := xItem;
+
+        cUtil.SetService('Pobuca_SendProduct', 'POBUCA', 'ITEM_SEND', gKey + '-' + gParams[1], gParams);
+        bOK := ProcessService();
+        if bOK then begin
+            cUtil.getRetvalues(retVal);
+            RetText := retVal[1];
+        end else begin
+            RetText := GetLastErrorText();
+        end;
+        IF GuiAllowed THEN dDLG.Close();
+        exit(bOK);
     end;
 
 
