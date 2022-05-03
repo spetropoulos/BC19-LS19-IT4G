@@ -115,7 +115,13 @@ table 60003 "IT4G-LS Document"
         field(60002; "Cancel Document Code"; Code[20])
         {
             DataClassification = ToBeClassified;
-            TableRelation = "IT4G-LS Document".Code where("Type" = const(Series),
+            TableRelation = "IT4G-LS Document".Code where("Type" = const(Document),
+                "LS Transaction Type" = field("LS Transaction Type"));
+        }
+        field(60003; "Refund Document Code"; Code[20])
+        {
+            DataClassification = ToBeClassified;
+            TableRelation = "IT4G-LS Document".Code where("Type" = const(Document),
                 "LS Transaction Type" = field("LS Transaction Type"));
         }
 
@@ -198,7 +204,7 @@ table 60003 "IT4G-LS Document"
         field(1006; "Collect Series Document"; Code[20])
         {
             DataClassification = ToBeClassified;
-            TableRelation = "IT4G-LS Document".Code where("Type" = const(Series));
+            TableRelation = "IT4G-LS Document".Code where("Type" = const(Document));
         }
         field(1007; "Do not Export"; Boolean)
         {

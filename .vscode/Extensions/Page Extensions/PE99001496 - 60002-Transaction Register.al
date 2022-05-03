@@ -39,6 +39,11 @@ pageextension 60002 "Transaction Register" extends "LSC Transaction Register"
                 ToolTip = 'Specifies the value of the Cancellation Entry No. field.';
                 ApplicationArea = All;
             }
+            field("Allow Cancel"; Rec."Allow Cancel")
+            {
+                ToolTip = 'Specifies the value of the Allow Cancel field.';
+                ApplicationArea = All;
+            }
         }
         addlast(Control1)
         {

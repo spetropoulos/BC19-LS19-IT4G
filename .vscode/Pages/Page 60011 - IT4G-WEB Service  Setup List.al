@@ -126,6 +126,21 @@ page 60011 "IT4G-WEB Service Setup"
 
                 end;
             }
+            action("Create Mirror Service")
+            {
+                ApplicationArea = All;
+                Tooltip = '';
+                Promoted = true;
+                PromotedOnly = true;
+                PromotedCategory = Process;
+                Caption = 'Create Mirror Service';
+                trigger OnAction()
+                var
+
+                begin
+                    rec.createMirrorService();
+                end;
+            }
         }
     }
 

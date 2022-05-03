@@ -16,6 +16,9 @@ xmlport 50004 GetTransactionIT4GXML
                 fieldelement(TransactionNo; "Transaction Header"."Transaction No.")
                 {
                 }
+                fieldelement(AllowCancel; "Transaction Header"."Allow Cancel")
+                {
+                }
                 fieldelement(CancellationEntryNo; "Transaction Header"."Cancellation Entry No.")
                 {
                 }

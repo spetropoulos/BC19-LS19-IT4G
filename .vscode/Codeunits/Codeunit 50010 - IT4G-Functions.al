@@ -323,5 +323,25 @@ codeunit 50010 "IT4G-Functions"
         if rPTIE.findfirst then exit(rPTIE.Information);
         exit('');
     end;
+
+
+    procedure ExportFile(xFileContent: text; Filename: text; FileExtention: Text)
+    var
+        FileMgmt: Codeunit "File Management";
+        ServerFileName: Text;
+        DotFile: File;
+        LogOutStream: OutStream;
+        LogInStream: InStream;
+        TempBlob: Codeunit "Temp Blob";
+    begin
+        ServerFileName := FileMgmt.ServerTempFileName(FileExtention);
+        TempBlob.CreateOutStream(LogOutStream);
+        LogOutStream.WriteText(xFileContent);
+        TempBlob.CreateInStream(LogInStream);
+        Serverfilename := FileMgmt.InstreamExportToServerFile(LogInStream, FileExtention);
+        FileMgmt.CopyServerFile(ServerFileName, FileName, true);
+        FileMgmt.DeleteServerFile(ServerFileName);
+
+    end;
 }
 

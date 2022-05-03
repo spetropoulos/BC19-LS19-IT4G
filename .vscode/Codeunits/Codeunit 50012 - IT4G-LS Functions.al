@@ -359,7 +359,7 @@ codeunit 50012 "IT4G-LS Functions"
         lNetAmount: array[5] of Decimal;
         lVATAmount: array[4] of Decimal;
         lTotalAmount: Decimal;
-        lErr001: TextConst ELL = 'Δεν έχει οριστεί %1 για %2: %3', ENU = '%1 not set for %2: %3';
+        lErr001: Label '%1 not set for %2: %3';
         lInfocode: Record "IT4G-LS Document";
         lInfocodePrinterSetup: Record "IT4G-Doc. Series Printer Setup";
         rPOS: Record "LSC POS Terminal";
@@ -389,7 +389,7 @@ codeunit 50012 "IT4G-LS Functions"
         lNetAmount: array[5] of Decimal;
         lVATAmount: array[4] of Decimal;
         lTotalAmount: Decimal;
-        lErr001: TextConst ELL = 'Δεν έχει οριστεί %1 για %2: %3', ENU = '%1 not set for %2: %3';
+        lErr001: Label '%1 not set for %2: %3';
         lInfocode: Record "IT4G-LS Document";
         lInfocodePrinterSetup: Record "IT4G-Doc. Series Printer Setup";
     begin
@@ -496,7 +496,7 @@ codeunit 50012 "IT4G-LS Functions"
         lNetAmount: array[5] of Decimal;
         lVATAmount: array[4] of Decimal;
         lTotalAmount: Decimal;
-        lErr001: TextConst ELL = 'Δεν έχει οριστεί %1 για %2: %3', ENU = '%1 not set for %2: %3';
+        lErr001: Label '%1 not set for %2: %3';
         rI: Record "IT4G-LS Document";
         lInfocode: Record "IT4G-LS Document";
         lInfocodePrinterSetup: Record "IT4G-Doc. Series Printer Setup";

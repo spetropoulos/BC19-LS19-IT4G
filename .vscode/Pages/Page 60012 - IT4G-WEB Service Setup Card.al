@@ -3,8 +3,7 @@ page 60012 "IT4G-WEB Service card"
     Caption = 'IT4G-WEB Service card';
     PageType = Card;
     SourceTable = "IT4G-WEb Service Setup";
-    DelayedInsert = true;
-
+    //    DelayedInsert = true;
     layout
     {
         area(content)
@@ -98,6 +97,7 @@ page 60012 "IT4G-WEB Service card"
                     ApplicationArea = All;
                 }
             }
+
             part("WEB Service Methods"; "IT4G-WEB Service Setup Methods")
             {
                 ApplicationArea = All;
@@ -105,5 +105,6 @@ page 60012 "IT4G-WEB Service card"
                 UpdatePropagation = Both;
             }
         }
+
     }
 }

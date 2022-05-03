@@ -1,8 +1,8 @@
-codeunit 50040 "IT4G - WEB Service Functions"
+codeunit 50040 "IT4G-WEB Service Functions"
 {
     var
         dDLG: Dialog;
-        cUtil: Codeunit "IT4G - WEB Service Utils";
+        cUtil: Codeunit "IT4G-WEB Service Utils";
         rLog: Record "IT4G-Log";
         LogEntryNo: Integer;
         rGWSS: Record "IT4G-WEb Service Setup";
@@ -63,22 +63,22 @@ codeunit 50040 "IT4G - WEB Service Functions"
         end;
     end;
 
-    procedure IT4G_SendTransaction(xStore: Code[20]; xPOS: Code[20]; xTransNo: Integer): Boolean
+    procedure IT4G_SendLoyTransaction(xStore: Code[20]; xPOS: Code[20]; xTransNo: Integer): Boolean
     var
         retVal: Array[20] of Text;
         RetText: Text;
     begin
-        exit(IT4G_SendTransaction(xStore, xPOS, xTransNo, RetText, retVal));
+        exit(IT4G_SendLoyTransaction(xStore, xPOS, xTransNo, RetText, retVal));
     end;
 
-    procedure IT4G_SendTransaction(xStore: Code[20]; xPOS: Code[20]; xTransNo: Integer; var RetText: Text): Boolean
+    procedure IT4G_SendLoyTransaction(xStore: Code[20]; xPOS: Code[20]; xTransNo: Integer; var RetText: Text): Boolean
     var
         retVal: Array[20] of Text;
     begin
-        exit(IT4G_SendTransaction(xStore, xPOS, xTransNo, RetText, retVal));
+        exit(IT4G_SendLoyTransaction(xStore, xPOS, xTransNo, RetText, retVal));
     end;
 
-    procedure IT4G_SendTransaction(xStore: Code[20]; xPOS: Code[20]; xTransNo: Integer; var RetText: Text; var retVal: Array[20] of Text): Boolean
+    procedure IT4G_SendLoyTransaction(xStore: Code[20]; xPOS: Code[20]; xTransNo: Integer; var RetText: Text; var retVal: Array[20] of Text): Boolean
     var
         rPOS: Record "LSC POS Terminal";
         rTH: Record "LSC Transaction Header";
@@ -99,7 +99,44 @@ codeunit 50040 "IT4G - WEB Service Functions"
         case rPOS."Loyalty System" of
             rPOS."Loyalty System"::POBUCA:
                 begin
-                    exit(Pobuca_SendTransaction(xStore, xPOS, xTransNo, RetText, retVal));
+                    exit(Pobuca_SendLoyTransaction(xStore, xPOS, xTransNo, RetText, retVal));
+                end;
+        end;
+    end;
+
+    procedure IT4G_SendAADETransaction(xStore: Code[20]; xPOS: Code[20]; xTransNo: Integer): Boolean
+    var
+        retVal: Array[20] of Text;
+        RetText: Text;
+    begin
+        exit(IT4G_SendAADETransaction(xStore, xPOS, xTransNo, RetText, retVal));
+    end;
+
+    procedure IT4G_SendAADETransaction(xStore: Code[20]; xPOS: Code[20]; xTransNo: Integer; var RetText: Text): Boolean
+    var
+        retVal: Array[20] of Text;
+    begin
+        exit(IT4G_SendAADETransaction(xStore, xPOS, xTransNo, RetText, retVal));
+    end;
+
+    procedure IT4G_SendAADETransaction(xStore: Code[20]; xPOS: Code[20]; xTransNo: Integer; var RetText: Text; var retVal: Array[20] of Text): Boolean
+    var
+        rPOS: Record "LSC POS Terminal";
+        rTH: Record "LSC Transaction Header";
+        lblError1: label 'Transaction Not Found!!!';
+        lblError2: label 'Transaction has not a Loyalty member Assigned!!!';
+    begin
+        If not rTh.get(xStore, xPOS, xTransNo) then begin
+            RetText := lblError1;
+            exit(true);
+        end;
+
+        GlobalPOS := xPOS;
+        rPOS.Get(GlobalPOS);
+        case rPOS."Fiscal Printer Software" of
+            rPOS."Fiscal Printer Software"::SoftOne_WS:
+                begin
+                    exit(AADE_SoftOneSendLSDoc(xStore, xPOS, xTransNo, RetText, retVal));
                 end;
         end;
     end;
@@ -203,7 +240,7 @@ codeunit 50040 "IT4G - WEB Service Functions"
                 else
                     gParams[1] := '';
         gParams[2] := xInput;
-        cUtil.SetService('Pobuca_RetrieveAccount', 'POBUCA', 'GET_ACC', gKey + '-' + xInput, gParams);
+        cUtil.SetService('Pobuca_RetrieveAccount', rGWSSL.Code, rGWSSL.SubCode, gKey + '-' + xInput, gParams);
         bOK := ProcessService();
         if bOK then begin
             cUtil.getRetvalues(retVal);
@@ -231,7 +268,7 @@ codeunit 50040 "IT4G - WEB Service Functions"
         gParams[1] := 'MOB';
         gParams[2] := xInput;
 
-        cUtil.SetService('Pobuca_CreateAccount', 'POBUCA', 'ACC_CREATE', gKey + '-' + xInput, gParams);
+        cUtil.SetService('Pobuca_CreateAccount', rGWSSL.Code, rGWSSL.SubCode, gKey + '-' + xInput, gParams);
         bOK := ProcessService();
         if bOK then begin
             cUtil.getRetvalues(retVal);
@@ -242,7 +279,7 @@ codeunit 50040 "IT4G - WEB Service Functions"
         exit(bOK);
     end;
 
-    local procedure Pobuca_SendTransaction(xStore: Code[20]; xPOS: Code[20]; xTransNo: Integer; var RetText: Text; var retVal: Array[20] of Text) bOK: Boolean
+    local procedure Pobuca_SendLoyTransaction(xStore: Code[20]; xPOS: Code[20]; xTransNo: Integer; var RetText: Text; var retVal: Array[20] of Text) bOK: Boolean
     var
         lblSend: Label 'Sending Transaction to POBUCA!!!\Please Wait...';
     begin
@@ -252,7 +289,7 @@ codeunit 50040 "IT4G - WEB Service Functions"
         gParams[2] := xPOS;
         gParams[3] := format(xTransNo);
 
-        cUtil.SetService('Pobuca_SubmitInvoice', 'POBUCA', 'INV_SEND', gKey + '-' + gParams[1] + '-' + gParams[2] + '-' + gParams[3], gParams);
+        cUtil.SetService('Pobuca_SubmitInvoice', rGWSSL.Code, rGWSSL.SubCode, gKey + '-' + gParams[1] + '-' + gParams[2] + '-' + gParams[3], gParams);
         bOK := ProcessService();
         if bOK then begin
             cUtil.getRetvalues(retVal);
@@ -272,13 +309,33 @@ codeunit 50040 "IT4G - WEB Service Functions"
         Init('POBUCA', 'ITEM_SEND');
         gParams[1] := xItem;
 
-        cUtil.SetService('Pobuca_SendProduct', 'POBUCA', 'ITEM_SEND', gKey + '-' + gParams[1], gParams);
+        cUtil.SetService('Pobuca_SendProduct', rGWSSL.Code, rGWSSL.SubCode, gKey + '-' + gParams[1], gParams);
         bOK := ProcessService();
         if bOK then begin
             cUtil.getRetvalues(retVal);
             RetText := retVal[1];
         end else begin
             RetText := GetLastErrorText();
+        end;
+        IF GuiAllowed THEN dDLG.Close();
+        exit(bOK);
+    end;
+
+    local procedure AADE_SoftOneSendLSDoc(xStore: Code[20]; xPOS: Code[20]; xTransNo: Integer; var RetText: Text; var retVal: Array[20] of Text) bOK: Boolean
+    var
+        lblSend: Label 'Sending Document to AADE\Please Wait...';
+    begin
+        IF GuiAllowed THEN dDLG.Open(lblSend);
+        Init('AADE-SOFTONE', 'INVOICE');
+        gParams[1] := xStore;
+        gParams[2] := xPOS;
+        gParams[3] := format(xTransNo);
+
+        cUtil.SetService('AADE_SoftOne_SendInvoice', rGWSSL.Code, rGWSSL.SubCode, gKey + '-' + gParams[1] + '-' + gParams[2] + '-' + gParams[3], gParams);
+        bOK := ProcessService();
+        if bOK then begin
+            cUtil.getRetvalues(retVal);
+        end else begin
         end;
         IF GuiAllowed THEN dDLG.Close();
         exit(bOK);

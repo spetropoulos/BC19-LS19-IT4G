@@ -1,0 +1,592 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="DataSource">
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString />
+      </ConnectionProperties>
+      <rd:SecurityType>None</rd:SecurityType>
+    </DataSource>
+  </DataSources>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <Height>2in</Height>
+        <Style />
+      </Body>
+      <Width>6.5in</Width>
+      <Page>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="l_ReportName">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>l_ReportName</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>l_ReportName</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="l_Page">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>l_Page</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>l_Page</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="l_Total">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>l_Total</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>l_Total</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Customer">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Customer</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Customer</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Account">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Account</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Account</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ItemNo">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>ItemNo</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>ItemNo</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ItemDescription">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>ItemDescription</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>ItemDescription</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="VariantCode">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>VariantCode</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>VariantCode</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Price">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Price</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Price</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Qty">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Qty</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Qty</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Discount">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Discount</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Discount</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="NetAmount">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>NetAmount</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>NetAmount</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="VAT">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>VAT</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>VAT</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Payment">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Payment</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Payment</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Description">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Description</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Description</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="TotalPayment">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>TotalPayment</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>TotalPayment</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="AccountDescription">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>AccountDescription</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>AccountDescription</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="TenderType">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>TenderType</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>TenderType</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Transaction_Header__Receipt_No__Caption">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Transaction_Header__Receipt_No__Caption</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Transaction_Header__Receipt_No__Caption</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Transaction_Header__Transaction_No__Caption">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Transaction_Header__Transaction_No__Caption</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Transaction_Header__Transaction_No__Caption</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Transaction_Header__DateCaption">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Transaction_Header__DateCaption</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Transaction_Header__DateCaption</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Transaction_Header__POS_Terminal_No__Caption">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Transaction_Header__POS_Terminal_No__Caption</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Transaction_Header__POS_Terminal_No__Caption</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Transaction_Header__Staff_ID_Caption">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Transaction_Header__Staff_ID_Caption</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Transaction_Header__Staff_ID_Caption</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Transaction_Header__Entry_Status_Caption">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Transaction_Header__Entry_Status_Caption</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Transaction_Header__Entry_Status_Caption</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Transaction_Header__Transaction_Type_Caption">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Transaction_Header__Transaction_Type_Caption</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Transaction_Header__Transaction_Type_Caption</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Trans__Payment_Entry___Currency_Code_Caption">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Trans__Payment_Entry___Currency_Code_Caption</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Trans__Payment_Entry___Currency_Code_Caption</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Trans__Payment_Entry___Amount_in_Currency_Caption">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Trans__Payment_Entry___Amount_in_Currency_Caption</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Trans__Payment_Entry___Amount_in_Currency_Caption</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Trans__Payment_Entry___Exchange_Rate_Caption">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Trans__Payment_Entry___Exchange_Rate_Caption</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Trans__Payment_Entry___Exchange_Rate_Caption</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Trans__Payment_Entry___Amount_Tendered_Caption">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Trans__Payment_Entry___Amount_Tendered_Caption</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Trans__Payment_Entry___Amount_Tendered_Caption</Prompt>
+    </ReportParameter>
+  </ReportParameters>
+  <Code>Public Function BlankZero(ByVal Value As Decimal)
+    if Value = 0 then
+        Return ""
+    end if
+    Return Value
+End Function
+
+Public Function BlankPos(ByVal Value As Decimal)
+    if Value &gt; 0 then
+        Return ""
+    end if
+    Return Value
+End Function
+
+Public Function BlankZeroAndPos(ByVal Value As Decimal)
+    if Value &gt;= 0 then
+        Return ""
+    end if
+    Return Value
+End Function
+
+Public Function BlankNeg(ByVal Value As Decimal)
+    if Value &lt; 0 then
+        Return ""
+    end if
+    Return Value
+End Function
+
+Public Function BlankNegAndZero(ByVal Value As Decimal)
+    if Value &lt;= 0 then
+        Return ""
+    end if
+    Return Value
+End Function
+</Code>
+  <Language>=User!Language</Language>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportID>0eeb6585-38ae-40f1-885b-8d50088d51b4</rd:ReportID>
+  <DataSets>
+    <DataSet Name="DataSet_Result">
+      <Fields>
+        <Field Name="FORMAT_TODAY_0_4_">
+          <DataField>FORMAT_TODAY_0_4_</DataField>
+        </Field>
+        <Field Name="COMPANYNAME">
+          <DataField>COMPANYNAME</DataField>
+        </Field>
+        <Field Name="Transaction_Header__Receipt_No__">
+          <DataField>Transaction_Header__Receipt_No__</DataField>
+        </Field>
+        <Field Name="Transaction_Header__Transaction_No__">
+          <DataField>Transaction_Header__Transaction_No__</DataField>
+        </Field>
+        <Field Name="Transaction_Header__Date">
+          <DataField>Transaction_Header__Date</DataField>
+        </Field>
+        <Field Name="Transaction_Header__Time">
+          <DataField>Transaction_Header__Time</DataField>
+        </Field>
+        <Field Name="Transaction_Header__POS_Terminal_No__">
+          <DataField>Transaction_Header__POS_Terminal_No__</DataField>
+        </Field>
+        <Field Name="Transaction_Header__Staff_ID_">
+          <DataField>Transaction_Header__Staff_ID_</DataField>
+        </Field>
+        <Field Name="Transaction_Header__CustomerName">
+          <DataField>Transaction_Header__CustomerName</DataField>
+        </Field>
+        <Field Name="Transaction_Header__CustomerRec__No__">
+          <DataField>Transaction_Header__CustomerRec__No__</DataField>
+        </Field>
+        <Field Name="Transaction_Header__Entry_Status_">
+          <DataField>Transaction_Header__Entry_Status_</DataField>
+        </Field>
+        <Field Name="Transaction_Header__Transaction_Type_">
+          <DataField>Transaction_Header__Transaction_Type_</DataField>
+        </Field>
+        <Field Name="Transaction_Header__Store_No_">
+          <DataField>Transaction_Header__Store_No_</DataField>
+        </Field>
+        <Field Name="Trans__Sales_Entry___Store_No_">
+          <DataField>Trans__Sales_Entry___Store_No_</DataField>
+        </Field>
+        <Field Name="Trans__Sales_Entry___POS_Terminal_No_">
+          <DataField>Trans__Sales_Entry___POS_Terminal_No_</DataField>
+        </Field>
+        <Field Name="Trans__Sales_Entry___Transaction_No_">
+          <DataField>Trans__Sales_Entry___Transaction_No_</DataField>
+        </Field>
+        <Field Name="Trans__Sales_Entry___Line_No_">
+          <DataField>Trans__Sales_Entry___Line_No_</DataField>
+        </Field>
+        <Field Name="Trans__Sales_Entry___Item_No__">
+          <DataField>Trans__Sales_Entry___Item_No__</DataField>
+        </Field>
+        <Field Name="Trans__Sales_Entry___ItemName">
+          <DataField>Trans__Sales_Entry___ItemName</DataField>
+        </Field>
+        <Field Name="Trans__Sales_Entry___Variant_Code_">
+          <DataField>Trans__Sales_Entry___Variant_Code_</DataField>
+        </Field>
+        <Field Name="Trans__Sales_Entry___Price_">
+          <DataField>Trans__Sales_Entry___Price_</DataField>
+        </Field>
+        <Field Name="Trans__Sales_Entry___Price_Format">
+          <DataField>Trans__Sales_Entry___Price_Format</DataField>
+        </Field>
+        <Field Name="Trans__Sales_Entry___Quantity____1">
+          <DataField>Trans__Sales_Entry___Quantity____1</DataField>
+        </Field>
+        <Field Name="Trans__Sales_Entry___Quantity____1Format">
+          <DataField>Trans__Sales_Entry___Quantity____1Format</DataField>
+        </Field>
+        <Field Name="Trans__Sales_Entry___Discount_Amount_">
+          <DataField>Trans__Sales_Entry___Discount_Amount_</DataField>
+        </Field>
+        <Field Name="Trans__Sales_Entry___Discount_Amount_Format">
+          <DataField>Trans__Sales_Entry___Discount_Amount_Format</DataField>
+        </Field>
+        <Field Name="Trans__Sales_Entry___Net_Amount_____1">
+          <DataField>Trans__Sales_Entry___Net_Amount_____1</DataField>
+        </Field>
+        <Field Name="Trans__Sales_Entry___Net_Amount_____1Format">
+          <DataField>Trans__Sales_Entry___Net_Amount_____1Format</DataField>
+        </Field>
+        <Field Name="Trans__Sales_Entry___VAT_Amount_____1">
+          <DataField>Trans__Sales_Entry___VAT_Amount_____1</DataField>
+        </Field>
+        <Field Name="Trans__Sales_Entry___VAT_Amount_____1Format">
+          <DataField>Trans__Sales_Entry___VAT_Amount_____1Format</DataField>
+        </Field>
+        <Field Name="Trans__Sales_Entry___Net_Amount">
+          <DataField>Trans__Sales_Entry___Net_Amount</DataField>
+        </Field>
+        <Field Name="Trans__Sales_Entry___Net_AmountFormat">
+          <DataField>Trans__Sales_Entry___Net_AmountFormat</DataField>
+        </Field>
+        <Field Name="Trans__Sales_Entry___VAT_Amount">
+          <DataField>Trans__Sales_Entry___VAT_Amount</DataField>
+        </Field>
+        <Field Name="Trans__Sales_Entry___VAT_AmountFormat">
+          <DataField>Trans__Sales_Entry___VAT_AmountFormat</DataField>
+        </Field>
+        <Field Name="Trans__Sales_Entry___ItemTotal____1">
+          <DataField>Trans__Sales_Entry___ItemTotal____1</DataField>
+        </Field>
+        <Field Name="Trans__Sales_Entry___ItemTotal____1Format">
+          <DataField>Trans__Sales_Entry___ItemTotal____1Format</DataField>
+        </Field>
+        <Field Name="Trans__Sales_Entry___TotDiscText">
+          <DataField>Trans__Sales_Entry___TotDiscText</DataField>
+        </Field>
+        <Field Name="Transaction_Header___Total_Discount_">
+          <DataField>Transaction_Header___Total_Discount_</DataField>
+        </Field>
+        <Field Name="Transaction_Header___Total_Discount_Format">
+          <DataField>Transaction_Header___Total_Discount_Format</DataField>
+        </Field>
+        <Field Name="Trans__Discount_Entry___Store_No_">
+          <DataField>Trans__Discount_Entry___Store_No_</DataField>
+        </Field>
+        <Field Name="Trans__Discount_Entry___POS_Terminal_No_">
+          <DataField>Trans__Discount_Entry___POS_Terminal_No_</DataField>
+        </Field>
+        <Field Name="Trans__Discount_Entry___Transaction_No_">
+          <DataField>Trans__Discount_Entry___Transaction_No_</DataField>
+        </Field>
+        <Field Name="Trans__Discount_Entry___Line_No_">
+          <DataField>Trans__Discount_Entry___Line_No_</DataField>
+        </Field>
+        <Field Name="Trans__Discount_Entry___Offer_Type">
+          <DataField>Trans__Discount_Entry___Offer_Type</DataField>
+        </Field>
+        <Field Name="Trans__Discount_Entry___Offer_No_">
+          <DataField>Trans__Discount_Entry___Offer_No_</DataField>
+        </Field>
+        <Field Name="Trans__Discount_Entry___Sequence_Code_">
+          <DataField>Trans__Discount_Entry___Sequence_Code_</DataField>
+        </Field>
+        <Field Name="Trans__Discount_Entry___Sequence_Function_">
+          <DataField>Trans__Discount_Entry___Sequence_Function_</DataField>
+        </Field>
+        <Field Name="Trans__Discount_Entry___DiscountDescription">
+          <DataField>Trans__Discount_Entry___DiscountDescription</DataField>
+        </Field>
+        <Field Name="Trans__Discount_Entry___Discount_Amount_">
+          <DataField>Trans__Discount_Entry___Discount_Amount_</DataField>
+        </Field>
+        <Field Name="Trans__Discount_Entry___Discount_Amount_Format">
+          <DataField>Trans__Discount_Entry___Discount_Amount_Format</DataField>
+        </Field>
+        <Field Name="TransSalesEntryTotal_Number">
+          <DataField>TransSalesEntryTotal_Number</DataField>
+        </Field>
+        <Field Name="DiscountSummary__Number">
+          <DataField>DiscountSummary__Number</DataField>
+        </Field>
+        <Field Name="DiscountSummary__Text002">
+          <DataField>DiscountSummary__Text002</DataField>
+        </Field>
+        <Field Name="DiscountSummary__PeriodicDiscountTEMP_Description">
+          <DataField>DiscountSummary__PeriodicDiscountTEMP_Description</DataField>
+        </Field>
+        <Field Name="DiscountSummary__PeriodicDiscountTEMP__Discount_Amount_Value_">
+          <DataField>DiscountSummary__PeriodicDiscountTEMP__Discount_Amount_Value_</DataField>
+        </Field>
+        <Field Name="DiscountSummary__PeriodicDiscountTEMP__Discount_Amount_Value_Format">
+          <DataField>DiscountSummary__PeriodicDiscountTEMP__Discount_Amount_Value_Format</DataField>
+        </Field>
+        <Field Name="DiscountSummary__NoOfPeriodicDiscountTEMP">
+          <DataField>DiscountSummary__NoOfPeriodicDiscountTEMP</DataField>
+        </Field>
+        <Field Name="DiscountSummary__Text001">
+          <DataField>DiscountSummary__Text001</DataField>
+        </Field>
+        <Field Name="DiscountSummary__TotalSummaryDisc">
+          <DataField>DiscountSummary__TotalSummaryDisc</DataField>
+        </Field>
+        <Field Name="DiscountSummary__TotalSummaryDiscFormat">
+          <DataField>DiscountSummary__TotalSummaryDiscFormat</DataField>
+        </Field>
+        <Field Name="TransIncomeExpensentry_Header__Number">
+          <DataField>TransIncomeExpensentry_Header__Number</DataField>
+        </Field>
+        <Field Name="Trans__Income_Expense___Entry_Store_No_">
+          <DataField>Trans__Income_Expense___Entry_Store_No_</DataField>
+        </Field>
+        <Field Name="Trans__Income_Expense___Entry_POS_Terminal_No_">
+          <DataField>Trans__Income_Expense___Entry_POS_Terminal_No_</DataField>
+        </Field>
+        <Field Name="Trans__Income_Expense___Entry_Transaction_No_">
+          <DataField>Trans__Income_Expense___Entry_Transaction_No_</DataField>
+        </Field>
+        <Field Name="Trans__Income_Expense___Entry_Line_No_">
+          <DataField>Trans__Income_Expense___Entry_Line_No_</DataField>
+        </Field>
+        <Field Name="Trans__Income_Expense___No__">
+          <DataField>Trans__Income_Expense___No__</DataField>
+        </Field>
+        <Field Name="Trans__Income_Expense___IncExpAccName">
+          <DataField>Trans__Income_Expense___IncExpAccName</DataField>
+        </Field>
+        <Field Name="Trans__Income_Expense___Amount">
+          <DataField>Trans__Income_Expense___Amount</DataField>
+        </Field>
+        <Field Name="Trans__Income_Expense___AmountFormat">
+          <DataField>Trans__Income_Expense___AmountFormat</DataField>
+        </Field>
+        <Field Name="TransIncomeExpensentry_Footer__Number">
+          <DataField>TransIncomeExpensentry_Footer__Number</DataField>
+        </Field>
+        <Field Name="TransPaymentEntryHeader__Number">
+          <DataField>TransPaymentEntryHeader__Number</DataField>
+        </Field>
+        <Field Name="Trans__Payment_Entry___Store_No_">
+          <DataField>Trans__Payment_Entry___Store_No_</DataField>
+        </Field>
+        <Field Name="Trans__Payment_Entry___POS_Terminal_No_">
+          <DataField>Trans__Payment_Entry___POS_Terminal_No_</DataField>
+        </Field>
+        <Field Name="Trans__Payment_Entry___Transaction_No_">
+          <DataField>Trans__Payment_Entry___Transaction_No_</DataField>
+        </Field>
+        <Field Name="Trans__Payment_Entry___Line_No_">
+          <DataField>Trans__Payment_Entry___Line_No_</DataField>
+        </Field>
+        <Field Name="Trans__Payment_Entry___TenderType">
+          <DataField>Trans__Payment_Entry___TenderType</DataField>
+        </Field>
+        <Field Name="Trans__Payment_Entry___PayDescription">
+          <DataField>Trans__Payment_Entry___PayDescription</DataField>
+        </Field>
+        <Field Name="Trans__Payment_Entry___Currency_Code_">
+          <DataField>Trans__Payment_Entry___Currency_Code_</DataField>
+        </Field>
+        <Field Name="Trans__Payment_Entry___Amount_in_Currency_">
+          <DataField>Trans__Payment_Entry___Amount_in_Currency_</DataField>
+        </Field>
+        <Field Name="Trans__Payment_Entry___Amount_in_Currency_Format">
+          <DataField>Trans__Payment_Entry___Amount_in_Currency_Format</DataField>
+        </Field>
+        <Field Name="Trans__Payment_Entry___Exchange_Rate_">
+          <DataField>Trans__Payment_Entry___Exchange_Rate_</DataField>
+        </Field>
+        <Field Name="Trans__Payment_Entry___Exchange_Rate_Format">
+          <DataField>Trans__Payment_Entry___Exchange_Rate_Format</DataField>
+        </Field>
+        <Field Name="Trans__Payment_Entry___Amount_Tendered_">
+          <DataField>Trans__Payment_Entry___Amount_Tendered_</DataField>
+        </Field>
+        <Field Name="Trans__Payment_Entry___Amount_Tendered_Format">
+          <DataField>Trans__Payment_Entry___Amount_Tendered_Format</DataField>
+        </Field>
+        <Field Name="TransPaymentEntryFooter__Number">
+          <DataField>TransPaymentEntryFooter__Number</DataField>
+        </Field>
+      </Fields>
+      <Query>
+        <DataSourceName>DataSource</DataSourceName>
+        <CommandText />
+      </Query>
+    </DataSet>
+  </DataSets>
+</Report>

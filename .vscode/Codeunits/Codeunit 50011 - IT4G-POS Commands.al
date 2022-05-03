@@ -11,6 +11,8 @@ codeunit 50011 "IT4G-POS Commands"
         if not rRetailSetup."IT4G Module Enabled" then error(lblSetUpErr);
 
         GlobalRec := Rec;
+        gText1 := GlobalRec."Current-Description";
+        gText2 := GlobalRec."Current-Description2";
 
         if rec."Registration Mode" then
             Register(Rec)
@@ -59,17 +61,21 @@ codeunit 50011 "IT4G-POS Commands"
                 'CH_LOC_FR':
                     ChangeLocPressed(rec.Parameter, rec."Current-INPUT", gLocType::"From");
                 'DYNPAYMENU':
-                    DynemicPaymenuPressed();
+                    DynamicPayMenuPressed();
                 'GET_IT4GDOC':
                     GetIT4GDocPressed(rec."Current-INPUT");
+                'CANCEL_DOC':
+                    CancelDocPressed(rec."Current-INPUT");
                 'IT4G_UPGRADE':
                     begin
                         Codeunit.run(50030);
                     end;
             end;
+            UpdateTexts();
             Rec := GlobalRec;
         end;
     end;
+
 
     var
         POSVIEW: Codeunit "LSC POS View";
@@ -106,7 +112,12 @@ codeunit 50011 "IT4G-POS Commands"
         Text001: Label '%1 %2 must exist to run the guest list';
         gLocType: Option From,To;
         rDOC: Record "IT4G-LS Document";
+        cF: Codeunit "IT4G-Functions";
         gDoc: Code[20];
+        POSCtrl: Codeunit "LSC POS Control Interface";
+        lblFieldChange: Label '%1 changed to %2';
+        gText1: Text;
+        gText2: Text;
 
     Internal
     procedure Register(var MenuLine: Record "LSC POS Menu Line")
@@ -133,6 +144,7 @@ codeunit 50011 "IT4G-POS Commands"
         CommandFunc.RegisterExtCommand('CH_EXT_DOC', 'Change External Document No.', 50011, ParameterType::" ", Module, false);
         CommandFunc.RegisterExtCommand('CH_REL_DOC', 'Change Related Document No.', 50011, ParameterType::" ", Module, false);
         CommandFunc.RegisterExtCommand('CH_WEB_DOC', 'Change WEB Order No.', 50011, ParameterType::" ", Module, false);
+        CommandFunc.RegisterExtCommand('CANCEL_DOC', 'Cancel Posted Document', 50011, ParameterType::" ", Module, false);
 
         CommandFunc.RegisterExtCommand('CH_SHIPADD', 'Change Customer Shipping Address', 50011, ParameterType::" ", Module, false);
         CommandFunc.RegisterExtCommand('CH_SHIPREA', 'Change Shipment Reason', 50011, ParameterType::" ", Module, false);
@@ -160,6 +172,8 @@ codeunit 50011 "IT4G-POS Commands"
 
         createTag('<#IT4G_Version>', 'IT4G Version', xtagType::Transaction);
 
+        cF.SetRV_C('IT4G_CancelDoc_Lookup', 0, 1, 'IT4G-REGISTER_CANCEL');
+
         MenuLine."Registration Mode" := false;
 
         /*
@@ -174,6 +188,16 @@ codeunit 50011 "IT4G-POS Commands"
                 if rPA.Insert then;
         */
 
+    end;
+
+    procedure UpdateTexts()
+    begin
+        POSGUI.UpdatePosInfoTexts(gText1, gText2);
+        cPOSTrans.SetPosInfoText1(gText1);
+        cPOSTrans.SetPosInfoText2(gText2);
+        GlobalRec."Current-Description" := gText1;
+        GlobalRec."Current-Description2" := gText2;
+        GlobalRec.MODIFY;
     end;
 
     Internal
@@ -194,7 +218,6 @@ codeunit 50011 "IT4G-POS Commands"
         //ErrorBeep
         OposUtil.Beeper;
         OposUtil.Beeper;
-
         POSGUI.PosMessage(Txt);
     end;
 
@@ -286,6 +309,14 @@ codeunit 50011 "IT4G-POS Commands"
         KeyVal: Code[20];
         cC: Codeunit "IT4G-POS Commands";
         newCurrInput: Text;
+        cCancel: Codeunit "IT4G-LS Cancellation";
+        RecordIDLoc: RecordID;
+        RecordRefLoc: RecordRef;
+        Transaction: Record "LSC Transaction Header";
+        ActiveLookupID: Code[20];
+        ErrorText: Text;
+        ProcessCode: Code[30];
+        retTXT: Text;
     begin
         bLookupActive := false;
         KeyVal := POSGUI.GetLookupKeyValue(LookupID);
@@ -314,6 +345,17 @@ codeunit 50011 "IT4G-POS Commands"
                             exit;
                         end;
                     end;
+                'IT4G-REGISTER_CANCEL':
+                    begin
+                        if POSCtrl.GetActiveLookupRecordID(RecordIDLoc) then begin
+                            RecordRefLoc.Get(RecordIDLoc);
+                            RecordRefLoc.SetTable(Transaction);
+                            Commit;
+                            cCancel.CancelLSDoc(POSTrans, GlobalRec."Current-RECEIPT", Transaction."Store No.", Transaction."POS Terminal No.", Transaction."Transaction No.",
+                            gText2);
+                        end;
+
+                    end;
                 else begin
                         newCurrInput := KeyVal;
                         cPOSTrans.SetCurrInput(newCurrInput);
@@ -321,34 +363,34 @@ codeunit 50011 "IT4G-POS Commands"
                         exit;
                     end;
             end;
+            UpdateTexts();
         end;
     end;
 
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"LSC POS Controller", 'OnModalPanelResult', '', false, false)]
+    local procedure OnModalPanelResult(panelID: Text; resultOK: Boolean; payload: Text; var processed: Boolean)
+    begin
+        if processed then
+            exit;
+    end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"LSC POS Controller", 'OnLookupResult', '', false, false)]
     local procedure OnLookupResult_IT4G(LookupID: Text; FilterText: Text; resultOK: Boolean; var processed: Boolean)
     begin
         if processed then
             exit;
-
-        case LookupID of
-            'IT4G_DOC', 'IT4G_SHIP_REASON', 'IT4G_SHIP_METHOD', 'IT4G_REASON_CODE', 'IT4G_LOCATION':
-                begin
-                    if IsMyLookup(LookupID) then begin
-                        if resultOK then begin
-                            processed := true;
-                            ProcessLookupResult();
-                        end;
-                        exit;
-                    end;
-                    exit;
-                end;
+        if IsMyLookup(LookupID) then begin
+            if resultOK then begin
+                processed := true;
+                ProcessLookupResult();
+            end;
+            exit;
         end;
     end;
 
     procedure IsMyLookup(pLookupID: Text): Boolean
     begin
-        exit((pLookupID in ['IT4G_DOC', 'IT4G_SHIP_REASON', 'IT4G_SHIP_METHOD', 'IT4G_REASON_CODE', 'IT4G_LOCATION']) and bLookupActive);
+        exit((pLookupID in ['IT4G_DOC', 'IT4G_SHIP_REASON', 'IT4G_SHIP_METHOD', 'IT4G_REASON_CODE', 'IT4G_LOCATION', 'IT4G-REGISTER_CANCEL']) and bLookupActive);
     end;
 
 
@@ -447,10 +489,12 @@ codeunit 50011 "IT4G-POS Commands"
                 if xLocType = xLocType::"From" then begin
                     PosTrans."From Store" := rSL."Store No.";
                     PosTrans."From Location" := rSL."Location Code";
+                    gText2 := StrSubstNo(lblFieldChange, postrans.FieldCaption("From Location"), PosTrans."From Location");
                 end;
                 if xLocType = xLocType::"To" then begin
                     PosTrans."To Store" := rSL."Store No.";
                     PosTrans."To Location" := rSL."Location Code";
+                    gText2 := StrSubstNo(lblFieldChange, postrans.FieldCaption("To Location"), PosTrans."To Location");
                 end;
                 PosTrans.Modify();
                 Exit;
@@ -484,6 +528,7 @@ codeunit 50011 "IT4G-POS Commands"
         if xParam <> '' then begin
             PosTrans."External Doc. No." := xParam;
             PosTrans.modify;
+            gText2 := StrSubstNo(lblFieldChange, postrans.FieldCaption("External Doc. No."), PosTrans."External Doc. No.");
             exit;
         end else begin
             PosTrans.Get(GlobalRec."Current-RECEIPT");
@@ -499,6 +544,7 @@ codeunit 50011 "IT4G-POS Commands"
         if xParam <> '' then begin
             PosTrans."Related Doc. No." := xParam;
             PosTrans.modify;
+            gText2 := StrSubstNo(lblFieldChange, postrans.FieldCaption("Related Doc. No."), PosTrans."Related Doc. No.");
             exit;
         end else begin
             PosTrans.Get(GlobalRec."Current-RECEIPT");
@@ -513,6 +559,7 @@ codeunit 50011 "IT4G-POS Commands"
         if xParam <> '' then begin
             PosTrans."WEB Order No." := xParam;
             PosTrans.modify;
+            gText2 := StrSubstNo(lblFieldChange, postrans.FieldCaption("WEB Order No."), PosTrans."WEB Order No.");
             exit;
         end else begin
             PosTrans.Get(GlobalRec."Current-RECEIPT");
@@ -529,6 +576,8 @@ codeunit 50011 "IT4G-POS Commands"
             if not rList.get(rList.Type::"Shipment Reason", GlobalRec."Current-INPUT") then begin
                 ErrorBeep(StrSubstNo(lblErrShipReason, GlobalRec."Current-INPUT"));
             end else begin
+                PosTrans."Shipment Reason" := GlobalRec."Current-INPUT";
+                gText2 := StrSubstNo(lblFieldChange, postrans.FieldCaption("Shipment Reason"), PosTrans."Shipment Reason");
                 PosTrans.Modify();
                 Exit;
             end;
@@ -550,7 +599,9 @@ codeunit 50011 "IT4G-POS Commands"
             if not rList.get(GlobalRec."Current-INPUT") then begin
                 ErrorBeep(StrSubstNo(lblErrShipMethod, GlobalRec."Current-INPUT"));
             end else begin
+                PosTrans."Shipment Method" := GlobalRec."Current-INPUT";
                 PosTrans.Modify();
+                gText2 := StrSubstNo(lblFieldChange, postrans.FieldCaption("Shipment Method"), PosTrans."Shipment Method");
                 Exit;
             end;
         end else begin
@@ -571,7 +622,9 @@ codeunit 50011 "IT4G-POS Commands"
             if not rList.get(GlobalRec."Current-INPUT") then begin
                 ErrorBeep(StrSubstNo(lblErrReasonCode, GlobalRec."Current-INPUT"));
             end else begin
+                PosTrans."Reason Code" := GlobalRec."Current-INPUT";
                 PosTrans.Modify();
+                gText2 := StrSubstNo(lblFieldChange, postrans.FieldCaption("Reason Code"), PosTrans."Reason Code");
                 Exit;
             end;
         end else begin
@@ -582,7 +635,7 @@ codeunit 50011 "IT4G-POS Commands"
         end;
     end;
 
-    procedure DynemicPaymenuPressed()
+    procedure DynamicPayMenuPressed()
     var
         cC: Codeunit "IT4G-POS Dynamic Menus";
         xRelType: Enum "IT4G-Document Relation Type";
@@ -735,5 +788,16 @@ codeunit 50011 "IT4G-POS Commands"
         exit(true);
     end;
 
+    procedure CancelDocPressed(xDoc: code[20])
+    var
+        rTH: Record "LSC Transaction Header";
+    begin
+        if not InitLookup(cf.GRV_C('IT4G_CancelDoc_Lookup', 0, 1)) then exit;
+        bLookupActive := true;
+        recref.GetTable(rTH);
+        POSGui.Lookup(POSLookup, '', sl, true, '', recref);
+
+        POSSESSION.SetValue('CANCEL_DOC', '1');
+    end;
 }
 

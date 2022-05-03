@@ -232,7 +232,7 @@ codeunit 50026 "IT4G-Loyalty"
     local procedure ScanMember(xParam: text): Boolean
     var
         lblStart: label 'Scan Member First';
-        cWS: Codeunit "IT4G - WEB Service Functions";
+        cWS: Codeunit "IT4G-WEB Service Functions";
     begin
         If xParam = '' then begin
             globalText := lblStart;

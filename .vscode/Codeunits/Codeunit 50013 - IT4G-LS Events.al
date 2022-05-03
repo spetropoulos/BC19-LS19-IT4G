@@ -36,12 +36,14 @@ codeunit 50013 "IT4G-LS Events"
         rRetailSetup: Record "LSC Retail Setup";
         lblSeriesNotFound: label 'No Document series setup found for Document Code ';
         enSerType: enum "IT4G-DocSeriesRetType";
+        rDoc: Record "IT4G-LS Document";
     begin
         if not rRetailSetup.get then exit;
         if not cC.IsIT4GRetailActive() then exit;
         if POSTrans."Entry Status" = POSTrans."Entry Status"::Voided then exit;
 
         Transaction."Document Code" := POSTrans."Document Code";
+        rDoc.get(Transaction."Document Code");
         Transaction."Post Series" := cC.GetDocumentSeries(POSTrans."Document Code", POSTrans."Store No.", POSTrans."POS Terminal No.", Transaction.Date, enSerType::"No. Series");
 
         if Transaction."Post Series" = '' then error(lblSeriesNotFound + Transaction."Document Code");
@@ -64,6 +66,10 @@ codeunit 50013 "IT4G-LS Events"
 
         Transaction."IT4G-Loyalty Card" := POSTrans."IT4G-Loyalty Card";
         Transaction."IT4G-Loyalty ID" := POSTrans."IT4G-Loyalty ID";
+        If rDoc."Cancel Document Code" <> '' then
+            Transaction."Allow Cancel" := true
+        else
+            Transaction."Allow Cancel" := false;
 
     end;
 
@@ -110,9 +116,10 @@ codeunit 50013 "IT4G-LS Events"
     local procedure OnAfterPostTransaction_IT4G(var TransactionHeader_p: Record "LSC Transaction Header")
     var
         cC: Codeunit "IT4G-Doc. Management";
-        cWS: Codeunit "IT4G - WEB Service Functions";
+        cWS: Codeunit "IT4G-WEB Service Functions";
     begin
-        cWS.IT4G_SendTransaction(TransactionHeader_p."Store No.", TransactionHeader_p."POS Terminal No.", TransactionHeader_p."Transaction No.");
+        cWS.IT4G_SendLoyTransaction(TransactionHeader_p."Store No.", TransactionHeader_p."POS Terminal No.", TransactionHeader_p."Transaction No.");
+        cWS.IT4G_SendAADETransaction(TransactionHeader_p."Store No.", TransactionHeader_p."POS Terminal No.", TransactionHeader_p."Transaction No.");
         cC.LSCreateIT4GDoc(TransactionHeader_p."Store No.", TransactionHeader_p."POS Terminal No.", TransactionHeader_p."Transaction No.");
         cC.LSApplyIT4GDoc(TransactionHeader_p."Store No.", TransactionHeader_p."POS Terminal No.", TransactionHeader_p."Transaction No.");
     end;
@@ -316,7 +323,7 @@ codeunit 50013 "IT4G-LS Events"
         ErrorText: Text;
         TSUTIL: Codeunit "LSC POS Trans. Server Utility";
         RetryEntry: Record "LSC Trans. Server Work Table";
-
+        bAddOnly: Boolean;
     begin
         IsHandled := false;
         if not cC.IsIT4GRetailActive() then exit;
@@ -341,7 +348,12 @@ codeunit 50013 "IT4G-LS Events"
                     //                    IF PosFuncProfile."Use Web Replication" and PosFuncProfile."Use Background Session" then
                     //                        WebReplClientHandler.SendTransaction(ResponseCode, ErrorText, TransactionHeaderTemp."Refund Receipt No." = '', PosFuncProfile.TransUpdateReplCounter, TransactionHeaderTemp)
                     //                    else
-                    SendTransactionUtils.SendRequest(ResponseCode, ErrorText, TransactionHeaderTemp."Refund Receipt No." = '', PosFuncProfile.TransUpdateReplCounter, TransactionHeaderTemp);
+                    bAddOnly := true;
+                    if (TransactionHeaderTemp."Refund Receipt No." <> '') or
+                        (TransactionHeaderTemp."Cancellation Type" = TransactionHeaderTemp."Cancellation Type"::Cancelled) then
+                        bAddOnly := false;
+
+                    SendTransactionUtils.SendRequest(ResponseCode, ErrorText, bAddOnly, PosFuncProfile.TransUpdateReplCounter, TransactionHeaderTemp);
                     if ErrorText <> '' then begin
                         RetryEntry.Reset;
                         RetryEntry.SetRange(Table, Database::"LSC Transaction Header");
@@ -477,4 +489,38 @@ codeunit 50013 "IT4G-LS Events"
                 end;
         end;
     end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"LSC POS Transaction", 'OnProcessRefundSelection', '', false, false)]
+    local procedure OnProcessRefundSelection_IT4G(OriginalTransaction: Record "LSC Transaction Header"; var POSTransaction: Record "LSC POS Transaction"; isPostVoid: Boolean)
+    var
+        rDoc: Record "IT4G-LS Document";
+    begin
+        If rDoc.Get(OriginalTransaction."Document Code") Then begin
+            POSTransaction."Document Code" := rDoc."Refund Document Code";
+            POSTransaction."IT4G-Loyalty Card" := OriginalTransaction."IT4G-Loyalty Card";
+            POSTransaction."IT4G-Loyalty ID" := OriginalTransaction."IT4G-Loyalty ID";
+            POSTransaction.Modify();
+        end;
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"LSC POS Print Utility", 'OnBeforePrintSlips', '', false, false)]
+    local procedure OnBeforePrintSlips(var Transaction: Record "LSC Transaction Header"; var PrintBuffer: Record "LSC POS Print Buffer"; var PrintBufferIndex: Integer; var LinesPrinted: Integer; var MsgTxt: Text[50]; var IsHandled: Boolean; var ReturnValue: Boolean)
+    var
+
+        reportID: Integer;
+    begin
+        IsHandled := true;
+        reportID := cC.GetDocumentPrinter(Transaction."Document Code", Transaction."Store No.", Transaction."POS Terminal No.");
+        if reportID = 0 then begin
+            IsHandled := false;
+            exit;
+        end;
+
+        Transaction.SetRange("Store No.", Transaction."Store No.");
+        Transaction.SetRange("POS Terminal No.", Transaction."POS Terminal No.");
+        Transaction.SetRange("Transaction No.", Transaction."Transaction No.");
+        REPORT.Run(reportID, false, true, Transaction);
+
+    end;
+
 }

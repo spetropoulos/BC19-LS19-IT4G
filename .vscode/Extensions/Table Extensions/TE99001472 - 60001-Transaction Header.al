@@ -34,6 +34,11 @@ tableextension 60001 "TE99001472-Transaction Header" extends "LSC Transaction He
             Caption = 'Cancellation Entry No.';
             DataClassification = ToBeClassified;
         }
+        field(60012; "Allow Cancel"; Boolean)
+        {
+            Caption = 'Allow Cancel';
+            DataClassification = ToBeClassified;
+        }
         field(60101; "Trans. Document No."; Code[20])
         {
             Caption = 'Trans. Document No.';

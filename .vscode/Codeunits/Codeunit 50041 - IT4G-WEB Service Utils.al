@@ -1,4 +1,4 @@
-codeunit 50041 "IT4G - WEB Service Utils"
+codeunit 50041 "IT4G-WEB Service Utils"
 {
     trigger OnRun()
     var
@@ -15,6 +15,8 @@ codeunit 50041 "IT4G - WEB Service Utils"
                 Pobuca_SubmitInvoice();
             'Pobuca_SendProduct':
                 Pobuca_SendProduct();
+            'AADE_SoftOne_SendInvoice':
+                AADE_SoftOne_SendInvoice();
         End;
     end;
 
@@ -34,7 +36,7 @@ codeunit 50041 "IT4G - WEB Service Utils"
         JsonText: Text;
         rGWSS: Record "IT4G-WEb Service Setup";
         rGWSSL: Record "IT4G-WEb Service Setup Line";
-        cWF: Codeunit "IT4G - WEB Service Functions";
+        cWF: Codeunit "IT4G-WEB Service Functions";
         gURL: text;
         gWhat: text;
         gParams: Array[20] of Text;
@@ -101,7 +103,12 @@ codeunit 50041 "IT4G - WEB Service Utils"
                 if Jtoken.ReadFrom(JsonText) then begin
                     if Jtoken.IsObject() then begin
                         JObject := Jtoken.AsObject();
-                        txtErr := getJsonValue('message') + '\' + getJsonValue('modelState');
+                        case rGWSS.Code of
+                            'POBUCA':
+                                txtErr := getJsonValueErr('message') + '\' + getJsonValueErr('modelState');
+                            'AADE-SOFTONE':
+                                txtErr := getJsonValueErr('title') + '\' + getJsonValueErr('message') + '\TraceID:' + getJsonValueErr('traceId');
+                        end;
                     end;
 
                     JObject := Jtoken.AsObject();
@@ -380,4 +387,39 @@ codeunit 50041 "IT4G - WEB Service Utils"
         exit(jtoken2.AsValue().AsText());
 
     end;
+
+    local procedure getJsonValueErr(xVal: text): Text
+    begin
+        if JObject.Get(xVal, Jtoken2) then
+            if Jtoken2.IsValue then
+                exit(jtoken2.AsValue().AsText());
+
+    end;
+
+    local procedure AADE_SoftOne_SendInvoice();
+    var
+        xStore: Code[20];
+        xPOS: Code[20];
+        xTransNo: Integer;
+
+        cC: Codeunit "AADE Json";
+
+        jInvoice: JsonObject;
+
+    begin
+        gURL := StrSubstNo(gURL, rGWSS."Authentication Key");
+        xStore := gParams[1];
+        xPOS := gParams[2];
+        evaluate(xTransNo, gParams[3]);
+        JsonText := cC.GenerateJsonLS(xStore, xPOS, xTransNo);
+        if rGWSS.Debug and (rGWSS."Debug Path" <> '') then ExportFile(JsonText, '_request.json');
+
+        CreateJsonCall;
+
+        Clear(gParams);
+        //todo: Validate Response
+
+    end;
+
 }
+

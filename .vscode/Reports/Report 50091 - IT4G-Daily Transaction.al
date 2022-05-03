@@ -106,8 +106,7 @@ report 50091 "IT4G-Daily Transaction"
 
 
                 IF (xStore = '') OR (xDate = 0D) THEN
-                    ERROR(diTH.FIELDNAME("Store No.") + ' και ' +
-diTH.FIELDNAME(Date) + ' δεν μπορούν να είναι κενά!!!');
+                    ERROR(diTH.FIELDNAME("Store No.") + ' και ' + diTH.FIELDNAME(Date) + ' δεν μπορούν να είναι κενά!!!');
             end;
         }
         dataitem(diTPE; "LSC Trans. Payment Entry")

@@ -12,8 +12,8 @@ codeunit 50030 "IT4G-Upgrade Version"
 
     trigger OnRun()
     begin
-        LatestVersionDate := 20220407D;
-        LatestWSVersionDate := 20220407D;
+        LatestVersionDate := 20220410D;
+        LatestWSVersionDate := 20220410D;
 
 
         rRetailSetUp.get();

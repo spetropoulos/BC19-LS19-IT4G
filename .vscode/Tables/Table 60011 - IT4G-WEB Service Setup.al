@@ -90,16 +90,9 @@ table 60011 "IT4G-WEb Service Setup"
         rRec: Record "IT4G-WEb Service Setup";
 
     trigger OnInsert()
-    var
-        rNew: Record "IT4G-WEb Service Setup";
     begin
-        if rec.Code = '' then error('Fill code First');
-        Active := true;
-        Logging := Logging::All;
-        rNew.TransferFields(rec);
-        rNew.Active := false;
-        rNew.Type := rNew.Type::Live;
-        if rNew.insert then;
+        rec.Active := true;
+        rec.Logging := Logging::All;
     end;
 
     trigger OnDelete()
@@ -112,5 +105,18 @@ table 60011 "IT4G-WEb Service Setup"
         rL.DeleteAll();
     end;
 
+    procedure createMirrorService()
+    var
+        rNew: Record "IT4G-WEb Service Setup";
+    begin
+        clear(rNEW);
+        rNew.TransferFields(rec);
+        rNew.Active := not rNew.Active;
+        rNew.Type := rNew.Type::Live;
+        if not rNew.insert then begin
+            rNew.Type := rNew.Type::Test;
+            if rNew.insert then;
+        end;
+    end;
 }
 

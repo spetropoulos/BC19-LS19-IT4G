@@ -1,7 +1,8 @@
 codeunit 50027 "IT4G-LS Cancellation"
 {
-    Procedure CancelLSDoc(xStore: Code[20]; xPOS: Code[20]; xTransNo: Integer; xRetTxt: Text): boolean
+    Procedure CancelLSDoc(var POSTrans: Record "LSC POS Transaction"; xReceiptNo: code[20]; xStore: Code[20]; xPOS: Code[20]; xTransNo: Integer; var xRetTxt: Text): boolean
     var
+        lblCancelDone: Label 'Document %1 cancelled by Document %2';
         Trans: Record "LSC Transaction Header";
         newTrans: Record "LSC Transaction Header";
         SE: Record "LSC Trans. Sales Entry";
@@ -57,7 +58,7 @@ codeunit 50027 "IT4G-LS Cancellation"
         cNSM: Codeunit NoSeriesManagement;
         lblSeriesNotFound: label 'No Document series setup found for Document Code ';
         rTransDoc: Record "IT4G-Doc. Header";
-
+        POSTransactionGlob: Codeunit "LSC POS Transaction";
     Begin
         //TODO: Check if you can cancel the decument        
         //TODO: If Cancel refund return related trans
@@ -76,12 +77,15 @@ codeunit 50027 "IT4G-LS Cancellation"
         end;
 
         NewTrans.TransferFields(Trans);
+        newTrans."Receipt No." := xReceiptNo;
         newTrans."Transaction No." := CancelTransNo;
         newTrans."Cancellation Type" := newTrans."Cancellation Type"::Cancellation;
         newTrans."Cancellation Entry No." := Trans."Transaction No.";
+        newTrans."Allow Cancel" := false;
 
         Trans."Cancellation Type" := Trans."Cancellation Type"::Cancelled;
         Trans."Cancellation Entry No." := CancelTransNo;
+        Trans."Allow Cancel" := false;
         Trans.Modify;
 
         //TODO: Assign new Document etc   
@@ -102,6 +106,7 @@ codeunit 50027 "IT4G-LS Cancellation"
         newTrans."No. of Items" := -newTrans."No. of Items";
         newTrans.Date := Today;
         newTrans.Time := Time;
+        newTrans."Retrieved from Receipt No." := Trans."Receipt No.";
         newTrans.Insert();
 
         SE.SetRange("Store No.", xStore);
@@ -373,10 +378,22 @@ codeunit 50027 "IT4G-LS Cancellation"
         //TODO: Update related Documents
         if rTransDoc.get(Trans."Document No.") then begin
             rTransDoc.Validate(Status, rTransDoc.Status::Canceled);
+            //            rTransDoc.send
         end;
+        xRetTxt := StrSubstNo(lblCancelDone, Trans."Document No.", newTrans."Document No.");
         //TODO: Send NewTrans and all related Transactions
-        TSUtil.SendAtEndOfTransaction(Trans);
-        TSUtil.SendAtEndOfTransaction(newTrans);
+        commit;
+        if newTrans.Get(xStore, xPOS, CancelTransNo) then TSUtil.SendAtEndOfTransaction(newTrans);
+        if Trans.Get(xStore, xPOS, xTransNo) then TSUtil.SendAtEndOfTransaction(Trans);
+
+        POSTransactionGlob.TSSendUnsentTransactions;
+        POSTransactionGlob.TSCheckError;
+        POSTrans.delete(TRUE);
+        POSTransactionGlob.InsertTmpTransaction(true);
+        POSTransactionGlob.ClearGlobs;
+        POSTransactionGlob.PickUpWarning(newTrans);
+        POSTransactionGlob.SetTransNo(newTrans."Transaction No.");
+        POSTransactionGlob.ClearPluCheckPriceAndVariant;
 
     End;
 
