@@ -343,5 +343,83 @@ codeunit 50010 "IT4G-Functions"
         FileMgmt.DeleteServerFile(ServerFileName);
 
     end;
+
+    procedure PrintTestZPL()
+    var
+        PrinterSelection: Record "Printer Selection";
+        BOPrintUtil: Codeunit "LSC BO Print Utility";
+        OStream: OutStream;
+        IStream: InStream;
+        ErrorText: Text;
+        Text001: Label 'TEST Label';
+        Text003: Label 'Label printout sent to "%1"';
+        CR: Char;
+        LF: Char;
+        LabelPrinter: Record "LSC Label Printer Selection";
+        TempBlob: Codeunit "Temp Blob";
+        LineEnd: Text;
+        NoLabelPrinter: Label 'No Printer defined for Item Label.';
+        rIL: Record "LSC Label Functions";
+    begin
+        if not LabelPrinter.Get(UserId, rIL.Type::"Item Label", '71X120ZEBRA') then
+            if not LabelPrinter.Get('', rIL.Type::"Item Label", '71X120ZEBRA') then
+                error(NoLabelPrinter);
+        CR := 13;
+        LF := 10;
+        LineEnd := Format(CR) + Format(LF);
+
+        TempBlob.CreateOutStream(OStream);
+
+        OStream.WriteText(LineEnd);
+        OStream.WriteText('^XA' + LineEnd);
+        OStream.WriteText('^FX Top section with logo, name and address.' + LineEnd);
+        OStream.WriteText('^CF0,60' + LineEnd);
+        OStream.WriteText('^FO50,50^GB100,100,100^FS' + LineEnd);
+        OStream.WriteText('^FO75,75^FR^GB100,100,100^FS' + LineEnd);
+        OStream.WriteText('^FO93,93^GB40,40,40^FS' + LineEnd);
+        OStream.WriteText('^FO220,50^FDIntershipping, Inc.^FS' + LineEnd);
+        OStream.WriteText('^CF0,30' + LineEnd);
+        OStream.WriteText('^FO220,115^FD1000 Shipping Lane^FS' + LineEnd);
+        OStream.WriteText('^FO220,155^FDShelbyville TN 38102^FS' + LineEnd);
+        OStream.WriteText('^FO220,195^FDUnited States (USA)^FS' + LineEnd);
+        OStream.WriteText('^FO50,250^GB700,3,3^FS' + LineEnd);
+        OStream.WriteText('^FX Second section with recipient address and permit information.' + LineEnd);
+        OStream.WriteText('^CFA,30' + LineEnd);
+        OStream.WriteText('^FO50,300^FDJohn Doe^FS' + LineEnd);
+        OStream.WriteText('^FO50,340^FD100 Main Street^FS' + LineEnd);
+        OStream.WriteText('^FO50,380^FDSpringfield TN 39021^FS' + LineEnd);
+        OStream.WriteText('^FO50,420^FDUnited States (USA)^FS' + LineEnd);
+        OStream.WriteText('^CFA,15' + LineEnd);
+        OStream.WriteText('^FO600,300^GB150,150,3^FS' + LineEnd);
+        OStream.WriteText('^FO638,340^FDPermit^FS' + LineEnd);
+        OStream.WriteText('^FO638,390^FD123456^FS' + LineEnd);
+        OStream.WriteText('^FO50,500^GB700,3,3^FS' + LineEnd);
+        OStream.WriteText('^FX Third section with bar code.' + LineEnd);
+        OStream.WriteText('^BY5,2,270' + LineEnd);
+        OStream.WriteText('^FO100,550^BC^FD12345678^FS' + LineEnd);
+        OStream.WriteText('^FX Fourth section (the two boxes on the bottom).' + LineEnd);
+        OStream.WriteText('^FO50,900^GB700,250,3^FS' + LineEnd);
+        OStream.WriteText('^FO400,900^GB3,250,3^FS' + LineEnd);
+        OStream.WriteText('^CF0,40' + LineEnd);
+        OStream.WriteText('^FO100,960^FDCtr. X34B-1^FS' + LineEnd);
+        OStream.WriteText('^FO100,1010^FDREF1 F00B47^FS' + LineEnd);
+        OStream.WriteText('^FO100,1060^FDREF2 BL4H8^FS' + LineEnd);
+        OStream.WriteText('^CF0,190' + LineEnd);
+        OStream.WriteText('^FO470,955^FDCA^FS' + LineEnd);
+        OStream.WriteText('^XZ' + LineEnd);
+        OStream.WriteText(LineEnd);
+
+
+        TempBlob.CreateInStream(IStream);
+        PrinterSelection."Printer Name" := LabelPrinter."Hardware Station Printer";
+        PrinterSelection."LSC Print to File" := LabelPrinter."Print to File";
+        BOPrintUtil.DoPrint(IStream, BOPrintUtil.GetLabelPrinterUrl(LabelPrinter."Hardware Station Printer"), PrinterSelection, ErrorText);
+        if ErrorText <> '' then
+            error(ErrorText);
+
+        Message(StrSubstNo(Text003, LabelPrinter."Hardware Station Printer"));
+    end;
+
+
 }
 

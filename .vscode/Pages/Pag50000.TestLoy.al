@@ -226,6 +226,21 @@ page 50000 "Test Loy"
                     cC.IT4G_SendAADETransaction(xStore, xPOS, xTransNo, xRet);
                 end;
             }
+            action("Print test Label")
+            {
+                ApplicationArea = All;
+                Tooltip = '';
+                Promoted = true;
+                PromotedOnly = true;
+                PromotedCategory = Process;
+                Caption = 'Print test Label';
+                trigger OnAction()
+                var
+                    cC: Codeunit "IT4G-Functions";
+                begin
+                    cC.PrintTestZPL();
+                end;
+            }
         }
     }
     var
